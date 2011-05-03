@@ -4,16 +4,36 @@ embed_assets: off
 gzip_assets: off
 
 javascripts:
+  sproutcore:
+    - public/javascripts/vendor/sproutcore/bootstrap.js
+    - public/javascripts/vendor/sproutcore/sproutcore.min.js
+    - public/javascripts/vendor/sproutcore/routes.js
+    - public/javascripts/vendor/sproutcore/ajax.js
+  sproutcore_dev:
+    - public/javascripts/vendor/sproutcore/bootstrap.js
+    - public/javascripts/vendor/sproutcore/jquery.js
+    - public/javascripts/vendor/sproutcore/runtime.js
+    - public/javascripts/vendor/sproutcore/handlebars.js
+    - public/javascripts/vendor/sproutcore/core_foundation.js
+    - public/javascripts/vendor/sproutcore/datetime/core.js
+    - public/javascripts/vendor/sproutcore/datastore.js
+    - public/javascripts/vendor/sproutcore/routes.js
+    - public/javascripts/vendor/sproutcore/ajax.js
   travis:
-    - public/javascripts/vendor/jquery*.js
-    - public/javascripts/vendor/underscore*.js
-    - public/javascripts/vendor/**/*.js
-    - public/javascripts/application.js
-    - public/javascripts/lib/**/*.js
-    - public/javascripts/app/**/*.js
+    - public/javascripts/app.js
+    - public/javascripts/app/controllers.js
+    - public/javascripts/app/data_source.js
+    - public/javascripts/app/helpers/urls.js
+    - public/javascripts/app/models/build.js
+    - public/javascripts/app/models/repository.js
+    - public/javascripts/app/queries.js
+    - public/javascripts/lib/utils.js
+    - public/javascripts/fixtures/build.js
+    - public/javascripts/fixtures/repository.js
   jasmine:
     - public/javascripts/tests/vendor/jasmine.js
     - public/javascripts/tests/vendor/**/*.js
+    - public/javascripts/tests/test_helper.js
     - public/javascripts/tests/test_helper/**/*.js
     - public/javascripts/tests/**/*.js
 

@@ -1,0 +1,7 @@
+{{view SC.TemplateView templateName="summary" contentBinding="Travis.buildController"}}
+
+{{#if content.matrix}}
+{{else}}
+{{/if}}
+<pre class="log">{{content.foldedLog}}</pre>
+

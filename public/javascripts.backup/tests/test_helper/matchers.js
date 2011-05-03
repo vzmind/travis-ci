@@ -161,7 +161,3 @@ beforeEach(function() {
     },
   });
 });
-
-jasmine.match = function (lft, rgt) {
-  return typeof rgt == 'function' ? rgt.test(lft) : lft == rgt;
-}

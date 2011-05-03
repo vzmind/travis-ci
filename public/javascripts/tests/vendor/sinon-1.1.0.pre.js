@@ -2091,10 +2091,10 @@ if (typeof module == "object" && typeof require == "function") {
  * Copyright (c) 2010-2011 Christian Johansen
  */
 
-if (typeof require == "function") {
-    var sinon = require("sinon");
-    sinon.extend(sinon, require("./util/fake_timers"));
-}
+// if (typeof require == "function") {
+//     var sinon = require("sinon");
+//     sinon.extend(sinon, require("./util/fake_timers"));
+// }
 
 (function () {
     function exposeValue(sandbox, config, key, value) {

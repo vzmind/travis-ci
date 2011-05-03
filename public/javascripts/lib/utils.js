@@ -1,11 +1,10 @@
 Utils = {
-  loadTemplates: function() {
+  loadTemplates: function(compiler) {
     var templates = {};
     $('*[type="text/x-js-template"]').map(function() {
       var name = $(this).attr('name');
-      var source = $(this).html().replace('&gt;', '>');
-      if(name.split('/')[1][0] == '_') { Handlebars.registerPartial(name.replace('/', ''), source) }
-      templates[name] = Handlebars.compile(source);
+      var source = $(this).html().replace('&gt;', '>').trim();
+      templates[name] = compiler ? compiler(source) : source;
     });
     return templates;
   },
@@ -109,4 +108,3 @@ function trace() {
     _.each(stack, function(line) { console.log(line); });
   }
 }
-

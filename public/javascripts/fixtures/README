@@ -1,0 +1,13 @@
+FIXTURES SCENARIO
+
+2 repositories:
+
+- svenfuchs/minimal has 2 normal builds:
+  #1 failed
+  #2 passed
+
+- josevalim/enginex has 2 matrix builds:
+  #1 failed, #1.1 failed, #1.2 passed
+  #2 passed, #2.1 passed, #2.2 passed
+
+

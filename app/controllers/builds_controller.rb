@@ -6,7 +6,7 @@ class BuildsController < ApplicationController
   skip_before_filter :verify_authenticity_token
 
   def index
-    render :json => repository.builds.started.order('id DESC').limit(10).as_json
+    render :json => builds.started.order('id DESC').limit(10).as_json
   end
 
   def show
@@ -14,6 +14,7 @@ class BuildsController < ApplicationController
   end
 
   def create
+    build = Build.create_from_github_payload(params[:payload])
     build.save!
     enqueue!(build)
     build.repository.update_attributes!(:last_built_at => Time.now) # TODO the build isn't actually started now
@@ -47,8 +48,12 @@ class BuildsController < ApplicationController
       @repository ||= params[:repository_id] ? Repository.find(params[:repository_id]) : build.repository
     end
 
+    def builds
+      params[:id] ? repository.builds : Build.limit(25)
+    end
+
     def build
-      @build ||= params[:id] ? Build.find(params[:id]) : Build.create_from_github_payload(params[:payload])
+      @build ||= Build.find(params[:id]) if params[:id]
     end
 
     def enqueue!(build)
