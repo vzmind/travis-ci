@@ -1,7 +1,7 @@
 Travis.DataSource = SC.DataSource.extend({
   fetch: function(store, query) {
     if(query.url) {
-      this.request(query.url()).notify(this, 'didFetchRecords', store, query).send();
+      this.request(query.url).notify(this, 'didFetchRecords', store, query).send();
       return YES;
     } else {
       return NO;

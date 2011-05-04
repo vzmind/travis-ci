@@ -1,7 +1,10 @@
 Travis.Query = SC.Query.extend();
 Travis.Query.mixin({
   build: function(location, params) {
-    return SC.Query.build.apply(this, [location, this.recordType, this.conditions, params])
+    var conditions = this.conditions ? this.conditions.fmt(params) : null;
+    var query = SC.Query.build.apply(this, [location, this.recordType, conditions]);
+    if(this.url) query.url = this.url;
+    return query;
   }
 });
 
@@ -13,7 +16,8 @@ Travis.Queries = {
       return '/repositories.json';
     }
   }),
-  RepositoryBySlug: Travis.Query.extend(),
+  RepositoryBySlug: Travis.Query.extend({
+  }),
   RepositoryBuilds: SC.Query.extend({
     recordType: Travis.Build,
     conditions: 'repositoryId = {repositoryId} AND parentId = {parentId}',
@@ -40,7 +44,10 @@ Travis.Queries = {
 
 Travis.Queries.RepositoryBySlug.mixin({
   recordType: Travis.Repository,
-  conditions: 'slug = {slug}',
-  parameterKeys: 'slug'.w()
+  conditions: 'slug = "%@"',
+  // parameterKeys: 'slug'.w(),
+  // url: function() {
+  //   return '/repositories.json';
+  // }
 })
 

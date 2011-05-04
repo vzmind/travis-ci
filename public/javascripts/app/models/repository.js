@@ -18,6 +18,12 @@ Travis.Repository = SC.Record.extend(Travis.Helpers.Urls, {
   }.property().cacheable()
 });
 
-Travis.Repository.latest = function() {
-  return Travis.store.find(Travis.Queries.LatestRepositories.create());
-}
+Travis.Repository.mixin({
+  latest: function() {
+    return Travis.store.find(SC.Query.local(Travis.Repository).mixin({ url: '/repositories.json' }));
+  },
+  bySlug: function(slug) {
+    return Travis.store.find(SC.Query.local(Travis.Repository, { conditions: 'slug = "%@"'.fmt(slug) }).mixin({ url: '/repositories.json' }));
+  }
+})
+

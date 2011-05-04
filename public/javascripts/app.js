@@ -22,35 +22,33 @@ Travis = SC.Application.create({
 
 Travis.dispatch = SC.Object.create({
   current: function(params) {
-    var repository = this._findRepository(params);
+    var repositories = this._repositoriesBySlug(params);
     var build = Travis.store.find(Travis.Build, 2);
 
-    Travis.repositoryController.set('content', repository);
-    Travis.buildController.set('content', build);
+    Travis.repositoriesBySlugController.set('content', repositories);
+    // Travis.buildController.set('content', build);
     this._activateTab('current');
   },
   history: function(params) {
-    var repository = this._findRepository(params);
+    var repositories = this._repositoriesBySlug(params);
     var builds = Travis.store.find(Travis.Build);
 
     if(repository) {
-      Travis.repositoryController.set('content', repository);
+      Travis.repositoriesBySlugController.set('content', repositories);
       Travis.buildsController.set('content', repository.get('builds'));
     }
     this._activateTab('builds');
   },
   build: function(params) {
-    var repository = this._findRepository(params);
+    var repositories = this._repositoriesBySlug(params);
     var build = Travis.store.find(Travis.Build, params.id);
 
-    Travis.repositoryController.set('content', repository);
+    Travis.repositoriesBySlugController.set('content', repositories);
     Travis.buildController.set('content', build);
     this._activateTab('build');
  },
-  _findRepository: function(params) {
-    var slug = params.owner + '/' + params.repository;
-    var repositories = Travis.store.find(Travis.Queries.RepositoryBySlug.local({ slug: slug }));
-    return repositories.firstObject();
+  _repositoriesBySlug: function(params) {
+    return Travis.Repository.bySlug(params.owner + '/' + params.repository)
   },
   _activateTab: function(tab) {
     Travis.repositoryController.set('activeTab', tab);
