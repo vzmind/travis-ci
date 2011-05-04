@@ -20,8 +20,11 @@ class RepositoriesController < ApplicationController
 
   protected
     def repositories
-      repos = params[:owner_name] ? Repository.where(:owner_name => params[:owner_name]).timeline : Repository.timeline.recent
-      params[:search].present? ? repos.search(params[:search]) : repos
+      repos = Repository.timeline.recent
+      repos = repos.where(:owner_name => params[:owner_name]) if params[:owner_name].present?
+      repos = repos.where(:name => params[:slug].split('/').first, :name => params[:slug].split('/').last) if params[:slug].present?
+      repos = repos.search(params[:search]) if params[:search].present?
+      repos
     end
 
     def repository

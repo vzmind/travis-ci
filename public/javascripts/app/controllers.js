@@ -2,17 +2,17 @@ Travis.repositoriesController = SC.ArrayController.create({
 });
 
 Travis.repositoriesBySlugController = SC.ArrayController.create({
-  readyObserver: function(){
-    var content = this.get('content');
-    if(content){
-      var status = content.get('status');
-      if(status === SC.Record.READY_CLEAN && content.get('length') === 0) {
-          var query = SC.Query.create(Travis.Repository, { conditions: 'slug = "%@"'.fmt('svenfuchs/minimal') }).mixin({ url: '/repositories.json' });
-          var repositories = Travis.store.find(query);
-          this.set('content', repositories);
-       }
-    }
-  }.observes('*content.status')
+  // readyObserver: function(){
+  //   var content = this.get('content');
+  //   if(content){
+  //     var status = content.get('status');
+  //     if(status === SC.Record.READY_CLEAN && content.get('length') === 0) {
+  //         var query = SC.Query.create(Travis.Repository, { conditions: 'slug = "%@"'.fmt('svenfuchs/minimal') }).mixin({ url: '/repositories.json' });
+  //         var repositories = Travis.store.find(query);
+  //         this.set('content', repositories);
+  //      }
+  //   }
+  // }.observes('*content.status')
 });
 
 Travis.repositoryController = SC.ObjectController.create({
