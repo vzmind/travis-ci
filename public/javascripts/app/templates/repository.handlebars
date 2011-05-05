@@ -5,13 +5,13 @@
     <li><a class="forks" {{bindAttr href="content.urlGithubNetwork"}}></a></li>
   </ul>
   <ul class="tabs">
-    <li id="tab_current" {{bindAttr class="content.tabCurrentClass"}}>
+    <li id="tab_current">
       <h5><a {{bindAttr href="content.urlCurrent"}}>Current</a></h5>
       <div class="tab">
         {{view SC.TemplateView templateName="build" contentBinding="Travis.buildController"}}
       </div>
     </li>
-    <li id="tab_builds" {{bindAttr class="content.tabBuildsClass"}}>
+    <li id="tab_builds">
       <h5><a {{bindAttr href="content.urlBuilds"}}>Build History</a></h5>
       <div class="tab">
         {{view SC.TemplateView templateName="builds"}}
@@ -20,7 +20,7 @@
     <li id="tab_parent">
       <h5><a {{bindAttr href="content.urlBuild"}}>Build</a></h5>
     </li>
-    <li id="tab_build" {{bindAttr class="content.tabBuildClass"}}>
+    <li id="tab_build">
       <h5><a {{bindAttr href="content.urlBuild"}}>{{#view SC.TemplateView contentBinding="Travis.buildController"}}Build #{{content.number}}{{/view}}</a></h5>
       <div class="tab">
         {{view SC.TemplateView templateName="build" contentBinding="Travis.buildController"}}

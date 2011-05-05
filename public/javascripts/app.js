@@ -1,5 +1,7 @@
 Travis = SC.Application.create({
   main: function() {
+    SC.routes.add('!/:owner/:repository/builds/:id', Travis.dispatch, 'build');
+    SC.routes.add('!/:owner/:repository/builds', Travis.dispatch, 'history');
     SC.routes.add('!/:owner/:repository', Travis.dispatch, 'current');
 
     Travis.mainPane = SC.TemplatePane.append({
@@ -14,9 +16,24 @@ Travis = SC.Application.create({
 
 Travis.dispatch = SC.Object.create({
   current: function(params) {
-    var repositories = Travis.Repository.bySlug(params.owner + '/' + params.repository);
-    Travis.repositoriesBySlugController.set('content', repositories);
+    Travis.repositoryController.set('content', Travis.Repository.bySlug(params.owner + '/' + params.repository));
+    // Travis.buildController.set('content', Travis.Build.byId(2));
+    Travis.repositoryController.activateTab('current');
   },
+  history: function(params) {
+    Travis.repositoryController.set('content', Travis.Repository.bySlug(params.owner + '/' + params.repository));
+    // var builds = Travis.store.find(Travis.Build);
+    // Travis.buildsController.set('content', repository.get('builds'));
+    Travis.repositoryController.activateTab('builds');
+  },
+ //  build: function(params) {
+ //    var repositories = this._repositoriesBySlug(params);
+ //    var build = Travis.store.find(Travis.Build, params.id);
+
+ //    Travis.repositoryController.set('content', repositories);
+ //    Travis.buildController.set('content', build);
+ //    this._activateTab('build');
+ // },
 });
 
 SC.ready(function() {
