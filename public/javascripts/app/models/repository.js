@@ -1,5 +1,3 @@
-sc_require('helpers/urls')
-
 Travis.Repository = SC.Record.extend(Travis.Helpers.Urls, {
   primaryKey:         'id',
 
@@ -15,7 +13,11 @@ Travis.Repository = SC.Record.extend(Travis.Helpers.Urls, {
 
   builds: function() {
     return Travis.Build.byRepositoryId(this.get('id'));
-  }
+  }.property().cacheable(),
+
+  lastBuild: function() {
+    return Travis.Build.byRepositoryId(this.get('id'), { limit: 1 });
+  }.property().cacheable()
 });
 
 Travis.Repository.mixin({
@@ -29,10 +31,10 @@ Travis.Repository.mixin({
   bySlug: function(slug) {
     var query = this._queries.bySlug[slug] = this._queries.bySlug[slug] || SC.Query.local(Travis.Repository, {
       conditions: 'slug = {slug}',
-      parameters: { slug: slug }
+      parameters: { slug: slug },
+      url: '/repositories.json?slug=%@'.fmt(slug)
     });
     return Travis.store.find(query);
-    // return Travis.store.find(SC.Query.remote(Travis.Repository, { conditions: 'slug = "{slug}"', parameters: { slug: slug } }));
   },
 })
 

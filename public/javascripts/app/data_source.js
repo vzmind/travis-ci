@@ -1,7 +1,6 @@
 Travis.DataSource = SC.DataSource.extend({
   fetch: function(store, query) {
     var url = this._urlForQuery(query);
-    // console.log([url, query.isRemote()])
     if(url) {
       SC.Request.getUrl(url).set('isJSON', YES).notify(this, '_didFetchRecords', store, query).send();
       return YES;
@@ -15,20 +14,14 @@ Travis.DataSource = SC.DataSource.extend({
     return YES;
   },
   _urlForQuery: function(query) {
+    if(query.url) return query.url;
+
+    var parameters = query.parameters || {};
+
     if(query.recordType == Travis.Repository) {
-      if(query.getPath('parameters.slug')) {
-        return '/repositories.json?slug=' + query.parameters.slug;
-      } else {
-        return '/repositories.json';
-      }
+      return '/repositories.json';
     } else if(query.recordType == Travis.Build) {
-      if(query.getPath('parameters.repositoryId')) {
-        return '/repositories/%@/builds.json'.fmt(query.parameters.repositoryId);
-      } else if(query.getPath('parameters.parentId')) {
-        return '/builds/%@.json'.fmt(query.parameters.parentIdd);
-      } else if(query.getPath('parameters.id')) {
-        return '/builds/%@.json'.fmt(query.parameters.id);
-      }
+      return '/builds/%@.json'.fmt(parameters.id);
     }
     console.log(query)
   },

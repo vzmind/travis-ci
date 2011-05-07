@@ -21,16 +21,14 @@ javascripts:
     - public/javascripts/vendor/sproutcore/ajax.js
   travis:
     - public/javascripts/app.js
-    - public/javascripts/app/controllers.js
     - public/javascripts/app/data_source.js
-    - public/javascripts/app/helpers/urls.js
-    - public/javascripts/app/models/build.js
-    - public/javascripts/app/models/repository.js
-    - public/javascripts/app/queries.js
+    - public/javascripts/app/helpers/*.js
+    - public/javascripts/app/models/*.js
+    - public/javascripts/app/controllers.js
     - public/javascripts/lib/utils.js
+  jasmine:
     - public/javascripts/fixtures/build.js
     - public/javascripts/fixtures/repository.js
-  jasmine:
     - public/javascripts/tests/vendor/jasmine.js
     - public/javascripts/tests/vendor/**/*.js
     - public/javascripts/tests/test_helper.js

@@ -387,7 +387,9 @@ SC.routes = SC.Object.create({
       delete params.route;
       delete params.params;
       route = firstRoute.routeForParts(location.split('/'), params);
-      if (route && route.target && route.method) {
+      // changed: sven
+      // if (route && route.target && route.method) {
+      if (route && route.method) {
         route.method.call(route.target, params);
       }
     }

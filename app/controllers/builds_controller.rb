@@ -6,7 +6,7 @@ class BuildsController < ApplicationController
   skip_before_filter :verify_authenticity_token
 
   def index
-    render :json => builds.started.order('id DESC').limit(10).as_json
+    render :json => builds.started.order('id DESC').limit(limit).as_json
   end
 
   def show
@@ -49,11 +49,15 @@ class BuildsController < ApplicationController
     end
 
     def builds
-      params[:id] ? repository.builds : Build.limit(25)
+      params[:repository_id] ? repository.builds : Build.limit(25) # ???
     end
 
     def build
       @build ||= Build.find(params[:id]) if params[:id]
+    end
+
+    def limit
+      params[:limit].present? ? params[:limit] : 10
     end
 
     def enqueue!(build)

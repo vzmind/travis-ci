@@ -2,24 +2,39 @@ Travis.repositoriesController = SC.ArrayController.create({
 });
 
 Travis.repositoryController = SC.ObjectController.create({
-  repositoryObserver: function() {
-    var repository = this.getPath('content.firstObject');
-    if(repository) {
-      Travis.buildsController.set('content', repository.builds())
-    }
-  }.observes('*content'),
+  load: function(params) {
+    this.params = params;
+    this.activateTab(params.tab);
+    this.set('content', Travis.Repository.bySlug(params.owner + '/' + params.repository));
+  },
   activateTab: function(tab) {
+    this.activeTabController = Travis[tab + 'TabController'];
     $('#repository .tabs > li').removeClass('active');
     $('#repository #tab_' + tab).addClass('active');
+  },
+  repositoryObserver: function() {
+    var repository = Travis.repositoryController.getPath('content.firstObject');
+    if(repository) {
+      this.activeTabController.load(repository, this.params);
+    }
+  }.observes('Travis.repositoryController.*content'),
+});
+
+Travis.currentTabController = SC.ObjectController.create(Travis.Helpers.Build, {
+  load: function(repository, params) {
+    this.set('content', repository.get('lastBuild'));
+  },
+});
+
+Travis.buildsTabController = SC.ArrayController.create({
+  load: function(repository, params) {
+    this.set('content', repository.get('builds'));
   }
 });
 
-Travis.buildsController = SC.ArrayController.create({
-});
-
-Travis.buildController = SC.ObjectController.create({
-  foldedLog: function() {
-    if(this.content) return this.getPath('content.log'); // fold log etc. here
-  }.property('content'),
+Travis.buildTabController = SC.ObjectController.create(Travis.Helpers.Build, {
+  load: function(repository, params) {
+    this.set('content', Travis.store.find(Travis.Build, params.id));
+  },
 });
 
