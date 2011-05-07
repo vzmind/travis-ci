@@ -10,11 +10,13 @@
   </thead>
 
   {{#collection SC.TemplateCollectionView tagName="tbody" itemClass="build" contentBinding="Travis.buildsTabController"}}
-    <td class="number"><a {{bindAttr href="content.urlBuild"}}>{{content.number}}</a></td>
-    <td class="commit"><a {{bindAttr href="content.urlGithubCommit"}}>{{content.commit}}{{#if content.branch}} ({{content.branch}}){{/if}}</a></td>
-    <td class="message">{{content.message}}</td>
-    <td class="duration" {{bindAttr title="content.duration"}}></td>
-    <td class="finished_at timeago" {{bindAttr title="content.finished_at"}}>{{#if content.finished_at}}{{content.finished_at}}{{else}}-{{/if}}</td>
+    {{#with content}}
+      <td class="number"><a {{bindAttr href="urlBuild"}}>{{number}}</a></td>
+      <td class="commit"><a {{bindAttr href="urlGithubCommit"}}>{{commit}}{{#if branch}} ({{branch}}){{/if}}</a></td>
+      <td class="message">{{message}}</td>
+      <td class="duration" {{bindAttr title="duration"}}></td>
+      <td class="finished_at timeago" {{bindAttr title="finished_at"}}>{{#if finished_at}}{{finished_at}}{{else}}-{{/if}}</td>
+    {{/with}}
   {{/collection}}
 </table>
 
