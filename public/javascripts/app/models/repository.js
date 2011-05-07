@@ -13,11 +13,11 @@ Travis.Repository = SC.Record.extend(Travis.Helpers.Urls, {
 
   builds: function() {
     return Travis.Build.byRepositoryId(this.get('id'));
-  }.property().cacheable(),
+  }.property(),
 
   lastBuild: function() {
-    return Travis.Build.byRepositoryId(this.get('id'), { limit: 1 });
-  }.property().cacheable()
+    return Travis.Build.byRepositoryId(this.get('id')); // , { limit: 1 }
+  }.property()
 });
 
 Travis.Repository.mixin({

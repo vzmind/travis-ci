@@ -5,6 +5,7 @@ Travis.repositoryController = SC.ObjectController.create({
   load: function(params) {
     this.params = params;
     this.activateTab(params.tab);
+    this.set('content', null);
     this.set('content', Travis.Repository.bySlug(params.owner + '/' + params.repository));
   },
   activateTab: function(tab) {
@@ -13,26 +14,30 @@ Travis.repositoryController = SC.ObjectController.create({
     $('#repository #tab_' + tab).addClass('active');
   },
   repositoryObserver: function() {
-    var repository = Travis.repositoryController.getPath('content.firstObject');
+    var repository = this.getPath('content.firstObject');
     if(repository) {
+      this.activeTabController.set('content', null);
       this.activeTabController.load(repository, this.params);
     }
-  }.observes('Travis.repositoryController.*content'),
+  }.observes('*content'),
 });
 
 Travis.currentTabController = SC.ObjectController.create(Travis.Helpers.Build, {
+  name: 'current',
   load: function(repository, params) {
     this.set('content', repository.get('lastBuild'));
   },
 });
 
 Travis.buildsTabController = SC.ArrayController.create({
+  name: 'builds',
   load: function(repository, params) {
     this.set('content', repository.get('builds'));
   }
 });
 
 Travis.buildTabController = SC.ObjectController.create(Travis.Helpers.Build, {
+  name: 'build',
   load: function(repository, params) {
     this.set('content', Travis.Build.find(params.id));
   },

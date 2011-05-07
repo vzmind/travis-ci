@@ -8,6 +8,7 @@
     <li id="tab_current">
       <h5><a {{bindAttr href="content.urlCurrent"}}>Current</a></h5>
       <div class="tab">
+        {{view SC.TemplateView templateName="summary" contentBinding="Travis.currentTabController"}}
         {{view SC.TemplateView templateName="build" contentBinding="Travis.currentTabController"}}
       </div>
     </li>
@@ -23,6 +24,7 @@
     <li id="tab_build">
       <h5><a {{bindAttr href="content.urlBuild"}}>{{#view SC.TemplateView contentBinding="Travis.buildTabController"}}Build #{{content.number}}{{/view}}</a></h5>
       <div class="tab">
+        {{view SC.TemplateView templateName="summary" contentBinding="Travis.buildTabController"}}
         {{view SC.TemplateView templateName="build" contentBinding="Travis.buildTabController"}}
       </div>
     </li>
