@@ -15,7 +15,7 @@ Travis.Build = SC.Record.extend(Travis.Helpers.Urls, {
   finishedAt:     SC.Record.attr(String, { key: 'finished_at'}), // Date
 
   repository: function() {
-    return Travis.store.find(Travis.Repository, this.get('repositoryId'));
+    return Travis.Repository.find(this.get('repositoryId'));
   }.property(),
 
   matrix: function() {
@@ -27,6 +27,9 @@ Travis.Build.mixin({
   _queries: {
     byRepositoryId: {},
     byParentId: {}
+  },
+  find: function(id) {
+    return Travis.store.find(this, id);
   },
   byRepositoryId: function(id, parameters) {
     parameters = parameters || {};

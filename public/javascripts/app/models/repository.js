@@ -25,8 +25,11 @@ Travis.Repository.mixin({
     latest: {},
     bySlug: {}
   },
+  find: function(id) {
+    return Travis.store.find(this, id);
+  },
   latest: function() {
-    return Travis.store.find(SC.Query.remote(Travis.Repository));
+    return Travis.store.find(SC.Query.local(Travis.Repository));
   },
   bySlug: function(slug) {
     var query = this._queries.bySlug[slug] = this._queries.bySlug[slug] || SC.Query.local(Travis.Repository, {

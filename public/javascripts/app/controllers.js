@@ -34,7 +34,7 @@ Travis.buildsTabController = SC.ArrayController.create({
 
 Travis.buildTabController = SC.ObjectController.create(Travis.Helpers.Build, {
   load: function(repository, params) {
-    this.set('content', Travis.store.find(Travis.Build, params.id));
+    this.set('content', Travis.Build.find(params.id));
   },
 });
 
