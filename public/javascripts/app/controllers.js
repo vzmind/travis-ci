@@ -24,15 +24,16 @@ Travis.repositoryController = SC.ObjectController.create({
 
 Travis.currentTabController = SC.ObjectController.create(Travis.Helpers.Build, {
   name: 'current',
+  repository: null,
   load: function(repository, params) {
-    this.set('content', repository.get('lastBuild'));
-  },
+    this.set('content', repository.lastBuild());
+  }
 });
 
 Travis.buildsTabController = SC.ArrayController.create({
   name: 'builds',
   load: function(repository, params) {
-    this.set('content', repository.get('builds'));
+    this.set('content', repository.builds());
   }
 });
 

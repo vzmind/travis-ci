@@ -18,9 +18,13 @@ Travis.Build = SC.Record.extend(Travis.Helpers.Urls, {
     return Travis.Repository.find(this.get('repositoryId'));
   }.property(),
 
-  matrix: function() {
-    return Travis.Build.byParentId(this.get('id'));
-  },
+  // matrix: function() {
+  //   return Travis.Build.byParentId(this.get('id'));
+  // },
+
+  // isMatrix: function() {
+  //   return this.matrix().length() > 0;
+  // }.property()
 });
 
 Travis.Build.mixin({
@@ -40,14 +44,6 @@ Travis.Build.mixin({
     });
     return Travis.store.find(query);
   },
-  byParentId: function(id) {
-    var query = this._queries.byParentId[id] = this._queries.byParentId[id] || SC.Query.local(Travis.Build, {
-      conditions: 'parentId = {parentId}',
-      parameters: { parentId: id },
-      url: '/builds/%@.json'.fmt(id)
-    });
-    return Travis.store.find(query);
-  }
 })
 
 
