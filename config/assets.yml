@@ -24,6 +24,7 @@ javascripts:
     - public/javascripts/app/data_source.js
     - public/javascripts/app/helpers/*.js
     - public/javascripts/app/models/*.js
+    - public/javascripts/app/views.js
     - public/javascripts/app/controllers.js
     - public/javascripts/lib/*.js
   jasmine:

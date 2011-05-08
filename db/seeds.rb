@@ -92,8 +92,8 @@ builds.each do |build|
   Build.create!(build)
 end
 
-Builds.all.each do |build|
-  build.matrix.each |child|
+Build.all.each do |build|
+  build.matrix.each do |child|
     child.update_attributes!(:log => "#{child.repository.name} #{child.number} log")
   end
 end
