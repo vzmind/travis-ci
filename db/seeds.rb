@@ -11,6 +11,7 @@ minimal = Repository.create!({
   :url => 'https://github.com/svenfuchs/minimal',
   :last_duration => 10
 })
+
 enginex = Repository.create!({
   :owner_name => 'josevalim',
   :name => 'enginex',
@@ -67,42 +68,10 @@ builds = [
     :started_at => '2010-11-11 3:00:00',
     :finished_at => '2010-11-11 3:00:20',
     :agent => 'a1732e4f',
-    :log => 'enginex build 1 log ...'
+    :log => 'enginex build 1 log ...',
+    :config => { 'rvm' => ['1.8.7', '1.9.2'] }
   },
   {
-    :id => 4,
-    :repository => enginex,
-    :parent_id => 3,
-    :number => '1.1',
-    :commit => '565294c',
-    :message => 'Update Capybara',
-    :committer_name => 'Jose Valim',
-    :committer_email => 'jose@email.com',
-    :author_name => 'Jose Valim',
-    :author_email => 'jose@email.com',
-    :log => 'enginex build 1.1 log ...',
-    :status => 1,
-    :started_at => '2010-11-11 3:00:00',
-    :finished_at => '2010-11-11 3:00:20',
-  },
-  {
-    :id => 5,
-    :repository => enginex,
-    :parent_id => 3,
-    :number => '1.2',
-    :commit => '565294c',
-    :message => 'Update Capybara',
-    :committer_name => 'Jose Valim',
-    :committer_email => 'jose@email.com',
-    :author_name => 'Jose Valim',
-    :author_email => 'jose@email.com',
-    :log => 'enginex build 1.2 log ...',
-    :status => 0,
-    :started_at => '2010-11-11 3:00:00',
-    :finished_at => '2010-11-11 3:00:20',
-  },
-  {
-    :id => 6,
     :repository => enginex,
     :number => '2',
     :commit => '1ba4b1f',
@@ -115,40 +84,14 @@ builds = [
     :status => 0,
     :started_at => '2010-11-11 3:00:00',
     :finished_at => '2010-11-11 3:00:20',
-  },
-  {
-    :id => 7,
-    :repository => enginex,
-    :parent_id => 6,
-    :number => '2.1',
-    :commit => '1ba4b1f',
-    :message => 'Update Gemfile',
-    :committer_name => 'Jose Valim',
-    :committer_email => 'jose@email.com',
-    :author_name => 'Jose Valim',
-    :author_email => 'jose@email.com',
-    :log => 'enginex build 1.1 log ...',
-    :status => 0,
-    :started_at => '2010-11-11 3:00:00',
-    :finished_at => '2010-11-11 3:00:20',
-  },
-  {
-    :id => 8,
-    :repository => enginex,
-    :parent_id => 6,
-    :number => '2.2',
-    :commit => '1ba4b1f',
-    :message => 'Update Gemfile',
-    :committer_name => 'Jose Valim',
-    :committer_email => 'jose@email.com',
-    :author_name => 'Jose Valim',
-    :author_email => 'jose@email.com',
-    :log => 'enginex build 1.2 log ...',
-    :status => 0,
-    :started_at => '2010-11-11 3:00:00',
-    :finished_at => '2010-11-11 3:00:20',
+    :config => { 'rvm' => ['1.8.7', '1.9.2'] }
   },
 ]
+
 builds.each do |build|
   Build.create!(build)
+end
+
+[4, 5, 7, 8].each do |id|
+  Build.find(id).update_attributes!(:log => "enginex build #{build.number} log")
 end
