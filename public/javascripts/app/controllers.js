@@ -29,7 +29,14 @@ Travis.controllers = SC.Object.create({
       this.params = params;
       this.activateTab(params.tab);
       this.set('content', null);
-      this.set('content', Travis.Repository.bySlug(params.owner + '/' + params.repository));
+      this.set('content', this.repository(params));
+    },
+    repository: function(params) {
+      if(params.owner && params.repository) {
+        return Travis.Repository.bySlug(params.owner + '/' + params.repository);
+      } else {
+        return Travis.Repository.latest();
+      }
     },
     activateTab: function(tab) {
       this.tabs.active = this.tabs[tab];

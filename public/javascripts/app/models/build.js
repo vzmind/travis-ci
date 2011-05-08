@@ -32,7 +32,6 @@ Travis.Build = SC.Record.extend(Travis.Helpers.Urls, {
 Travis.Build.mixin({
   _queries: {
     byRepositoryId: {},
-    byParentId: {}
   },
   find: function(id) {
     return Travis.store.find(this, id);
