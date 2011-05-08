@@ -92,6 +92,8 @@ builds.each do |build|
   Build.create!(build)
 end
 
-[4, 5, 7, 8].each do |id|
-  Build.find(id).update_attributes!(:log => "enginex build #{build.number} log")
+Builds.all.each do |build|
+  build.matrix.each |child|
+    child.update_attributes!(:log => "#{child.repository.name} #{child.number} log")
+  end
 end
