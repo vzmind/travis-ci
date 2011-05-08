@@ -22,3 +22,21 @@ SC.SingleObjectController = SC.ObjectController.extend({
     return content;
   }.property('content', 'allowsMultipleContent').cacheable(),
 });
+
+SC.routes.trigger = function() {
+  var firstRoute = this._firstRoute,
+      location = this.get('location'),
+      params, route;
+
+  if (firstRoute) {
+    params = this._extractParametersAndRoute({ route: location });
+    location = params.route;
+    delete params.route;
+    delete params.params;
+    route = firstRoute.routeForParts(location.split('/'), params);
+    // if (route && route.target && route.method) {
+    if (route && route.method) {
+      route.method.call(route.target, params);
+    }
+  }
+};
