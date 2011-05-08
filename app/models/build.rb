@@ -78,7 +78,7 @@ class Build < ActiveRecord::Base
   end
 
   def matrix?
-    parent_id.blank? && matrix_config?
+    matrix.present? || parent_id.blank? && matrix_config?
   end
 
   def matrix_expanded?

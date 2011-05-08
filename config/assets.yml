@@ -25,7 +25,7 @@ javascripts:
     - public/javascripts/app/helpers/*.js
     - public/javascripts/app/models/*.js
     - public/javascripts/app/controllers.js
-    - public/javascripts/lib/utils.js
+    - public/javascripts/lib/*.js
   jasmine:
     - public/javascripts/fixtures/build.js
     - public/javascripts/fixtures/repository.js

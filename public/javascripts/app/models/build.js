@@ -1,5 +1,7 @@
 Travis.Build = SC.Record.extend(Travis.Helpers.Urls, {
   primaryKey:     'id',
+  childRecordNamespace: Travis,
+  matrix: SC.Record.toMany('Travis.Build', { nested: true }),
 
   repositoryId:   SC.Record.attr(Number, { key: 'repository_id' }),
   parentId:       SC.Record.attr(Number, { key: 'parent_id' }),
@@ -18,13 +20,13 @@ Travis.Build = SC.Record.extend(Travis.Helpers.Urls, {
     return Travis.Repository.find(this.get('repositoryId'));
   }.property(),
 
-  // matrix: function() {
-  //   return Travis.Build.byParentId(this.get('id'));
-  // },
+  configDimensions: function() {
+    return $.map($.keys(this.get('config')), function(value) { return $.camelize(value) });
+  }.property(),
 
-  // isMatrix: function() {
-  //   return this.matrix().length() > 0;
-  // }.property()
+  configValues: function() {
+    return $.values(this.get('config'));
+  }.property()
 });
 
 Travis.Build.mixin({
