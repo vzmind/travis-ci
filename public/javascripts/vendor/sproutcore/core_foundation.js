@@ -1,23 +1,23 @@
 /* >>>>>>>>>> BEGIN source/core.js */
 // ==========================================================================
 // Project:   SproutCore - JavaScript Application Framework
-// Copyright: Â©2006-2011 Strobe Inc. and contributors.
-//            Portions Â©2008-2011 Apple Inc. All rights reserved.
+// Copyright: ©2006-2011 Strobe Inc. and contributors.
+//            Portions ©2008-2011 Apple Inc. All rights reserved.
 // License:   Licensed under MIT license (see license.js)
 // ==========================================================================
 
 /**
   Indicates that the collection view expects to accept a drop ON the specified
   item.
-
+  
   @property {Number}
 */
 SC.DROP_ON = 0x01 ;
 
 /**
-  Indicates that the collection view expects to accept a drop BEFORE the
+  Indicates that the collection view expects to accept a drop BEFORE the 
   specified item.
-
+  
   @property {Number}
 */
 SC.DROP_BEFORE = 0x02 ;
@@ -26,15 +26,15 @@ SC.DROP_BEFORE = 0x02 ;
   Indicates that the collection view expects to accept a drop AFTER the
   specified item.  This is treated just like SC.DROP_BEFORE is most views
   except for tree lists.
-
+  
   @property {Number}
 */
 SC.DROP_AFTER = 0x04 ;
 
 /**
-  Indicates that the collection view want's to know which operations would
+  Indicates that the collection view want's to know which operations would 
   be allowed for either drop operation.
-
+  
   @property {Number}
 */
 SC.DROP_ANY = 0x07 ;
@@ -91,18 +91,18 @@ SC.ALIGN_BOTTOM_RIGHT = 'bottom-right';
 
 
 SC.mixin(/** @lends SC */ {
-
+  
   /**
     Reads or writes data from a global cache.  You can use this facility to
     store information about an object without actually adding properties to
     the object itself.  This is needed especially when working with DOM,
     which can leak easily in IE.
-
+    
     To read data, simply pass in the reference element (used as a key) and
     the name of the value to read.  To write, also include the data.
-
+    
     You can also just pass an object to retrieve the entire cache.
-
+    
     @param elem {Object} An object or Element to use as scope
     @param name {String} Optional name of the value to read/write
     @param data {Object} Optional data.  If passed, write.
@@ -111,54 +111,54 @@ SC.mixin(/** @lends SC */ {
   data: function(elem, name, data) {
     elem = (elem === window) ? "@window" : elem ;
     var hash = SC.hashFor(elem) ; // get the hash key
-
+    
     // Generate the data cache if needed
     var cache = SC._data_cache ;
     if (!cache) SC._data_cache = cache = {} ;
-
+    
     // Now get cache for element
     var elemCache = cache[hash] ;
     if (name && !elemCache) cache[hash] = elemCache = {} ;
-
-    // Write data if provided
+    
+    // Write data if provided 
     if (elemCache && (data !== undefined)) elemCache[name] = data ;
-
+    
     return (name) ? elemCache[name] : elemCache ;
   },
-
+  
   /**
     Removes data from the global cache.  This is used throughout the
     framework to hold data without creating memory leaks.
-
-    You can remove either a single item on the cache or all of the cached
+    
+    You can remove either a single item on the cache or all of the cached 
     data for an object.
-
+    
     @param elem {Object} An object or Element to use as scope
-    @param name {String} optional name to remove.
+    @param name {String} optional name to remove. 
     @returns {Object} the value or cache that was removed
   */
   removeData: function(elem, name) {
     elem = (elem === window) ? "@window" : elem ;
     var hash = SC.hashFor(elem) ;
-
+    
     // return undefined if no cache is defined
     var cache = SC._data_cache ;
     if (!cache) return undefined ;
-
+    
     // return undefined if the elem cache is undefined
     var elemCache = cache[hash] ;
     if (!elemCache) return undefined;
-
+    
     // get the return value
     var ret = (name) ? elemCache[name] : elemCache ;
-
+    
     // and delete as appropriate
     if (name) {
       delete elemCache[name] ;
     } else {
       delete cache[hash] ;
     }
-
+    
     return ret ;
   },
 
@@ -188,61 +188,61 @@ SC.mixin(/** @lends SC */ {
   }
 
 }) ;
-
+; if ((typeof SC !== 'undefined') && SC && SC.Module && SC.Module.scriptDidLoad) SC.Module.scriptDidLoad('sproutcore/core_foundation');
 /* >>>>>>>>>> BEGIN __sc_chance.js */
 if (typeof CHANCE_SLICES === 'undefined') var CHANCE_SLICES = [];CHANCE_SLICES = CHANCE_SLICES.concat([]);
 
 /* >>>>>>>>>> BEGIN source/controllers/controller.js */
 // ==========================================================================
 // Project:   SproutCore - JavaScript Application Framework
-// Copyright: Â©2006-2011 Strobe Inc. and contributors.
-//            Portions Â©2008-2011 Apple Inc. All rights reserved.
+// Copyright: ©2006-2011 Strobe Inc. and contributors.
+//            Portions ©2008-2011 Apple Inc. All rights reserved.
 // License:   Licensed under MIT license (see license.js)
 // ==========================================================================
 
 /**
   @class
-
+  
   The controller base class provides some common functions you will need
   for controllers in your applications, especially related to maintaining
   an editing context.
-
+  
   In general you will not use this class, but you can use a subclass such
   as ObjectController, TreeController, or ArrayController.
-
+  
   ## EDITING CONTEXTS
-
+  
   One major function of a controller is to mediate between changes in the
-  UI and changes in the model.  In particular, you usually do not want
-  changes you make in the UI to be applied to a model object directly.
+  UI and changes in the model.  In particular, you usually do not want 
+  changes you make in the UI to be applied to a model object directly.  
   Instead, you often will want to collect changes to an object and then
   apply them only when the user is ready to commit their changes.
-
+  
   The editing contact support in the controller class will help you
   provide this capability.
-
+  
   @extends SC.Object
   @since SproutCore 1.0
 */
 SC.Controller = SC.Object.extend(
 /** @scope SC.Controller.prototype */ {
-
+  
   /**
-    Makes a controller editable or not editable.  The SC.Controller class
-    itself does not do anything with this property but subclasses will
+    Makes a controller editable or not editable.  The SC.Controller class 
+    itself does not do anything with this property but subclasses will 
     respect it when modifying content.
-
+    
     @property {Boolean}
   */
   isEditable: YES
 
 });
-
+; if ((typeof SC !== 'undefined') && SC && SC.Module && SC.Module.scriptDidLoad) SC.Module.scriptDidLoad('sproutcore/core_foundation');
 /* >>>>>>>>>> BEGIN source/mixins/selection_support.js */
 // ==========================================================================
 // Project:   SproutCore - JavaScript Application Framework
-// Copyright: Â©2006-2011 Strobe Inc. and contributors.
-//            Portions Â©2008-2011 Apple Inc. All rights reserved.
+// Copyright: ©2006-2011 Strobe Inc. and contributors.
+//            Portions ©2008-2011 Apple Inc. All rights reserved.
 // License:   Licensed under MIT license (see license.js)
 // ==========================================================================
 /**
@@ -488,12 +488,12 @@ SC.SelectionSupport = {
   }
 
 };
-
+; if ((typeof SC !== 'undefined') && SC && SC.Module && SC.Module.scriptDidLoad) SC.Module.scriptDidLoad('sproutcore/core_foundation');
 /* >>>>>>>>>> BEGIN source/controllers/array.js */
 // ==========================================================================
 // Project:   SproutCore - JavaScript Application Framework
-// Copyright: Â©2006-2011 Strobe Inc. and contributors.
-//            Portions Â©2008-2011 Apple Inc. All rights reserved.
+// Copyright: ©2006-2011 Strobe Inc. and contributors.
+//            Portions ©2008-2011 Apple Inc. All rights reserved.
 // License:   Licensed under MIT license (see license.js)
 // ==========================================================================
 
@@ -902,6 +902,7 @@ SC.ArrayController = SC.Controller.extend(SC.Array, SC.SelectionSupport,
   _scac_arrayContentDidChange: function(start, removed, added) {
     this.arrayContentDidChange(start, removed, added);
     var addedObjects = this.slice(start, start+added);
+    this._scac_cached = NO;
     this.setupEnumerablePropertyChains(addedObjects);
     this.updateSelectionAfterContentChange();
   },
@@ -982,23 +983,6 @@ SC.ArrayController = SC.Controller.extend(SC.Array, SC.SelectionSupport,
     this.updateSelectionAfterContentChange();
   }.observes('content'),
 
-  /**
-    @private
-
-    Forward enumerable content observer notifications to enumerable observers
-    on the array controller.
-
-    Since our content may be bound to another object, and that binding will not
-    update until the end of the run loop, we buffer up all enumerable changes
-    and play them back at the end of the run loop, once bindings have fired.
-
-    @param {Array} addedObjects the array of objects that were added
-    @param {Array} removedObject the array of objects that were removed
-    @param {Number} start the index at which the positions occurred
-  */
-  _scac_enumerableContentDidChange: function(addedObjects, removedObjects, start) {
-  },
-
   /** @private
     Whenever enumerable content changes, need to regenerate the
     observableContent and notify that the range has changed.
@@ -1030,12 +1014,12 @@ SC.ArrayController = SC.Controller.extend(SC.Array, SC.SelectionSupport,
   }
 
 });
-
+; if ((typeof SC !== 'undefined') && SC && SC.Module && SC.Module.scriptDidLoad) SC.Module.scriptDidLoad('sproutcore/core_foundation');
 /* >>>>>>>>>> BEGIN source/controllers/object.js */
 // ==========================================================================
 // Project:   SproutCore - JavaScript Application Framework
-// Copyright: Â©2006-2011 Strobe Inc. and contributors.
-//            Portions Â©2008-2011 Apple Inc. All rights reserved.
+// Copyright: ©2006-2011 Strobe Inc. and contributors.
+//            Portions ©2008-2011 Apple Inc. All rights reserved.
 // License:   Licensed under MIT license (see license.js)
 // ==========================================================================
 
@@ -1046,40 +1030,40 @@ sc_require('controllers/controller') ;
   An ObjectController gives you a simple way to manage the editing state of
   an object.  You can use an ObjectController instance as a "proxy" for your
   model objects.
-
-  Any properties you get or set on the object controller, will be passed
+  
+  Any properties you get or set on the object controller, will be passed 
   through to its content object.  This allows you to setup bindings to your
-  object controller one time for all of your views and then swap out the
+  object controller one time for all of your views and then swap out the 
   content as needed.
-
+  
   ## Working with Arrays
-
-  An ObjectController can accept both arrays and single objects as content.
-  If the content is an array, the ObjectController will do its best to treat
+  
+  An ObjectController can accept both arrays and single objects as content.  
+  If the content is an array, the ObjectController will do its best to treat 
   the array as a single object.  For example, if you set the content of an
   ObjectController to an array of Contact records and then call:
-
+  
       contactController.get('name');
 
-  The controller will check the name property of each Contact in the array.
-  If the value of the property for each Contact is the same, that value will
-  be returned.  If the any values are different, then an array will be
-  returned with the values from each Contact in them.
-
-  Most SproutCore views can work with both arrays and single content, which
+  The controller will check the name property of each Contact in the array.  
+  If the value of the property for each Contact is the same, that value will 
+  be returned.  If the any values are different, then an array will be 
+  returned with the values from each Contact in them. 
+  
+  Most SproutCore views can work with both arrays and single content, which 
   means that most of the time, you can simply hook up your views and this will
   work.
-
-  If you would prefer to make sure that your ObjectController is always
-  working with a single object and you are using bindings, you can always
-  setup your bindings so that they will convert the content to a single object
+  
+  If you would prefer to make sure that your ObjectController is always 
+  working with a single object and you are using bindings, you can always 
+  setup your bindings so that they will convert the content to a single object 
   like so:
-
+  
       contentBinding: SC.Binding.single('MyApp.listController.selection') ;
 
-  This will ensure that your content property is always a single object
+  This will ensure that your content property is always a single object 
   instead of an array.
-
+  
   @extends SC.Controller
   @since SproutCore 1.0
 */
@@ -1088,8 +1072,8 @@ SC.ObjectController = SC.Controller.extend(
 
   // ..........................................................
   // PROPERTIES
-  //
-
+  // 
+  
   /**
     Set to the object you want this controller to manage.  The object should
     usually be a single value; not an array or enumerable.  If you do supply
@@ -1098,21 +1082,21 @@ SC.ObjectController = SC.Controller.extend(
 
     Usually your content object should implement the SC.Observable mixin, but
     this is not required.  All SC.Object-based objects support SC.Observable
-
+    
     @property {Object}
   */
   content: null,
 
   /**
-    If YES, then setting the content to an enumerable or an array with more
+    If YES, then setting the content to an enumerable or an array with more 
     than one item will cause the Controller to attempt to treat the array as
     a single object.  Use of get(), for example, will get every property on
     the enumerable and return it.  set() will set the property on every item
-    in the enumerable.
-
+    in the enumerable. 
+    
     If NO, then setting content to an enumerable with multiple items will be
     treated like setting a null value.  hasContent will be NO.
-
+    
     @property {Boolean}
   */
   allowsMultipleContent: NO,
@@ -1120,95 +1104,95 @@ SC.ObjectController = SC.Controller.extend(
   /**
     Becomes YES whenever this object is managing content.  Usually this means
     the content property contains a single object or an array or enumerable
-    with a single item.  Array's or enumerables with multiple items will
+    with a single item.  Array's or enumerables with multiple items will 
     normally make this property NO unless allowsMultipleContent is YES.
-
+    
     @property {Boolean}
   */
   hasContent: function() {
     return !SC.none(this.get('observableContent'));
   }.property('observableContent'),
-
+  
   /**
-    Makes a controller editable or not editable.  The SC.Controller class
-    itself does not do anything with this property but subclasses will
+    Makes a controller editable or not editable.  The SC.Controller class 
+    itself does not do anything with this property but subclasses will 
     respect it when modifying content.
-
+    
     @property {Boolean}
   */
   isEditable: YES,
-
+  
   /**
-    Primarily for internal use.  Normally you should not access this property
-    directly.
-
-    Returns the actual observable object proxied by this controller.  Usually
-    this property will mirror the content property.  In some cases - notably
+    Primarily for internal use.  Normally you should not access this property 
+    directly.  
+    
+    Returns the actual observable object proxied by this controller.  Usually 
+    this property will mirror the content property.  In some cases - notably 
     when setting content to an enumerable, this may return a different object.
-
+    
     Note that if you set the content to an enumerable which itself contains
     enumerables and allowsMultipleContent is NO, this will become null.
-
+    
     @property {Object}
   */
   observableContent: function() {
     var content = this.get('content'),
         len, allowsMultiple;
-
+        
     // if enumerable, extract the first item or possibly become null
     if (content && content.isEnumerable) {
       len = content.get('length');
       allowsMultiple = this.get('allowsMultipleContent');
-
+      
       if (len === 1) content = content.firstObject();
       else if (len===0 || !allowsMultiple) content = null;
-
+      
       // if we got some new content, it better not be enum also...
       if (content && !allowsMultiple && content.isEnumerable) content=null;
     }
-
+    
     return content;
   }.property('content', 'allowsMultipleContent').cacheable(),
 
   // ..........................................................
   // METHODS
-  //
+  // 
 
   /**
     Override this method to destroy the selected object.
-
+    
     The default just passes this call onto the content object if it supports
-    it, and then sets the content to null.
-
-    Unlike most calls to destroy() this will not actually destroy the
-    controller itself; only the the content.  You continue to use the
+    it, and then sets the content to null.  
+    
+    Unlike most calls to destroy() this will not actually destroy the 
+    controller itself; only the the content.  You continue to use the 
     controller by setting the content to a new value.
-
+    
     @returns {SC.ObjectController} receiver
   */
   destroy: function() {
     var content = this.get('observableContent') ;
     if (content && SC.typeOf(content.destroy) === SC.T_FUNCTION) {
       content.destroy();
-    }
-    this.set('content', null) ;
+    } 
+    this.set('content', null) ;  
     return this;
   },
-
+  
   /**
-    Invoked whenever any property on the content object changes.
+    Invoked whenever any property on the content object changes.  
 
-    The default implementation will simply notify any observers that the
-    property has changed.  You can override this method if you need to do
+    The default implementation will simply notify any observers that the 
+    property has changed.  You can override this method if you need to do 
     some custom work when the content property changes.
-
-    If you have set the content property to an enumerable with multiple
-    objects and you set allowsMultipleContent to YES, this method will be
+    
+    If you have set the content property to an enumerable with multiple 
+    objects and you set allowsMultipleContent to YES, this method will be 
     called anytime any property in the set changes.
 
-    If all properties have changed on the content or if the content itself
+    If all properties have changed on the content or if the content itself 
     has changed, this method will be called with a key of "*".
-
+    
     @param {Object} target the content object
     @param {String} key the property that changes
     @returns {void}
@@ -1217,26 +1201,26 @@ SC.ObjectController = SC.Controller.extend(
     if (key === '*') this.allPropertiesDidChange();
     else this.notifyPropertyChange(key);
   },
-
+  
   /**
-    Called whenver you try to get/set an unknown property.  The default
-    implementation will pass through to the underlying content object but
-    you can override this method to do some other kind of processing if
+    Called whenver you try to get/set an unknown property.  The default 
+    implementation will pass through to the underlying content object but 
+    you can override this method to do some other kind of processing if 
     needed.
-
+    
     @property {String} key key being retrieved
     @property {Object} value value to set or undefined if reading only
     @returns {Object} property value
   */
   unknownProperty: function(key,value) {
-
+    
     // avoid circular references
     if (key==='content') {
       if (value !== undefined) this.content = value;
       return this.content;
     }
-
-    // for all other keys, just pass through to the observable object if
+    
+    // for all other keys, just pass through to the observable object if 
     // there is one.  Use getEach() and setEach() on enumerable objects.
     var content = this.get('observableContent'), loc, cur, isSame;
     if (content===null || content===undefined) return undefined; // empty
@@ -1259,21 +1243,21 @@ SC.ObjectController = SC.Controller.extend(
         } else value = undefined; // empty array.
 
       } else value = (content.isObservable) ? content.get(key) : content[key];
-
+      
     // setter
     } else {
       if (!this.get('isEditable')) {
         throw "%@.%@ is not editable".fmt(this,key);
       }
-
+      
       if (content.isEnumerable) content.setEach(key, value);
       else if (content.isObservable) content.set(key, value);
       else content[key] = value;
     }
-
+    
     return value;
   },
-
+  
   // ...............................
   // INTERNAL SUPPORT
   //
@@ -1288,7 +1272,7 @@ SC.ObjectController = SC.Controller.extend(
   _scoc_contentDidChange: function () {
     var last = this._scoc_content,
         cur  = this.get('content');
-
+        
     if (last !== cur) {
       this._scoc_content = cur;
       var func = this._scoc_enumerableContentDidChange;
@@ -1302,9 +1286,9 @@ SC.ObjectController = SC.Controller.extend(
       }
     }
   }.observes("content"),
-
+  
   /**  @private
-
+    
     Called whenever the observable content property changes.  This will setup
     observers on the content if needed.
   */
@@ -1316,15 +1300,15 @@ SC.ObjectController = SC.Controller.extend(
 
     if (last === cur) return this; // nothing to do
     //console.log('observableContentDidChange');
-
+    
     this._scoc_observableContent = cur; // save old content
-
+    
     // stop observing last item -- if enumerable stop observing set
     if (last) {
       if (last.isEnumerable) last.removeObserver('[]', this, efunc);
       else if (last.isObservable) last.removeObserver('*', this, func);
     }
-
+    
     if (cur) {
       if (cur.isEnumerable) cur.addObserver('[]', this, efunc);
       else if (cur.isObservable) cur.addObserver('*', this, func);
@@ -1336,10 +1320,10 @@ SC.ObjectController = SC.Controller.extend(
     } else this.contentPropertyDidChange(cur, '*');
 
   }.observes("observableContent"),
-
+  
   /** @private
     Called when observed enumerable content has changed.  This will teardown
-    and setup observers on the enumerable content items and then calls
+    and setup observers on the enumerable content items and then calls 
     contentPropertyDidChange().  This method may be called even if the new
     'cur' is not enumerable but the last content was enumerable.
   */
@@ -1347,7 +1331,7 @@ SC.ObjectController = SC.Controller.extend(
     var cur  = this.get('observableContent'),
         set  = this._scoc_observableContentItems,
         func = this.contentPropertyDidChange;
-
+    
     // stop observing each old item
     if (set) {
       set.forEach(function(item) {
@@ -1355,7 +1339,7 @@ SC.ObjectController = SC.Controller.extend(
       }, this);
       set.clear();
     }
-
+    
     // start observing new items if needed
     if (cur && cur.isEnumerable) {
       if (!set) set = SC.Set.create();
@@ -1363,36 +1347,36 @@ SC.ObjectController = SC.Controller.extend(
         if (set.contains(item)) return ; // nothing to do
         set.add(item);
         if (item.isObservable) item.addObserver('*', this, func);
-      }, this);
+      }, this); 
     } else set = null;
-
+    
     this._scoc_observableContentItems = set; // save for later cleanup
-
+  
     // notify
     this.contentPropertyDidChange(cur, '*');
     return this ;
   }
-
+        
 }) ;
-
+; if ((typeof SC !== 'undefined') && SC && SC.Module && SC.Module.scriptDidLoad) SC.Module.scriptDidLoad('sproutcore/core_foundation');
 /* >>>>>>>>>> BEGIN source/ext/function.js */
 // ==========================================================================
 // Project:   SproutCore - JavaScript Application Framework
-// Copyright: Â©2006-2011 Strobe Inc. and contributors.
-//            Portions Â©2008-2011 Apple Inc. All rights reserved.
+// Copyright: ©2006-2011 Strobe Inc. and contributors.
+//            Portions ©2008-2011 Apple Inc. All rights reserved.
 // License:   Licensed under MIT license (see license.js)
 // ==========================================================================
 
 SC.mixin(Function.prototype, /** @scope Function.prototype */ {
 
   /**
-    Creates a timer that will execute the function after a specified
+    Creates a timer that will execute the function after a specified 
     period of time.
-
+    
     If you pass an optional set of arguments, the arguments will be passed
-    to the function as well.  Otherwise the function should have the
+    to the function as well.  Otherwise the function should have the 
     signature:
-
+    
         function functionName(timer)
 
     @param target {Object} optional target object to use as this
@@ -1407,7 +1391,7 @@ SC.mixin(Function.prototype, /** @scope Function.prototype */ {
       args.unshift(target);
       // f = f.bind.apply(f, args) ;
       var func = f ;
-      // Use "this" in inner func because it get its scope by
+      // Use "this" in inner func because it get its scope by 
       // outer func f (=target). Could replace "this" with target for clarity.
       f = function() { return func.apply(this, args.slice(1)); } ;
     }
@@ -1415,7 +1399,7 @@ SC.mixin(Function.prototype, /** @scope Function.prototype */ {
   }
 
 });
-
+; if ((typeof SC !== 'undefined') && SC && SC.Module && SC.Module.scriptDidLoad) SC.Module.scriptDidLoad('sproutcore/core_foundation');
 /* >>>>>>>>>> BEGIN source/ext/handlebars.js */
 /**
   Prepares the Handlebars templating library for use inside SproutCore's view
@@ -1490,7 +1474,7 @@ Handlebars.registerHelper('helperMissing', function(path, options) {
   error = "%@ Handlebars error: Could not find property '%@' on object %@.";
   throw error.fmt(options.data.view, path, this);
 });
-
+; if ((typeof SC !== 'undefined') && SC && SC.Module && SC.Module.scriptDidLoad) SC.Module.scriptDidLoad('sproutcore/core_foundation');
 /* >>>>>>>>>> BEGIN source/ext/handlebars/bind.js */
 sc_require('ext/handlebars');
 
@@ -1785,7 +1769,7 @@ SC.Handlebars.bindClasses = function(context, classBindings, view, id) {
 
   return ret;
 };
-
+; if ((typeof SC !== 'undefined') && SC && SC.Module && SC.Module.scriptDidLoad) SC.Module.scriptDidLoad('sproutcore/core_foundation');
 /* >>>>>>>>>> BEGIN source/ext/handlebars/collection.js */
 /*globals Handlebars */
 
@@ -1795,6 +1779,7 @@ Handlebars.registerHelper('collection', function(path, options) {
   var fn = options.fn;
   var data = options.data;
   var inverse = options.inverse;
+  var hash = options.hash;
   var collectionClass, collectionObject;
 
   collectionClass = path ? SC.objectForPropertyPath(path) : SC.TemplateCollectionView;
@@ -1806,11 +1791,11 @@ Handlebars.registerHelper('collection', function(path, options) {
 
   var extensions = {};
 
-  if (fn) {
-    var hash = fn.hash, itemHash = {}, match;
+  if (hash) {
+    var itemHash = {}, match;
 
     for (var prop in hash) {
-      if (fn.hash.hasOwnProperty(prop)) {
+      if (hash.hasOwnProperty(prop)) {
         match = prop.match(/^item(.)(.*)$/);
 
         if(match) {
@@ -1821,13 +1806,11 @@ Handlebars.registerHelper('collection', function(path, options) {
     }
 
     extensions = SC.clone(hash);
-
-    SC.mixin(extensions, {
-      itemViewTemplate: fn,
-      inverseTemplate: inverse,
-      itemViewOptions: itemHash
-    });
+    extensions.itemViewOptions = itemHash;
   }
+
+  if (fn) { extensions.itemViewTemplate = fn; }
+  if (inverse) { extensions.inverseTemplate = inverse; }
 
   if(collectionClass.isClass) {
     collectionObject = collectionClass.extend(extensions);
@@ -1845,14 +1828,14 @@ Handlebars.registerHelper('each', function(path, options) {
   options.hash.itemContextProperty = 'content';
   return Handlebars.helpers.collection.call(this, null, options);
 });
-
+; if ((typeof SC !== 'undefined') && SC && SC.Module && SC.Module.scriptDidLoad) SC.Module.scriptDidLoad('sproutcore/core_foundation');
 /* >>>>>>>>>> BEGIN source/ext/handlebars/localization.js */
 sc_require('ext/handlebars');
 
 Handlebars.registerHelper('loc', function(property) {
   return SC.String.loc(property);
 });
-
+; if ((typeof SC !== 'undefined') && SC && SC.Module && SC.Module.scriptDidLoad) SC.Module.scriptDidLoad('sproutcore/core_foundation');
 /* >>>>>>>>>> BEGIN source/ext/handlebars/view.js */
 sc_require('ext/handlebars');
 
@@ -1938,7 +1921,6 @@ SC.Handlebars.ViewHelper = SC.Object.create({
     }
 
     var classBindings = options.classBinding;
-
     if (classBindings) {
       SC.Handlebars.bindClasses(childView, classBindings, childView).forEach(function(className) {
         context.setClass(className, YES);
@@ -1951,12 +1933,12 @@ SC.Handlebars.ViewHelper = SC.Object.create({
 Handlebars.registerHelper('view', function(path, options) {
   return SC.Handlebars.ViewHelper.helper(this, path, options);
 });
-
+; if ((typeof SC !== 'undefined') && SC && SC.Module && SC.Module.scriptDidLoad) SC.Module.scriptDidLoad('sproutcore/core_foundation');
 /* >>>>>>>>>> BEGIN source/ext/object.js */
 // ==========================================================================
 // Project:   SproutCore - JavaScript Application Framework
-// Copyright: Â©2006-2011 Strobe Inc. and contributors.
-//            Portions Â©2008-2011 Apple Inc. All rights reserved.
+// Copyright: ©2006-2011 Strobe Inc. and contributors.
+//            Portions ©2008-2011 Apple Inc. All rights reserved.
 // License:   Licensed under MIT license (see license.js)
 // ==========================================================================
 
@@ -2034,12 +2016,12 @@ SC.mixin(SC.Object.prototype, /** @scope SC.Object.prototype */ {
   }
 
 });
-
+; if ((typeof SC !== 'undefined') && SC && SC.Module && SC.Module.scriptDidLoad) SC.Module.scriptDidLoad('sproutcore/core_foundation');
 /* >>>>>>>>>> BEGIN source/ext/run_loop.js */
 // ==========================================================================
 // Project:   SproutCore - JavaScript Application Framework
-// Copyright: Â©2006-2011 Strobe Inc. and contributors.
-//            Portions Â©2008-2011 Apple Inc. All rights reserved.
+// Copyright: ©2006-2011 Strobe Inc. and contributors.
+//            Portions ©2008-2011 Apple Inc. All rights reserved.
 // License:   Licensed under MIT license (see license.js)
 // ==========================================================================
 
@@ -2199,12 +2181,12 @@ SC.RunLoop = SC.RunLoop.extend(
 
 // Recreate the currentRunLoop with the new methods
 SC.RunLoop.currentRunLoop = SC.RunLoop.create();
-
+; if ((typeof SC !== 'undefined') && SC && SC.Module && SC.Module.scriptDidLoad) SC.Module.scriptDidLoad('sproutcore/core_foundation');
 /* >>>>>>>>>> BEGIN source/system/locale.js */
 // ==========================================================================
 // Project:   SproutCore - JavaScript Application Framework
-// Copyright: Â©2006-2011 Strobe Inc. and contributors.
-//            Portions Â©2008-2011 Apple Inc. All rights reserved.
+// Copyright: ©2006-2011 Strobe Inc. and contributors.
+//            Portions ©2008-2011 Apple Inc. All rights reserved.
 // License:   Licensed under MIT license (see license.js)
 // ==========================================================================
 
@@ -2213,41 +2195,41 @@ SC.RunLoop.currentRunLoop = SC.RunLoop.create();
   number formatting conventions, and localization strings.  You can define
   various locales by adding them to the SC.locales hash, keyed by language
   and/or country code.
-
-  On page load, the default locale will be chosen based on the current
-  languages and saved at SC.Locale.current.  This locale is used for
+  
+  On page load, the default locale will be chosen based on the current 
+  languages and saved at SC.Locale.current.  This locale is used for 
   localization, etc.
-
+  
   ## Creating a new locale
-
+  
   You can create a locale by simply extending the SC.Locale class and adding
   it to the locales hash:
-
+  
       SC.Locale.locales['en'] = SC.Locale.extend({ .. config .. }) ;
-
+  
   Alternatively, you could choose to base your locale on another locale by
   extending that locale:
-
+  
       SC.Locale.locales['en-US'] = SC.Locale.locales['en'].extend({ ... }) ;
-
+  
   Note that if you do not define your own strings property, then your locale
   will inherit any strings added to the parent locale.  Otherwise you must
   implement your own strings instead.
-
+  
   @extends SC.Object
   @since SproutCore 1.0
 */
 SC.Locale = SC.Object.extend({
-
+  
   init: function() {
     // make sure we know the name of our own locale.
     if (!this.language) SC.Locale._assignLocales();
-
+    
     // Make sure we have strings that were set using the new API.  To do this
-    // we check to a bool that is set by one of the string helpers.  This
+    // we check to a bool that is set by one of the string helpers.  This 
     // indicates that the new API was used. If the new API was not used, we
-    // check to see if the old API was used (which places strings on the
-    // String class).
+    // check to see if the old API was used (which places strings on the 
+    // String class). 
     if (!this.hasStrings) {
       var langs = this._deprecatedLanguageCodes || [] ;
       langs.push(this.language);
@@ -2257,41 +2239,41 @@ SC.Locale = SC.Object.extend({
         strings = String[langs[idx]];
       }
       if (strings) {
-        this.hasStrings = YES;
+        this.hasStrings = YES; 
         this.strings = strings ;
       }
     }
   },
-
+  
   /** Set to YES when strings have been added to this locale. */
   hasStrings: NO,
-
+  
   /** The strings hash for this locale. */
   strings: {},
-
+  
   toString: function() {
     if (!this.language) SC.Locale._assignLocales() ;
     return "SC.Locale["+this.language+"]"+SC.guidFor(this) ;
   },
-
-  /**
+  
+  /** 
     Returns the localized version of the string or the string if no match
     was found.
-
+    
     @param {String} string
     @param {String} optional default string to return instead
     @returns {String}
   */
   locWithDefault: function(string, def) {
     var ret = this.strings[string];
-
+    
     // strings may be blank, so test with typeOf.
     if (SC.typeOf(ret) === SC.T_STRING) return ret;
     else if (SC.typeOf(def) === SC.T_STRING) return def;
     return string;
   }
-
-
+  
+  
 }) ;
 
 SC.Locale.mixin(/** @scope SC.Locale */ {
@@ -2301,22 +2283,22 @@ SC.Locale.mixin(/** @scope SC.Locale */ {
     preferred one.
   */
   useAutodetectedLanguage: NO,
-
+  
   /**
     This property is set by the build tools to the current build language.
   */
   preferredLanguage: null,
-
-  /**
-    Invoked at the start of SproutCore's document onready handler to setup
+  
+  /** 
+    Invoked at the start of SproutCore's document onready handler to setup 
     the currentLocale.  This will use the language properties you have set on
     the locale to make a decision.
   */
   createCurrentLocale: function() {
 
-    // get values from String if defined for compatibility with < 1.0 build
+    // get values from String if defined for compatibility with < 1.0 build 
     // tools.
-    var autodetect = (String.useAutodetectedLanguage !== undefined) ? String.useAutodetectedLanguage : this.useAutodetectedLanguage;
+    var autodetect = (String.useAutodetectedLanguage !== undefined) ? String.useAutodetectedLanguage : this.useAutodetectedLanguage; 
     var preferred = (String.preferredLanguage !== undefined) ? String.preferredLanguage : this.preferredLanguage ;
 
     // determine the language
@@ -2343,33 +2325,33 @@ SC.Locale.mixin(/** @scope SC.Locale */ {
   localeClassFor: function(lang) {
     lang = SC.Locale.normalizeLanguage(lang) ;
     var parent, klass = this.locales[lang];
-
+    
     // if locale class was not found and there is a broader-based locale
     // present, create a new locale based on that.
     if (!klass && ((parent = lang.split('-')[0]) !== lang) && (klass = this.locales[parent])) {
-      klass = this.locales[lang] = klass.extend() ;
+      klass = this.locales[lang] = klass.extend() ;      
     }
-
+    
     // otherwise, try to create a new locale based on english.
     if (!klass) klass = this.locales[lang] = this.locales.en.extend();
-
+    
     return klass;
   },
 
-  /**
+  /** 
     Shorthand method to define the settings for a particular locale.
     The settings you pass here will be applied directly to the locale you
-    designate.
+    designate.  
 
     If you are already holding a reference to a locale definition, you can
     also use this method to operate on the receiver.
-
-    If the locale you name does not exist yet, this method will create the
-    locale for you, based on the most closely related locale or english.  For
+    
+    If the locale you name does not exist yet, this method will create the 
+    locale for you, based on the most closely related locale or english.  For 
     example, if you name the locale 'fr-CA', you will be creating a locale for
     French as it is used in Canada.  This will be based on the general French
     locale (fr), since that is more generic.  On the other hand, if you create
-    a locale for manadarin (cn), it will be based on generic english (en)
+    a locale for manadarin (cn), it will be based on generic english (en) 
     since there is no broader language code to match against.
 
     @param {String} localeName
@@ -2384,20 +2366,20 @@ SC.Locale.mixin(/** @scope SC.Locale */ {
     SC.mixin(locale.prototype, options) ;
     return locale ;
   },
-
+  
   /**
-    Gets the current options for the receiver locale.  This is useful for
+    Gets the current options for the receiver locale.  This is useful for 
     inspecting registered locales that have not been instantiated.
-
+    
     @returns {Hash} options + instance methods
   */
   options: function() { return this.prototype; },
-
+  
   /**
     Adds the passed hash of strings to the locale's strings table.  Note that
-    if the receiver locale inherits its strings from its parent, then the
+    if the receiver locale inherits its strings from its parent, then the 
     strings table will be cloned first.
-
+    
     @returns {Object} receiver
   */
   addStrings: function(stringsHash) {
@@ -2408,21 +2390,21 @@ SC.Locale.mixin(/** @scope SC.Locale */ {
         this.prototype.strings = SC.clone(strings) ;
       }
     } else strings = this.prototype.strings = {} ;
-
+    
     // add strings hash
     if (stringsHash)  this.prototype.strings = SC.mixin(strings, stringsHash) ;
     this.prototype.hasStrings = YES ;
     return this;
   },
-
+  
   _map: { english: 'en', french: 'fr', german: 'de', japanese: 'ja', jp: 'ja', spanish: 'es' },
-
+  
   /**
     Normalizes the passed language into a two-character language code.
     This method allows you to specify common languages in their full english
     name (i.e. English, French, etc). and it will be treated like their two
     letter code equivalent.
-
+    
     @param {String} languageCode
     @returns {String} normalized code
   */
@@ -2430,19 +2412,19 @@ SC.Locale.mixin(/** @scope SC.Locale */ {
     if (!languageCode) return 'en' ;
     return SC.Locale._map[languageCode.toLowerCase()] || languageCode ;
   },
-
-  // this method is called once during init to walk the installed locales
+  
+  // this method is called once during init to walk the installed locales 
   // and make sure they know their own names.
   _assignLocales: function() {
     for(var key in this.locales) this.locales[key].prototype.language = key;
   },
-
+  
   toString: function() {
     if (!this.prototype.language) SC.Locale._assignLocales() ;
     return "SC.Locale["+this.prototype.language+"]" ;
   },
-
-  // make sure important properties are copied to new class.
+  
+  // make sure important properties are copied to new class. 
   extend: function() {
     var ret= SC.Object.extend.apply(this, arguments) ;
     ret.addStrings= SC.Locale.addStrings;
@@ -2451,14 +2433,14 @@ SC.Locale.mixin(/** @scope SC.Locale */ {
     ret.toString = SC.Locale.toString ;
     return ret ;
   }
-
+    
 }) ;
 
-/**
+/** 
   This locales hash contains all of the locales defined by SproutCore and
   by your own application.  See the SC.Locale class definition for the
   various properties you can set on your own locales.
-
+  
   @property {Hash}
 */
 SC.Locale.locales = {
@@ -2475,12 +2457,12 @@ SC.Locale.locales = {
 /**
   This special helper will store the strings you pass in the locale matching
   the language code.  If a locale is not defined from the language code you
-  specify, then one will be created for you with the english locale as the
+  specify, then one will be created for you with the english locale as the 
   parent.
-
+  
   @param {String} languageCode
   @param {Hash} strings
-  @returns {Object} receiver
+  @returns {Object} receiver 
 */
 SC.stringsFor = function(languageCode, strings) {
   // get the locale, creating one if needed.
@@ -2490,12 +2472,12 @@ SC.stringsFor = function(languageCode, strings) {
 } ;
 
 
-
+; if ((typeof SC !== 'undefined') && SC && SC.Module && SC.Module.scriptDidLoad) SC.Module.scriptDidLoad('sproutcore/core_foundation');
 /* >>>>>>>>>> BEGIN source/system/string.js */
 // ==========================================================================
 // Project:   SproutCore - JavaScript Application Framework
-// Copyright: Â©2006-2011 Strobe Inc. and contributors.
-//            Portions Â©2008-2011 Apple Inc. All rights reserved.
+// Copyright: ©2006-2011 Strobe Inc. and contributors.
+//            Portions ©2008-2011 Apple Inc. All rights reserved.
 // License:   Licensed under MIT license (see license.js)
 // ==========================================================================
 
@@ -2654,12 +2636,12 @@ SC.mixin(SC.String, {
     return SC.String.fmt(localized, args);
   }
 });
-
+; if ((typeof SC !== 'undefined') && SC && SC.Module && SC.Module.scriptDidLoad) SC.Module.scriptDidLoad('sproutcore/core_foundation');
 /* >>>>>>>>>> BEGIN source/ext/string.js */
 // ==========================================================================
 // Project:   SproutCore - JavaScript Application Framework
-// Copyright: Â©2006-2011 Strobe Inc. and contributors.
-//            Portions Â©2008-2011 Apple Inc. All rights reserved.
+// Copyright: ©2006-2011 Strobe Inc. and contributors.
+//            Portions ©2008-2011 Apple Inc. All rights reserved.
 // License:   Licensed under MIT license (see license.js)
 // ==========================================================================
 
@@ -2716,12 +2698,12 @@ SC.supplement(String.prototype,
 
 });
 
-
+; if ((typeof SC !== 'undefined') && SC && SC.Module && SC.Module.scriptDidLoad) SC.Module.scriptDidLoad('sproutcore/core_foundation');
 /* >>>>>>>>>> BEGIN source/mixins/delegate_support.js */
 // ==========================================================================
 // Project:   SproutCore - JavaScript Application Framework
-// Copyright: Â©2006-2011 Strobe Inc. and contributors.
-//            Portions Â©2008-2011 Apple Inc. All rights reserved.
+// Copyright: ©2006-2011 Strobe Inc. and contributors.
+//            Portions ©2008-2011 Apple Inc. All rights reserved.
 // License:   Licensed under MIT license (see license.js)
 // ==========================================================================
 
@@ -2828,12 +2810,12 @@ SC.DelegateSupport = {
   }
 
 };
-
+; if ((typeof SC !== 'undefined') && SC && SC.Module && SC.Module.scriptDidLoad) SC.Module.scriptDidLoad('sproutcore/core_foundation');
 /* >>>>>>>>>> BEGIN source/system/responder.js */
 // ==========================================================================
 // Project:   SproutCore - JavaScript Application Framework
-// Copyright: Â©2006-2011 Strobe Inc. and contributors.
-//            Portions Â©2008-2011 Apple Inc. All rights reserved.
+// Copyright: ©2006-2011 Strobe Inc. and contributors.
+//            Portions ©2008-2011 Apple Inc. All rights reserved.
 // License:   Licensed under MIT license (see license.js)
 // ==========================================================================
 
@@ -2850,73 +2832,73 @@ SC.DelegateSupport = {
 SC.Responder = SC.Object.extend( /** SC.Responder.prototype */ {
 
   isResponder: YES,
-
+  
   /** @property
-    The pane this responder belongs to.  This is used to determine where you
+    The pane this responder belongs to.  This is used to determine where you 
     belong to in the responder chain.  Normally you should leave this property
     set to null.
   */
   pane: null,
-
+  
   /** @property
-    The app this responder belongs to.  For non-user-interface responder
+    The app this responder belongs to.  For non-user-interface responder 
     chains, this is used to determine the context.  Usually this
     is the property you will want to work with.
   */
   responderContext: null,
-
+  
   /** @property
-    This is the nextResponder in the responder chain.  If the receiver does
-    not implement a particular event handler, it will bubble to the next
+    This is the nextResponder in the responder chain.  If the receiver does 
+    not implement a particular event handler, it will bubble to the next 
     responder.
-
+    
     This can point to an object directly or it can be a string, in which case
     the path will be resolved from the responderContext root.
   */
   nextResponder: null,
-
-  /** @property
-    YES if the view is currently first responder.  This property is always
+  
+  /** @property 
+    YES if the view is currently first responder.  This property is always 
     edited by the pane during its makeFirstResponder() method.
   */
   isFirstResponder: NO,
-
+  
   /** @property
-
+  
     YES the responder is somewhere in the responder chain.  This currently
     only works when used with a ResponderContext.
-
+    
     @type {Boolean}
   */
-  hasFirstResponder: NO,
-
+  hasFirstResponder: NO,    
+  
   /** @property
     Set to YES if your view is willing to accept first responder status.  This is used when calculcating key responder loop.
   */
   acceptsFirstResponder: YES,
-
+  
   becomingFirstResponder: NO,
-
-  /**
-    Call this method on your view or responder to make it become first
+  
+  /** 
+    Call this method on your view or responder to make it become first 
     responder.
-
+    
     @returns {SC.Responder} receiver
   */
-  becomeFirstResponder: function() {
+  becomeFirstResponder: function() {  
     var pane = this.get('pane') || this.get('responderContext') ||
               this.pane();
     if (pane && this.get('acceptsFirstResponder')) {
       if (pane.get('firstResponder') !== this) pane.makeFirstResponder(this);
-    }
+    } 
     return this ;
   },
-
+  
   /**
-    Call this method on your view or responder to resign your first responder
-    status. Normally this is not necessary since you will lose first responder
+    Call this method on your view or responder to resign your first responder 
+    status. Normally this is not necessary since you will lose first responder 
     status automatically when another view becomes first responder.
-
+    
     @param {Event} the original event that caused this method to be called
     @returns {SC.Responder} receiver
   */
@@ -2925,41 +2907,41 @@ SC.Responder = SC.Object.extend( /** SC.Responder.prototype */ {
     if (pane && (pane.get('firstResponder') === this)) {
       pane.makeFirstResponder(null, evt);
     }
-    return YES;
+    return YES;  
   },
 
   /**
     Called just before the responder or any of its subresponder's are about to
     lose their first responder status.  The passed responder is the responder
-    that is about to lose its status.
-
-    Override this method to provide any standard teardown when the first
+    that is about to lose its status. 
+    
+    Override this method to provide any standard teardown when the first 
     responder changes.
-
+    
     @param {SC.Responder} responder the responder that is about to change
     @returns {void}
   */
   willLoseFirstResponder: function(responder) {},
-
+  
   /**
-    Called just after the responder or any of its subresponder's becomes a
-    first responder.
-
-    Override this method to provide any standard setup when the first
+    Called just after the responder or any of its subresponder's becomes a 
+    first responder.  
+    
+    Override this method to provide any standard setup when the first 
     responder changes.
-
+    
     @param {SC.Responder} responder the responder that changed
     @returns {void}
   */
   didBecomeFirstResponder: function(responder) {}
 
 });
-
+; if ((typeof SC !== 'undefined') && SC && SC.Module && SC.Module.scriptDidLoad) SC.Module.scriptDidLoad('sproutcore/core_foundation');
 /* >>>>>>>>>> BEGIN source/mixins/responder_context.js */
 // ==========================================================================
 // Project:   SproutCore - JavaScript Application Framework
-// Copyright: Â©2006-2011 Strobe Inc. and contributors.
-//            Portions Â©2008-2011 Apple Inc. All rights reserved.
+// Copyright: ©2006-2011 Strobe Inc. and contributors.
+//            Portions ©2008-2011 Apple Inc. All rights reserved.
 // License:   Licensed under MIT license (see license.js)
 // ==========================================================================
 sc_require('system/responder');
@@ -3224,12 +3206,12 @@ SC.ResponderContext = {
   }
 
 };
-
+; if ((typeof SC !== 'undefined') && SC && SC.Module && SC.Module.scriptDidLoad) SC.Module.scriptDidLoad('sproutcore/core_foundation');
 /* >>>>>>>>>> BEGIN source/mixins/template_helpers/checkbox_support.js */
 // ==========================================================================
 // Project:   SproutCore - JavaScript Application Framework
-// Copyright: Â©2006-2011 Strobe Inc. and contributors.
-//            Â©2008-2011 Apple Inc. All rights reserved.
+// Copyright: ©2006-2011 Strobe Inc. and contributors.
+//            ©2008-2011 Apple Inc. All rights reserved.
 // License:   Licensed under MIT license (see license.js)
 // ==========================================================================
 /** @class */
@@ -3254,24 +3236,24 @@ SC.CheckboxSupport = /** @scope SC.CheckboxSupport.prototype */{
   }.property().idempotent()
 };
 
-
+; if ((typeof SC !== 'undefined') && SC && SC.Module && SC.Module.scriptDidLoad) SC.Module.scriptDidLoad('sproutcore/core_foundation');
 /* >>>>>>>>>> BEGIN source/mixins/template_helpers/text_field_support.js */
 // ==========================================================================
 // Project:   SproutCore - JavaScript Application Framework
-// Copyright: Â©2006-2011 Strobe Inc. and contributors.
-//            Â©2008-2011 Apple Inc. All rights reserved.
+// Copyright: ©2006-2011 Strobe Inc. and contributors.
+//            ©2008-2011 Apple Inc. All rights reserved.
 // License:   Licensed under MIT license (see license.js)
 // ==========================================================================
 /** @class
 
 */
 SC.TextFieldSupport = /** @scope SC.TextFieldSupport.prototype */{
-
+  
   /** @private
     Used internally to store value because the layer may not exist
   */
   _value: null,
-
+  
   /**
     @type String
     @default null
@@ -3332,12 +3314,12 @@ SC.TextFieldSupport = /** @scope SC.TextFieldSupport.prototype */{
   }
 };
 
-
+; if ((typeof SC !== 'undefined') && SC && SC.Module && SC.Module.scriptDidLoad) SC.Module.scriptDidLoad('sproutcore/core_foundation');
 /* >>>>>>>>>> BEGIN source/system/browser.js */
 // ==========================================================================
 // Project:   SproutCore - JavaScript Application Framework
-// Copyright: Â©2006-2011 Strobe Inc. and contributors.
-//            Portions Â©2008-2011 Apple Inc. All rights reserved.
+// Copyright: ©2006-2011 Strobe Inc. and contributors.
+//            Portions ©2008-2011 Apple Inc. All rights reserved.
 // License:   Licensed under MIT license (see license.js)
 // ==========================================================================
 
@@ -3364,18 +3346,18 @@ SC.mixin(SC.browser,
       if (isNaN(check)) return 0;
       if (check !== 0) return check;
     }
-
+    
     return 0;
   }
 
 });
 
-
+; if ((typeof SC !== 'undefined') && SC && SC.Module && SC.Module.scriptDidLoad) SC.Module.scriptDidLoad('sproutcore/core_foundation');
 /* >>>>>>>>>> BEGIN source/system/builder.js */
 // ==========================================================================
 // Project:   SproutCore - JavaScript Application Framework
-// Copyright: Â©2006-2011 Strobe Inc. and contributors.
-//            Portions Â©2008-2011 Apple Inc. All rights reserved.
+// Copyright: ©2006-2011 Strobe Inc. and contributors.
+//            Portions ©2008-2011 Apple Inc. All rights reserved.
 // License:   Licensed under MIT license (see license.js)
 // ==========================================================================
 
@@ -3385,91 +3367,91 @@ SC.mixin(SC.browser,
   those provided by CoreQuery or jQuery.  Usually you will not create a new
   builder yourself, but you will often use instances of the Builder object to
   configure parts of the UI such as menus and views.
-
+  
   # Anatomy of a Builder
-
-  You can create a new Builder much like you would any other class in
+  
+  You can create a new Builder much like you would any other class in 
   SproutCore.  For example, you could create a new CoreQuery-type object with
   the following:
-
+  
       SC.$ = SC.Builder.create({
         // methods you can call go here.
       });
-
-  Unlike most classes in SproutCore, Builder objects are actually functions
-  that you can call to create new instances.  In the example above, to use
+  
+  Unlike most classes in SproutCore, Builder objects are actually functions 
+  that you can call to create new instances.  In the example above, to use 
   the builder, you must call it like a function:
-
+  
       buildit = SC.$();
-
+  
   If you define an init() method on a builder, it will be invoked wheneve the
   builder is called as a function, including any passed params.  Your init()
   method MUST return this, unlike regular SC objects.  i.e.
-
+  
       SC.$ = SC.Builder.create({
-        init: function(args) {
+        init: function(args) { 
           this.args = SC.A(args);
           return this;
         }
       });
-
+      
       buildit = SC.$('a', 'b');
       buildit.args => ['a','b']
-
+  
   In addition to defining a function like this, all builder objects also have
   an 'fn' property that contains a hash of all of the helper methods defined
-  on the builder function.  Once a builder has been created, you can add
+  on the builder function.  Once a builder has been created, you can add 
   addition "plugins" for the builder by simply adding new methods to the
   fn property.
-
+  
   # Writing Builder Functions
-
+  
   All builders share a few things in common:
-
+  
    * when a new builder is created, it's init() method will be called.  The default version of this method simply copies the passed parameters into the builder as content, but you can override this with anything you want.
    * the content the builder works on is stored as indexed properties (i.e. 0,1,2,3, like an array).  The builder should also have a length property if you want it treated like an array.
    *- Builders also maintain a stack of previous builder instances which you can pop off at any time.
-
+  
   To get content back out of a builder once you are ready with it, you can
-  call the method done().  This will return an array or a single object, if
+  call the method done().  This will return an array or a single object, if 
   the builder only works on a single item.
-
+  
   You should write your methods using the getEach() iterator to work on your
   member objects.  All builders implement SC.Enumerable in the fn() method.
 
       CoreQuery = SC.Builder.create({
         ...
       }) ;
-
+      
       CoreQuery = new SC.Builder(properties) {
         ...
       } ;
-
+      
       CoreQuery2 = CoreQuery.extend() {
       }
-
+  
   @constructor
 */
 SC.Builder = function (props) { return SC.Builder.create(props); };
 
-/**
-  Create a new builder object, applying the passed properties to the
+/** 
+  Create a new builder object, applying the passed properties to the 
   builder's fn property hash.
-
+  
   @param {Hash} properties
   @returns {SC.Builder}
 */
-SC.Builder.create = function create(props) {
-
+SC.Builder.create = function create(props) { 
+  
   // generate new fn with built-in properties and copy props
   var fn = SC.mixin(SC.beget(this.fn), props||{}) ;
   if (props.hasOwnProperty('toString')) fn.toString = props.toString;
-
+  
   // generate new constructor and hook in the fn
   var construct = function() {
     var ret = SC.beget(fn); // NOTE: using closure here...
-
-    // the defaultClass is usually this for this constructor.
+    
+    // the defaultClass is usually this for this constructor. 
     // e.g. SC.View.build() -> this = SC.View
     ret.defaultClass = this ;
     ret.constructor = construct ;
@@ -3483,7 +3465,7 @@ SC.Builder.create = function create(props) {
   // eg. SC.View.buildCustom = SC.View.build.extend({ ...props... })
   construct.extend = SC.Builder.create ;
   construct.mixin = SC.Builder.mixin ;
-
+  
   return construct; // return new constructor
 } ;
 
@@ -3496,13 +3478,13 @@ SC.Builder.mixin = function() {
 /** This is the default set of helper methods defined for new builders. */
 SC.Builder.fn = {
 
-  /**
+  /** 
     Default init method for builders.  This method accepts either a single
-    content object or an array of content objects and copies them onto the
-    receiver.  You can override this to provide any kind of init behavior
-    that you want.  Any parameters passed to the builder method will be
+    content object or an array of content objects and copies them onto the 
+    receiver.  You can override this to provide any kind of init behavior 
+    that you want.  Any parameters passed to the builder method will be 
     forwarded to your init method.
-
+    
     @returns {SC.Builder} receiver
   */
   init: function(content) {
@@ -3519,14 +3501,14 @@ SC.Builder.fn = {
     }
     return this ;
   },
-
+  
   /** Return the number of elements in the matched set. */
   size: function() { return this.length; },
-
-  /**
+  
+  /** 
     Take an array of elements and push it onto the stack (making it the
     new matched set.)  The receiver will be saved so it can be popped later.
-
+    
     @param {Object|Array} content
     @returns {SC.Builder} new isntance
   */
@@ -3546,19 +3528,19 @@ SC.Builder.fn = {
     transform.  If there is no previous item on the stack, an empty set will
     be returned.
   */
-  end: function() {
-    return this.prevObject || this.constructor();
+  end: function() { 
+    return this.prevObject || this.constructor(); 
   },
-
+  
   // toString describes the builder
-  toString: function() {
-    return "%@$(%@)".fmt(this.defaultClass.toString(),
-      SC.A(this).invoke('toString').join(','));
+  toString: function() { 
+    return "%@$(%@)".fmt(this.defaultClass.toString(), 
+      SC.A(this).invoke('toString').join(',')); 
   },
-
+  
   /** You can enhance the fn using this mixin method. */
   mixin: SC.Builder.mixin
-
+  
 };
 
 // Apply SC.Enumerable.  Whenever possible we want to use the Array version
@@ -3574,12 +3556,12 @@ SC.Builder.fn = {
 
 
 
-
+; if ((typeof SC !== 'undefined') && SC && SC.Module && SC.Module.scriptDidLoad) SC.Module.scriptDidLoad('sproutcore/core_foundation');
 /* >>>>>>>>>> BEGIN source/system/core_query.js */
 // ==========================================================================
 // Project:   SproutCore - JavaScript Application Framework
-// Copyright: Â©2006-2011 Strobe Inc. and contributors.
-//            Portions Â©2008-2011 Apple Inc. All rights reserved.
+// Copyright: ©2006-2011 Strobe Inc. and contributors.
+//            Portions ©2008-2011 Apple Inc. All rights reserved.
 // License:   Licensed under MIT license (see license.js)
 // ==========================================================================
 
@@ -3717,12 +3699,12 @@ SC.mixin(SC.$, {
 }) ;
 
 
-
+; if ((typeof SC !== 'undefined') && SC && SC.Module && SC.Module.scriptDidLoad) SC.Module.scriptDidLoad('sproutcore/core_foundation');
 /* >>>>>>>>>> BEGIN source/system/event.js */
 // ==========================================================================
 // Project:   SproutCore - JavaScript Application Framework
-// Copyright: Â©2006-2011 Strobe Inc. and contributors.
-//            Portions Â©2008-2011 Apple Inc. All rights reserved.
+// Copyright: ©2006-2011 Strobe Inc. and contributors.
+//            Portions ©2008-2011 Apple Inc. All rights reserved.
 // License:   Licensed under MIT license (see license.js)
 // ==========================================================================
 
@@ -3732,23 +3714,23 @@ sc_require('system/core_query') ;
   The event class provides a simple cross-platform library for capturing and
   delivering events on DOM elements and other objects.  While this library
   is based on code from both jQuery and Prototype.js, it includes a number of
-  additional features including support for handler objects and event
+  additional features including support for handler objects and event 
   delegation.
 
   Since native events are implemented very unevenly across browsers,
   SproutCore will convert all native events into a standardized instance of
-  this special event class.
-
-  SproutCore events implement the standard W3C event API as well as some
+  this special event class.  
+  
+  SproutCore events implement the standard W3C event API as well as some 
   additional helper methods.
 
   @constructor
   @param {Event} originalEvent
   @returns {SC.Event} event instance
-
+  
   @since SproutCore 1.0
 */
-SC.Event = function(originalEvent) {
+SC.Event = function(originalEvent) { 
   var idx, len;
   // copy properties from original event, if passed in.
   if (originalEvent) {
@@ -3767,7 +3749,7 @@ SC.Event = function(originalEvent) {
 
   // Fix target property, if necessary
   // Fixes #1925 where srcElement might not be defined either
-  if (!this.target) this.target = this.srcElement || document;
+  if (!this.target) this.target = this.srcElement || document; 
 
   // check if target is a textnode (safari)
   if (this.target.nodeType === 3 ) this.target = this.target.parentNode;
@@ -3797,7 +3779,7 @@ SC.Event = function(originalEvent) {
   if (!this.which && this.button) {
     this.which = ((this.button & 1) ? 1 : ((this.button & 2) ? 3 : ( (this.button & 4) ? 2 : 0 ) ));
   }
-
+  
   // Normalize wheel delta values for mousewheel events
   if (this.type === 'mousewheel' || this.type === 'DOMMouseScroll' || this.type === 'MozMousePixelScroll') {
     var deltaMultiplier = SC.Event.MOUSE_WHEEL_MULTIPLIER,
@@ -3810,7 +3792,7 @@ SC.Event = function(originalEvent) {
       this.wheelDeltaX = 0-(originalEvent.wheelDeltaX||0);
 
     // normalize wheelDelta for Firefox
-    // note that we multiple the delta on FF to make it's acceleration more
+    // note that we multiple the delta on FF to make it's acceleration more 
     // natural.
     } else if (!SC.none(originalEvent.detail) && SC.browser.mozilla) {
       if (originalEvent.axis && (originalEvent.axis === originalEvent.HORIZONTAL_AXIS)) {
@@ -3841,7 +3823,7 @@ SC.Event = function(originalEvent) {
     this.wheelDeltaY *= deltaMultiplier;
   }
 
-  return this;
+  return this; 
 } ;
 
 SC.mixin(SC.Event, /** @scope SC.Event */ {
@@ -3901,67 +3883,67 @@ SC.mixin(SC.Event, /** @scope SC.Event */ {
   */
   _MOUSE_WHEEL_LIMIT_INVALIDATED: NO,
 
-  /**
+  /** 
     Standard method to create a new event.  Pass the native browser event you
     wish to wrap if needed.
   */
   create: function(e) { return new SC.Event(e); },
 
   // the code below was borrowed from jQuery, Dean Edwards, and Prototype.js
-
+  
   /**
     Bind an event to an element.
 
     This method will cause the passed handler to be executed whenever a
     relevant event occurs on the named element.  This method supports a
     variety of handler types, depending on the kind of support you need.
-
+    
     ## Simple Function Handlers
 
         SC.Event.add(anElement, "click", myClickHandler) ;
-
+    
     The most basic type of handler you can pass is a function.  This function
     will be executed everytime an event of the type you specify occurs on the
     named element.  You can optionally pass an additional context object which
     will be included on the event in the event.data property.
-
+    
     When your handler function is called the, the function's "this" property
     will point to the element the event occurred on.
-
+    
     The click handler for this method must have a method signature like:
-
+    
         function(event) { return YES|NO; }
-
+    
     ## Method Invocations
 
         SC.Event.add(anElement, "click", myObject, myObject.aMethod) ;
 
-    Optionally you can specify a target object and a method on the object to
+    Optionally you can specify a target object and a method on the object to 
     be invoked when the event occurs.  This will invoke the method function
-    with the target object you pass as "this".  The method should have a
+    with the target object you pass as "this".  The method should have a 
     signature like:
-
+    
         function(event, targetElement) { return YES|NO; }
 
     Like function handlers, you can pass an additional context data paramater
     that will be included on the event in the event.data property.
-
+    
     ## Handler Return Values
 
-    Both handler functions should return YES if you want the event to
+    Both handler functions should return YES if you want the event to 
     continue to propagate and NO if you want it to stop.  Returning NO will
-    both stop bubbling of the event and will prevent any default action
+    both stop bubbling of the event and will prevent any default action 
     taken by the browser.  You can also control these two behaviors separately
     by calling the stopPropagation() or preventDefault() methods on the event
     itself, returning YES from your method.
-
+    
     ## Limitations
-
-    Although SproutCore's event implementation is based on jQuery, it is
+    
+    Although SproutCore's event implementation is based on jQuery, it is 
     much simpler in design.  Notably, it does not support namespaced events
     and you can only pass a single type at a time.
-
-    If you need more advanced event handling, consider the SC.ClassicResponder
+    
+    If you need more advanced event handling, consider the SC.ClassicResponder 
     functionality provided by SproutCore or use your favorite DOM library.
 
     @param {Element} elem a DOM element, window, or document object
@@ -3973,11 +3955,11 @@ SC.mixin(SC.Event, /** @scope SC.Event */ {
   */
   add: function(elem, eventType, target, method, context, useCapture) {
 
-    // if a CQ object is passed in, either call add on each item in the
+    // if a CQ object is passed in, either call add on each item in the 
     // matched set, or simply get the first element and use that.
     if (elem && elem.isCoreQuery) {
       if (elem.length > 0) {
-        elem.forEach(function(e) {
+        elem.forEach(function(e) { 
           this.add(e, eventType, target, method, context);
         }, this);
         return this;
@@ -3988,7 +3970,7 @@ SC.mixin(SC.Event, /** @scope SC.Event */ {
 		if (!useCapture) {
 			useCapture = NO;
 		}
-
+    
     // cannot register events on text nodes, etc.
     if ( elem.nodeType === 3 || elem.nodeType === 8 ) return SC.Event;
 
@@ -3999,7 +3981,7 @@ SC.mixin(SC.Event, /** @scope SC.Event */ {
     // if target is a function, treat it as the method, with optional context
     if (SC.typeOf(target) === SC.T_FUNCTION) {
       context = method; method = target; target = null;
-
+      
     // handle case where passed method is a key on the target.
     } else if (target && SC.typeOf(method) === SC.T_STRING) {
       method = target[method] ;
@@ -4009,12 +3991,12 @@ SC.mixin(SC.Event, /** @scope SC.Event */ {
     // not exist yet, create it and also setup the shared listener for this
     // eventType.
     var events = SC.data(elem, "events") || SC.data(elem, "events", {}) ,
-        handlers = events[eventType];
+        handlers = events[eventType]; 
     if (!handlers) {
       handlers = events[eventType] = {} ;
       this._addEventListener(elem, eventType, useCapture) ;
     }
-
+    
     // Build the handler array and add to queue
     handlers[SC.hashFor(target, method)] = [target, method, context];
     SC.Event._global[eventType] = YES ; // optimization for global triggers
@@ -4030,21 +4012,21 @@ SC.mixin(SC.Event, /** @scope SC.Event */ {
     To remove a specific handler, you must pass in the same function or the
     same target and method as you passed into SC.Event.add().  See that method
     for full documentation on the parameters you can pass in.
-
+    
     If you omit a specific handler but provide both an element and eventType,
     then all handlers for that element will be removed.  If you provide only
     and element, then all handlers for all events on that element will be
     removed.
-
+    
     ## Limitations
-
-    Although SproutCore's event implementation is based on jQuery, it is
+    
+    Although SproutCore's event implementation is based on jQuery, it is 
     much simpler in design.  Notably, it does not support namespaced events
     and you can only pass a single type at a time.
-
-    If you need more advanced event handling, consider the SC.ClassicResponder
+    
+    If you need more advanced event handling, consider the SC.ClassicResponder 
     functionality provided by SproutCore or use your favorite DOM library.
-
+    
     @param {Element} elem a DOM element, window, or document object
     @param {String} eventType the event type to remove
     @param {Object} target The target object for a method call.  Or a function.
@@ -4053,18 +4035,18 @@ SC.mixin(SC.Event, /** @scope SC.Event */ {
   */
   remove: function(elem, eventType, target, method) {
 
-    // if a CQ object is passed in, either call add on each item in the
+    // if a CQ object is passed in, either call add on each item in the 
     // matched set, or simply get the first element and use that.
     if (elem && elem.isCoreQuery) {
       if (elem.length > 0) {
-        elem.forEach(function(e) {
+        elem.forEach(function(e) { 
           this.remove(e, eventType, target, method);
         }, this);
         return this;
       } else elem = elem[0];
     }
     if (!elem) return this; // nothing to do
-
+    
     // don't do events on text and comment nodes
     if ( elem.nodeType === 3 || elem.nodeType === 8 ) return SC.Event;
 
@@ -4083,19 +4065,19 @@ SC.mixin(SC.Event, /** @scope SC.Event */ {
     } else if (handlers = events[eventType]) {
 
       var cleanupHandlers = NO ;
-
+      
       // if a target/method is provided, remove only that one
       if (target || method) {
-
+        
         // normalize the target/method
         if (SC.typeOf(target) === SC.T_FUNCTION) {
           method = target; target = null ;
         } else if (SC.typeOf(method) === SC.T_STRING) {
           method = target[method] ;
         }
-
+        
         delete handlers[SC.hashFor(target, method)];
-
+        
         // check to see if there are handlers left on this event/eventType.
         // if not, then cleanup the handlers.
         key = null ;
@@ -4104,15 +4086,15 @@ SC.mixin(SC.Event, /** @scope SC.Event */ {
 
       // otherwise, just cleanup all handlers
       } else cleanupHandlers = YES ;
-
-      // If there are no more handlers left on this event type, remove
+      
+      // If there are no more handlers left on this event type, remove 
       // eventType hash from queue.
       if (cleanupHandlers) {
         delete events[eventType] ;
         this._removeEventListener(elem, eventType) ;
       }
-
-      // verify that there are still events registered on this element.  If
+      
+      // verify that there are still events registered on this element.  If 
       // there aren't, cleanup the element completely to avoid memory leaks.
       key = null ;
       for(key in events) break;
@@ -4120,20 +4102,20 @@ SC.mixin(SC.Event, /** @scope SC.Event */ {
         SC.removeData(elem, "events") ;
         delete this._elements[SC.guidFor(elem)]; // important to avoid leaks
       }
-
+      
     }
-
+    
     elem = events = handlers = null ; // avoid memory leaks
     return this ;
   },
 
   NO_BUBBLE: ['blur', 'focus', 'change'],
-
+  
   /**
-    Generates a simulated event object.  This is mostly useful for unit
-    testing.  You can pass the return value of this property into the
+    Generates a simulated event object.  This is mostly useful for unit 
+    testing.  You can pass the return value of this property into the 
     trigger() method to actually send the event.
-
+    
     @param {Element} elem the element the event targets
     @param {String} eventType event type.  mousedown, mouseup, etc
     @param {Hash} attrs optional additonal attributes to apply to event.
@@ -4154,24 +4136,24 @@ SC.mixin(SC.Event, /** @scope SC.Event */ {
     if (attrs) SC.mixin(ret, attrs) ;
     return ret ;
   },
-
+  
   /**
-    Trigger an event execution immediately.  You can use this method to
+    Trigger an event execution immediately.  You can use this method to 
     simulate arbitrary events on arbitary elements.
 
     ## Limitations
-
-    Note that although this is based on the jQuery implementation, it is
+    
+    Note that although this is based on the jQuery implementation, it is 
     much simpler.  Notably namespaced events are not supported and you cannot
     trigger events globally.
-
-    If you need more advanced event handling, consider the SC.Responder
+    
+    If you need more advanced event handling, consider the SC.Responder 
     functionality provided by SproutCore or use your favorite DOM library.
 
     ## Example
-
+    
         SC.Event.trigger(view.get('layer'), 'mousedown');
-
+    
     @param elem {Element} the target element
     @param eventType {String} the event type
     @param args {Array} optional argument or arguments to pass to handler.
@@ -4180,11 +4162,11 @@ SC.mixin(SC.Event, /** @scope SC.Event */ {
   */
   trigger: function(elem, eventType, args, donative) {
 
-    // if a CQ object is passed in, either call add on each item in the
+    // if a CQ object is passed in, either call add on each item in the 
     // matched set, or simply get the first element and use that.
     if (elem && elem.isCoreQuery) {
       if (elem.length > 0) {
-        elem.forEach(function(e) {
+        elem.forEach(function(e) { 
           this.trigger(e, eventType, args, donative);
         }, this);
         return this;
@@ -4194,11 +4176,11 @@ SC.mixin(SC.Event, /** @scope SC.Event */ {
 
     // don't do events on text and comment nodes
     if ( elem.nodeType === 3 || elem.nodeType === 8 ) return undefined;
-
+    
     // Normalize to an array
     args = SC.A(args) ;
 
-    var ret, fn = SC.typeOf(elem[eventType] || null) === SC.T_FUNCTION ,
+    var ret, fn = SC.typeOf(elem[eventType] || null) === SC.T_FUNCTION , 
         event, current, onfoo, isClick;
 
     // Get the event to pass, creating a fake one if necessary
@@ -4207,15 +4189,15 @@ SC.mixin(SC.Event, /** @scope SC.Event */ {
       event = this.simulateEvent(elem, eventType) ;
       args.unshift(event) ;
     }
-
+    
     event.type = eventType ;
-
+    
     // Trigger the event - bubble if enabled
     current = elem;
     do {
       ret = SC.Event.handle.apply(current, args);
       current = (current===document) ? null : (current.parentNode || document);
-    } while(!ret && event.bubbles && current);
+    } while(!ret && event.bubbles && current);    
     current = null ;
 
     // Handle triggering native .onfoo handlers
@@ -4231,7 +4213,7 @@ SC.mixin(SC.Event, /** @scope SC.Event */ {
       // prevent IE from throwing an error for some hidden elements
       } catch (e) {}
     }
-
+    
     this.triggered = NO;
 
     return ret;
@@ -4239,16 +4221,16 @@ SC.mixin(SC.Event, /** @scope SC.Event */ {
 
   /**
     This method will handle the passed event, finding any registered listeners
-    and executing them.  If you have an event you want handled, you can
+    and executing them.  If you have an event you want handled, you can 
     manually invoke this method.  This function expects it's "this" value to
-    be the element the event occurred on, so you should always call this
+    be the element the event occurred on, so you should always call this 
     method like:
-
+    
         SC.Event.handle.call(element, event) ;
 
     Note that like other parts of this library, the handle function does not
     support namespaces.
-
+    
     @param event {Event} the event to handle
     @returns {Boolean}
   */
@@ -4257,7 +4239,7 @@ SC.mixin(SC.Event, /** @scope SC.Event */ {
     // ignore events triggered after window is unloaded or if double-called
     // from within a trigger.
     if ((typeof SC === "undefined") || SC.Event.triggered) return YES ;
-
+    
     // returned undefined or NO
     var val, ret, namespace, all, handlers, args, key, handler, method, target;
 
@@ -4269,7 +4251,7 @@ SC.mixin(SC.Event, /** @scope SC.Event */ {
     // get the handlers for this event type
     handlers = (SC.data(this, "events") || {})[event.type];
     if (!handlers) return NO ; // nothing to do
-
+    
     // invoke all handlers
     for (key in handlers ) {
       handler = handlers[key];
@@ -4283,11 +4265,11 @@ SC.mixin(SC.Event, /** @scope SC.Event */ {
 
       target = handler[0] || this;
       ret = method.apply( target, args );
-
+      
       if (val !== NO) val = ret;
 
       // if method returned NO, do not continue.  Stop propogation and
-      // return default.  Note that we test explicitly for NO since
+      // return default.  Note that we test explicitly for NO since 
       // if the handler returns no specific value, we do not want to stop.
       if ( ret === NO ) {
         event.preventDefault();
@@ -4299,29 +4281,29 @@ SC.mixin(SC.Event, /** @scope SC.Event */ {
   },
 
   /**
-    This method is called just before the window unloads to unhook all
+    This method is called just before the window unloads to unhook all 
     registered events.
   */
   unload: function() {
     var key, elements = this._elements ;
     for(key in elements) this.remove(elements[key]) ;
-
+    
     // just in case some book-keeping was screwed up.  avoid memory leaks
     for(key in elements) delete elements[key] ;
-    delete this._elements ;
+    delete this._elements ; 
   },
-
+  
   /**
     This hash contains handlers for special or custom events.  You can add
     your own handlers for custom events here by simply naming the event and
     including a hash with the following properties:
-
+    
      - setup: this function should setup the handler or return NO
      - teardown: this function should remove the event listener
-
+     
   */
   special: {
-
+    
     ready: {
       setup: function() {
         // Make sure the ready event is setup
@@ -4396,11 +4378,11 @@ SC.mixin(SC.Event, /** @scope SC.Event */ {
   KEY_PAGEUP:   33,
   KEY_PAGEDOWN: 34,
   KEY_INSERT:   45,
-
+    
   _withinElement: function(event, elem) {
     // Check if mouse(over|out) are still within the same parent element
     var parent = event.relatedTarget;
-
+    
     // Traverse up the tree
     while ( parent && parent != elem ) {
       try { parent = parent.parentNode; } catch(error) { parent = elem; }
@@ -4409,14 +4391,14 @@ SC.mixin(SC.Event, /** @scope SC.Event */ {
     // Return YES if we actually just moused on to a sub-element
     return parent === elem;
   },
-
+  
   /** @private
     Adds the primary event listener for the named type on the element.
-
-    If the event type has a special handler defined in SC.Event.special,
+    
+    If the event type has a special handler defined in SC.Event.special, 
     then that handler will be used.  Otherwise the normal browser method will
     be used.
-
+    
     @param elem {Element} the target element
     @param eventType {String} the event type
   */
@@ -4431,17 +4413,17 @@ SC.mixin(SC.Event, /** @scope SC.Event */ {
     // Only use addEventListener/attachEvent if the special
     // events handler returns NO
     if ( !special || special.setup.call(elem)===NO) {
-
-      // Save element in cache.  This must be removed later to avoid
+      
+      // Save element in cache.  This must be removed later to avoid 
       // memory leaks.
       var guid = SC.guidFor(elem) ;
       this._elements[guid] = elem;
-
-      listener = SC.data(elem, "listener") || SC.data(elem, "listener",
+      
+      listener = SC.data(elem, "listener") || SC.data(elem, "listener", 
        function() {
-         return SC.Event.handle.apply(SC.Event._elements[guid], arguments);
+         return SC.Event.handle.apply(SC.Event._elements[guid], arguments); 
       }) ;
-
+      
       // Bind the global event handler to the element
       if (elem.addEventListener) {
         elem.addEventListener(eventType, listener, useCapture);
@@ -4450,25 +4432,25 @@ SC.mixin(SC.Event, /** @scope SC.Event */ {
         // there is currently a hack in request , but it needs to fixed here.
         elem.attachEvent("on" + eventType, listener);
       }
-      //
+      //  
       // else {
       //         elem.onreadystatechange = listener;
       //       }
     }
-
+    
     elem = special = listener = null ; // avoid memory leak
   },
 
   /** @private
     Removes the primary event listener for the named type on the element.
-
-    If the event type has a special handler defined in SC.Event.special,
+    
+    If the event type has a special handler defined in SC.Event.special, 
     then that handler will be used.  Otherwise the normal browser method will
     be used.
-
+    
     Note that this will not clear the _elements hash from the element.  You
     must call SC.Event.unload() on unload to make sure that is cleared.
-
+    
     @param elem {Element} the target element
     @param eventType {String} the event type
   */
@@ -4484,66 +4466,66 @@ SC.mixin(SC.Event, /** @scope SC.Event */ {
         }
       }
     }
-
+    
     elem = special = listener = null ;
   },
 
   _elements: {},
-
+  
   // implement preventDefault() in a cross platform way
-
+  
   /** @private Take an incoming event and convert it to a normalized event. */
   normalizeEvent: function(event) {
     if (event === window.event) {
       // IE can't do event.normalized on an Event object
-      return SC.Event.create(event) ;
+      return SC.Event.create(event) ; 
     } else {
       return event.normalized ? event : SC.Event.create(event) ;
     }
   },
-
+  
   _global: {},
 
   /** @private properties to copy from native event onto the event */
   _props: "altKey attrChange attrName bubbles button cancelable charCode clientX clientY ctrlKey currentTarget data detail eventPhase fromElement handler keyCode metaKey newValue originalTarget pageX pageY prevValue relatedNode relatedTarget screenX screenY shiftKey srcElement target timeStamp toElement type view which touches targetTouches changedTouches animationName elapsedTime dataTransfer".split(" ")
-
+  
 }) ;
 
 SC.Event.prototype = {
 
   /**
-    Set to YES if you have called either preventDefault() or stopPropagation().
-    This allows a generic event handler to notice if you want to provide
+    Set to YES if you have called either preventDefault() or stopPropagation().  
+    This allows a generic event handler to notice if you want to provide 
     detailed control over how the browser handles the real event.
-
+    
     @property {Boolean}
   */
   hasCustomEventHandling: NO,
-
+  
   /**
     Returns the touches owned by the supplied view.
-
+    
     @param {SC.View}
     @returns {Array} touches an array of SC.Touch objects
   */
   touchesForView: function(view) {
     if (this.touchContext) return this.touchContext.touchesForView(view);
   },
-
+  
   /**
     Same as touchesForView, but sounds better for responders.
-
+    
     @param {SC.RootResponder}
     @returns {Array} touches an array of SC.Touch objects
   */
   touchesForResponder: function(responder) {
     if (this.touchContext) return this.touchContext.touchesForView(responder);
   },
-
+  
   /**
-    Returns average data--x, y, and d (distance)--for the touches owned by the
+    Returns average data--x, y, and d (distance)--for the touches owned by the 
     supplied view.
-
+    
     @param {SC.View}
     @returns {Array} touches an array of SC.Touch objects
   */
@@ -4551,22 +4533,22 @@ SC.Event.prototype = {
     if (this.touchContext) return this.touchContext.averagedTouchesForView(view);
     return null;
   },
-
+  
   /**
     Indicates that you want to allow the normal default behavior.  Sets
     the hasCustomEventHandling property to YES but does not cancel the event.
-
+    
     @returns {SC.Event} receiver
   */
   allowDefault: function() {
     this.hasCustomEventHandling = YES ;
-    return this ;
+    return this ;  
   },
-
-  /**
+  
+  /** 
     Implements W3C standard.  Will prevent the browser from performing its
     default action on this event.
-
+    
     @returns {SC.Event} receiver
   */
   preventDefault: function() {
@@ -4581,7 +4563,7 @@ SC.Event.prototype = {
 
   /**
     Implements W3C standard.  Prevents further bubbling of the event.
-
+    
     @returns {SC.Event} receiver
   */
   stopPropagation: function() {
@@ -4590,30 +4572,30 @@ SC.Event.prototype = {
       if (evt.stopPropagation) evt.stopPropagation() ;
       evt.cancelBubble = YES ; // IE
     }
-    this.hasCustomEventHandling = YES ;
+    this.hasCustomEventHandling = YES ; 
     return this ;
   },
 
-  /**
-    Stops both the default action and further propogation.  This is more
+  /** 
+    Stops both the default action and further propogation.  This is more 
     convenient than calling both.
-
+    
     @returns {SC.Event} receiver
   */
   stop: function() {
     return this.preventDefault().stopPropagation();
   },
-
-  /**
-    Always YES to indicate the event was normalized.
-
+  
+  /** 
+    Always YES to indicate the event was normalized. 
+    
     @property {Boolean}
   */
   normalized: YES,
 
-  /**
-    Returns the pressed character (found in this.which) as a string.
-
+  /** 
+    Returns the pressed character (found in this.which) as a string. 
+  
     @returns {String}
   */
   getCharString: function() {
@@ -4622,31 +4604,31 @@ SC.Event.prototype = {
         return String.fromCharCode(0);
       }
       else {
-        return (this.keyCode>0) ? String.fromCharCode(this.keyCode) : null;
+        return (this.keyCode>0) ? String.fromCharCode(this.keyCode) : null;  
       }
     }
     else {
       return (this.charCode>0) ? String.fromCharCode(this.charCode) : null;
     }
   },
-
-  /**
-    Returns character codes for the event.  The first value is the normalized
-    code string, with any shift or ctrl characters added to the begining.
+  
+  /** 
+    Returns character codes for the event.  The first value is the normalized 
+    code string, with any shift or ctrl characters added to the begining.  
     The second value is the char string by itself.
-
+  
     @returns {Array}
   */
   commandCodes: function() {
     var code=this.keyCode, ret=null, key=null, modifiers='', lowercase ;
-
+    
     // handle function keys.
     if (code) {
       ret = SC.FUNCTION_KEYS[code] ;
       if (!ret && (this.altKey || this.ctrlKey || this.metaKey)) {
         ret = SC.PRINTABLE_KEYS[code];
       }
-
+      
       if (ret) {
         if (this.altKey) modifiers += 'alt_' ;
         if (this.ctrlKey || this.metaKey) modifiers += 'ctrl_' ;
@@ -4662,14 +4644,14 @@ SC.Event.prototype = {
       if (this.metaKey) {
         modifiers = 'meta_' ;
         ret = lowercase;
-
+        
       } else ret = null ;
     }
 
     if (ret) ret = modifiers + ret ;
     return [ret, key] ;
   }
-
+    
 } ;
 
 // Also provide a Prototype-like API so that people can use either one.
@@ -4684,7 +4666,7 @@ SC.Event.stopObserving = SC.Event.remove ;
 SC.Event.fire = SC.Event.trigger;
 
 // Register unload handler to eliminate any registered handlers
-// This avoids leaks in IE and issues with mouseout or other handlers on
+// This avoids leaks in IE and issues with mouseout or other handlers on 
 // other browsers.
 
 if(SC.browser.msie) SC.Event.add(window, 'unload', SC.Event.prototype, SC.Event.unload) ;
@@ -4694,11 +4676,11 @@ SC.MODIFIER_KEYS = {
 };
 
 SC.FUNCTION_KEYS = {
-  8: 'backspace',  9: 'tab',  13: 'return',  19: 'pause',  27: 'escape',
-  33: 'pageup', 34: 'pagedown', 35: 'end', 36: 'home',
-  37: 'left', 38: 'up', 39: 'right', 40: 'down', 44: 'printscreen',
-  45: 'insert', 46: 'delete', 112: 'f1', 113: 'f2', 114: 'f3', 115: 'f4',
-  116: 'f5', 117: 'f7', 119: 'f8', 120: 'f9', 121: 'f10', 122: 'f11',
+  8: 'backspace',  9: 'tab',  13: 'return',  19: 'pause',  27: 'escape',  
+  33: 'pageup', 34: 'pagedown', 35: 'end', 36: 'home', 
+  37: 'left', 38: 'up', 39: 'right', 40: 'down', 44: 'printscreen', 
+  45: 'insert', 46: 'delete', 112: 'f1', 113: 'f2', 114: 'f3', 115: 'f4', 
+  116: 'f5', 117: 'f7', 119: 'f8', 120: 'f9', 121: 'f10', 122: 'f11', 
   123: 'f12', 144: 'numlock', 145: 'scrolllock'
 } ;
 
@@ -4710,12 +4692,12 @@ SC.PRINTABLE_KEYS = {
   88:"x", 89:"y", 90:"z", 107:"+", 109:"-", 110:".", 188:",", 190:".",
   191:"/", 192:"`", 219:"[", 220:"\\", 221:"]", 222:"\""
 } ;
-
+; if ((typeof SC !== 'undefined') && SC && SC.Module && SC.Module.scriptDidLoad) SC.Module.scriptDidLoad('sproutcore/core_foundation');
 /* >>>>>>>>>> BEGIN source/system/cursor.js */
 // ==========================================================================
 // Project:   SproutCore - JavaScript Application Framework
-// Copyright: Â©2006-2011 Strobe Inc. and contributors.
-//            Portions Â©2008-2011 Apple Inc. All rights reserved.
+// Copyright: ©2006-2011 Strobe Inc. and contributors.
+//            Portions ©2008-2011 Apple Inc. All rights reserved.
 // License:   Licensed under MIT license (see license.js)
 // ==========================================================================
 
@@ -4740,33 +4722,33 @@ SC.HELP_CURSOR = 'help' ;
 /**
   @class SC.Cursor
 
-  A Cursor object is used to sychronize the cursor used by multiple views at
+  A Cursor object is used to sychronize the cursor used by multiple views at 
   the same time. For example, thumb views within a split view acquire a cursor
-  instance from the split view and set it as their cursor. The split view is
+  instance from the split view and set it as their cursor. The split view is 
   able to update its cursor object to reflect the state of the split view.
-  Because cursor objects are implemented internally with CSS, this is a very
+  Because cursor objects are implemented internally with CSS, this is a very 
   efficient way to update the same cursor for a group of view objects.
-
-  Note: This object creates an anonymous CSS class to represent the cursor.
+  
+  Note: This object creates an anonymous CSS class to represent the cursor. 
   The anonymous CSS class is automatically added by SproutCore to views that
-  have the cursor object set as "their" cursor. Thus, all objects attached to
+  have the cursor object set as "their" cursor. Thus, all objects attached to 
   the same cursor object will have their cursors updated simultaneously with a
   single DOM call.
-
+  
   @extends SC.Object
 */
 SC.Cursor = SC.Object.extend(
 /** @scope SC.Cursor.prototype */ {
-
+  
   /** @private */
   init: function() {
     arguments.callee.base.apply(this,arguments) ;
-
+    
     // create a unique style rule and add it to the shared cursor style sheet
     var cursorStyle = this.get('cursorStyle') || SC.DEFAULT_CURSOR ,
         ss = this.constructor.sharedStyleSheet(),
         guid = SC.guidFor(this);
-
+    
     if (ss.insertRule) { // WC3
       ss.insertRule(
         '.'+guid+' {cursor: '+cursorStyle+';}',
@@ -4775,27 +4757,27 @@ SC.Cursor = SC.Object.extend(
     } else if (ss.addRule) { // IE
       ss.addRule('.'+guid, 'cursor: '+cursorStyle) ;
     }
-
+    
     this.cursorStyle = cursorStyle ;
     this.className = guid ; // used by cursor clients...
     return this ;
   },
-
+  
   /**
     This property is the connection between cursors and views. The default
     SC.View behavior is to add this className to a view's layer if it has
     its cursor property defined.
-
+    
     @readOnly
     @property {String} the css class name updated by this cursor
   */
   className: null,
-
+  
   /**
     @property {String} the cursor value, can be 'url("path/to/cursor")'
   */
   cursorStyle: SC.DEFAULT_CURSOR,
-
+  
   /** @private */
   cursorStyleDidChange: function() {
     var cursorStyle, rule, selector, ss, rules, idx, len;
@@ -4805,12 +4787,12 @@ SC.Cursor = SC.Object.extend(
       rule.style.cursor = cursorStyle ; // fast path
       return ;
     }
-
+    
     // slow path, taken only once
     selector = '.'+this.get('className') ;
     ss = this.constructor.sharedStyleSheet() ;
     rules = (ss.cssRules ? ss.cssRules : ss.rules) || [] ;
-
+    
     // find our rule, cache it, and update the cursor style property
     for (idx=0, len = rules.length; idx<len; ++idx) {
       rule = rules[idx] ;
@@ -4821,9 +4803,9 @@ SC.Cursor = SC.Object.extend(
       }
     }
   }.observes('cursorStyle')
-
+  
   // TODO implement destroy
-
+  
 });
 
 /** @private */
@@ -4836,19 +4818,19 @@ SC.Cursor.sharedStyleSheet = function() {
     head = document.getElementsByTagName('head')[0] ;
     if (!head) head = document.documentElement ; // fix for Opera
     head.appendChild(ss) ;
-
+    
     // get the actual stylesheet object, not the DOM element
     ss = document.styleSheets[document.styleSheets.length-1] ;
     this._styleSheet = ss ;
   }
   return ss ;
 };
-
+; if ((typeof SC !== 'undefined') && SC && SC.Module && SC.Module.scriptDidLoad) SC.Module.scriptDidLoad('sproutcore/core_foundation');
 /* >>>>>>>>>> BEGIN source/system/theme.js */
 // ==========================================================================
 // Project:   SproutCore - JavaScript Application Framework
-// Copyright: Â©2006-2011 Strobe Inc. and contributors.
-//            Portions Â©2008-2011 Apple Inc. All rights reserved.
+// Copyright: ©2006-2011 Strobe Inc. and contributors.
+//            Portions ©2008-2011 Apple Inc. All rights reserved.
 // License:   Licensed under MIT license (see license.js)
 // ==========================================================================
 
@@ -4985,7 +4967,7 @@ SC.Theme = {
     } else {
       result.themes = SC.beget(this.themes);
     }
-
+    
     // we also have private ("invisible") child themes; look at invisibleSubtheme
     // method.
     result._privateThemes = {};
@@ -5026,21 +5008,21 @@ SC.Theme = {
     // and return the theme class
     return t;
   },
-
+  
   /**
     Semi-private, only used by SC.View to create "invisible" subthemes. You
     should never need to call this directly, nor even worry about.
-
+    
     Invisible subthemes are only available when find is called _on this theme_;
     if find() is called on a child theme, it will _not_ locate this theme.
-
+    
     The reason for "invisible" subthemes is that SC.View will create a subtheme
-    when it finds a theme name that doesn't exist. For example, imagine that you
+    when it finds a theme name that doesn't exist. For example, imagine that you 
     have a parent view with theme "base", and a child view with theme "popup".
     If no "popup" theme can be found inside "base", SC.View will call
     base.subtheme. This will create a new theme with the name "popup",
     derived from "base". Everyone is happy.
-
+    
     But what happens if you then change the parent theme to "ace"? The view
     will try again to find "popup", and it will find it-- but it will still be
     a child theme of "base"; SC.View _needs_ to re-subtheme it, but it won't
@@ -5052,11 +5034,11 @@ SC.Theme = {
 
     // add to our set of themes
     this._privateThemes[name] = t;
-
+    
     // and return the theme class
     return t;
   },
-
+  
   //
   // THEME MANAGEMENT
   //
@@ -5161,17 +5143,17 @@ SC.BaseTheme = SC.Theme.create({
 // actual theme is loaded.
 SC.Theme.themes['sc-base'] = SC.BaseTheme;
 SC.defaultTheme = 'sc-base';
-
+; if ((typeof SC !== 'undefined') && SC && SC.Module && SC.Module.scriptDidLoad) SC.Module.scriptDidLoad('sproutcore/core_foundation');
 /* >>>>>>>>>> BEGIN source/views/view/base.js */
 
 /** @class */
 SC.CoreView = SC.Responder.extend(SC.DelegateSupport);
-
+; if ((typeof SC !== 'undefined') && SC && SC.Module && SC.Module.scriptDidLoad) SC.Module.scriptDidLoad('sproutcore/core_foundation');
 /* >>>>>>>>>> BEGIN source/views/view.js */
 // ==========================================================================
 // Project:   SproutCore - JavaScript Application Framework
-// Copyright: Â©2006-2011 Strobe Inc. and contributors.
-//            Portions Â©2008-2011 Apple Inc. All rights reserved.
+// Copyright: ©2006-2011 Strobe Inc. and contributors.
+//            Portions ©2008-2011 Apple Inc. All rights reserved.
 // License:   Licensed under MIT license (see license.js)
 // ==========================================================================
 
@@ -6681,7 +6663,7 @@ SC.CoreView.unload = function() {
 */
 SC.View = SC.CoreView.extend(/** @scope SC.View.prototype */{
   classNames: ['sc-view'],
-
+  
   displayProperties: ['isFirstResponder']
 });
 
@@ -6689,12 +6671,12 @@ SC.View = SC.CoreView.extend(/** @scope SC.View.prototype */{
 if(SC.browser.msie) SC.Event.add(window, 'unload', SC.View, SC.View.unload) ;
 
 
-
+; if ((typeof SC !== 'undefined') && SC && SC.Module && SC.Module.scriptDidLoad) SC.Module.scriptDidLoad('sproutcore/core_foundation');
 /* >>>>>>>>>> BEGIN source/panes/pane.js */
 // ==========================================================================
 // Project:   SproutCore - JavaScript Application Framework
-// Copyright: Â©2006-2011 Strobe Inc. and contributors.
-//            Portions Â©2008-2011 Apple Inc. All rights reserved.
+// Copyright: ©2006-2011 Strobe Inc. and contributors.
+//            Portions ©2008-2011 Apple Inc. All rights reserved.
 // License:   Licensed under MIT license (see license.js)
 // ==========================================================================
 
@@ -7361,12 +7343,12 @@ SC.Pane = SC.View.extend(SC.ResponderContext,
 
 }) ;
 
-
+; if ((typeof SC !== 'undefined') && SC && SC.Module && SC.Module.scriptDidLoad) SC.Module.scriptDidLoad('sproutcore/core_foundation');
 /* >>>>>>>>>> BEGIN source/panes/keyboard.js */
 // ==========================================================================
 // Project:   SproutCore - JavaScript Application Framework
-// Copyright: Â©2006-2011 Strobe Inc. and contributors.
-//            Â©2008-2011 Apple Inc. All rights reserved.
+// Copyright: ©2006-2011 Strobe Inc. and contributors.
+//            ©2008-2011 Apple Inc. All rights reserved.
 // License:   Licensed under MIT license (see license.js)
 // ==========================================================================
 sc_require("panes/pane");
@@ -7437,12 +7419,12 @@ SC.Pane.reopen(
     }
   }
 });
-
+; if ((typeof SC !== 'undefined') && SC && SC.Module && SC.Module.scriptDidLoad) SC.Module.scriptDidLoad('sproutcore/core_foundation');
 /* >>>>>>>>>> BEGIN source/panes/layout.js */
 // ==========================================================================
 // Project:   SproutCore - JavaScript Application Framework
-// Copyright: Â©2006-2011 Strobe Inc. and contributors.
-//            Â©2008-2011 Apple Inc. All rights reserved.
+// Copyright: ©2006-2011 Strobe Inc. and contributors.
+//            ©2008-2011 Apple Inc. All rights reserved.
 // License:   Licensed under MIT license (see license.js)
 // ==========================================================================
 sc_require("panes/pane");
@@ -7534,12 +7516,12 @@ SC.Pane.reopen(
     original();
   }.enhance()
 });
-
+; if ((typeof SC !== 'undefined') && SC && SC.Module && SC.Module.scriptDidLoad) SC.Module.scriptDidLoad('sproutcore/core_foundation');
 /* >>>>>>>>>> BEGIN source/panes/manipulation.js */
 // ==========================================================================
 // Project:   SproutCore - JavaScript Application Framework
-// Copyright: Â©2006-2011 Strobe Inc. and contributors.
-//            Â©2008-2011 Apple Inc. All rights reserved.
+// Copyright: ©2006-2011 Strobe Inc. and contributors.
+//            ©2008-2011 Apple Inc. All rights reserved.
 // License:   Licensed under MIT license (see license.js)
 // ==========================================================================
 sc_require("panes/pane");
@@ -7569,12 +7551,12 @@ SC.Pane.reopen(
     throw SC.Error.desc("SC.Pane cannot be removed from its parent, since it's the root. Did you mean remove()?");
   }
 });
-
+; if ((typeof SC !== 'undefined') && SC && SC.Module && SC.Module.scriptDidLoad) SC.Module.scriptDidLoad('sproutcore/core_foundation');
 /* >>>>>>>>>> BEGIN source/panes/template.js */
 // ==========================================================================
 // Project:   SproutCore - JavaScript Application Framework
-// Copyright: Â©2006-2011 Strobe Inc. and contributors.
-//            Â©2008-2011 Apple Inc. All rights reserved.
+// Copyright: ©2006-2011 Strobe Inc. and contributors.
+//            ©2008-2011 Apple Inc. All rights reserved.
 // License:   Licensed under MIT license (see license.js)
 // ==========================================================================
 
@@ -7602,12 +7584,12 @@ SC.mixin(SC.TemplatePane, {
     return pane.create().append();
   }
 });
-
+; if ((typeof SC !== 'undefined') && SC && SC.Module && SC.Module.scriptDidLoad) SC.Module.scriptDidLoad('sproutcore/core_foundation');
 /* >>>>>>>>>> BEGIN source/panes/visibility.js */
 // ==========================================================================
 // Project:   SproutCore - JavaScript Application Framework
-// Copyright: Â©2006-2011 Strobe Inc. and contributors.
-//            Â©2008-2011 Apple Inc. All rights reserved.
+// Copyright: ©2006-2011 Strobe Inc. and contributors.
+//            ©2008-2011 Apple Inc. All rights reserved.
 // License:   Licensed under MIT license (see license.js)
 // ==========================================================================
 sc_require("panes/pane");
@@ -7621,187 +7603,12 @@ SC.Pane.reopen(
   }.enhance()
 
 });
-
-/* >>>>>>>>>> BEGIN source/protocols/observable_protocol.js */
-// ==========================================================================
-// Project:   SproutCore Costello - Property Observing Library
-// Copyright: Â©2006-2011 Strobe Inc. and contributors.
-//            Portions Â©2008-2011 Apple Inc. All rights reserved.
-// License:   Licensed under MIT license (see license.js)
-// ==========================================================================
-
-/**
-  The SC.ObservableProtocol defines optional methods you can implement on your
-  objects.  They will be used if defined but are not required for observing to
-  work.
-*/
-SC.ObservableProtocol = {
-
-  /**
-    Generic property observer called whenever a property on the receiver
-    changes.
-
-    If you need to observe a large number of properties on your object, it
-    is sometimes more efficient to implement this observer only and then to
-    handle requests yourself.  Although this observer will be triggered
-    more often than an observer registered on a specific property, it also
-    does not need to be registered which can make it faster to setup your
-    object instance.
-
-    You will often implement this observer using a switch statement on the
-    key parameter, taking appropriate action.
-
-    @param observer {null} no longer used; usually null
-    @param target {Object} the target of the change.  usually this
-    @param key {String} the name of the property that changed
-    @param value {Object} the new value of the property.
-    @param revision {Number} a revision you can use to quickly detect changes.
-    @returns {void}
-  */
-  propertyObserver: function(observer,target,key,value, revision) {
-
-  }
-
-};
-
-/* >>>>>>>>>> BEGIN source/protocols/sparse_array_delegate.js */
-// ==========================================================================
-// Project:   SproutCore Costello - Property Observing Library
-// Copyright: Â©2006-2011 Strobe Inc. and contributors.
-//            Portions Â©2008-2011 Apple Inc. All rights reserved.
-// License:   Licensed under MIT license (see license.js)
-// ==========================================================================
-
-/** @namespace
-
-  Delegate that provides data for a sparse array.  If you set the delegate for
-  a sparse array to an object that implements one or more of these methods,
-  they will be invoked by the sparse array to fetch data or to update the
-  array content as needed.
-
-  Your object does not need to implement all of these methods, but it should
-  at least implment the sparseArrayDidRequestIndex() method.
-
-  @since SproutCore 1.0
-*/
-SC.SparseArrayDelegate = {
-
-  /**
-    Invoked when an object requests the length of the sparse array and the
-    length has not yet been set.  You can implement this method to update
-    the length property of the sparse array immediately or at a later time
-    by calling the provideLength() method on the sparse array.
-
-    This method will only be called once on your delegate unless you
-    subsequently call provideLength(null) on the array, which will effectively
-    "empty" the array and cause the array to invoke the delegate again the
-    next time its length is request.
-
-    If you do not set a length on the sparse array immediately, it will return
-    a length of 0 until you provide the length.
-
-    @param {SC.SparseArray} sparseArray the array that needs a length.
-    @returns {void}
-  */
-  sparseArrayDidRequestLength: function(sparseArray) {
-    // Default does nothing.
-  },
-
-  /**
-    Invoked when an object requests an index on the sparse array that has not
-    yet been set.  You should implement this method to set the object at the
-    index using provideObjectsAtIndex() or provideObjectsInRange() on the
-    sparse array.  You can call these methods immediately during this handler
-    or you can wait and call them at a later time once you have loaded any
-    data.
-
-    This method will only be called when an index is requested on the sparse
-    array that has not yet been filled.  If you have filled an index or range
-    and you would like to reset it, call the objectsDidChangeInRange() method
-    on the sparse array.
-
-    Note that if you implement the sparseArrayDidRequestRange() method, that
-    method will be invoked instead of this one whenever possible to allow you
-    to fill in the array with the most efficiency possible.
-
-    @param {SC.SparseArray} sparseArray the sparse array
-    @param {Number} index the requested index
-    @returns {void}
-  */
-  sparseArrayDidRequestIndex: function(sparseArray, index) {
-
-  },
-
-  /**
-    Alternative method invoked when an object requests an index on the
-    sparse array that has not yet been set.  If you set the
-    rangeWindowSize property on the Sparse Array, then all object index
-    requests will be expanded to to nearest range window and then this
-    method will be called with that range.
-
-    You should fill in the passed range by calling the provideObjectsInRange()
-    method on the sparse array.
-
-    If you do not implement this method but set the rangeWindowSize anyway,
-    then the sparseArrayDidRequestIndex() method will be invoked instead.
-
-    Note that the passed range is a temporary object.  Be sure to clone it if
-    you want to keep the range for later use.
-
-    @param {SC.SparseArray} sparseArray the sparse array
-    @param {Range} range read only range.
-    @returns {void}
-  */
-  sparseArrayDidRequestRange: function(sparseArray, range) {
-
-  },
-
-  /**
-    Optional delegate method you can use to determine the index of a
-    particular object.  If you do not implement this method, then the
-    sparse array will just search the objects it has loaded already.
-
-    @param {SC.SparseArray} sparseArray the sparse array
-    @param {Object} object the object to find the index of
-    @return {Number} the index or -1
-    @returns {void}
-  */
-  sparseArrayDidRequestIndexOf: function(sparseArray, object) {
-
-  },
-
-  /**
-    Optional delegate method invoked whenever the sparse array attempts to
-    changes its contents.  If you do not implement this method or if you
-    return NO from this method, then the edit will not be allowed.
-
-    @param {SC.SparseArray} sparseArray the sparse array
-    @param {Number} idx the starting index to replace
-    @param {Number} amt the number if items to replace
-    @param {Array} objects the array of objects to insert
-    @returns {Boolean} YES to allow replace, NO to deny
-  */
-  sparseArrayShouldReplace: function(sparseArray, idx, amt, objects) {
-    return NO ;
-  },
-
-  /**
-    Invoked whenever the sparse array is reset.  Resetting a sparse array
-    will cause it to flush its content and go back to the delegate for all
-    property requests again.
-
-    @param {SC.SparseArray} sparseArray the sparse array
-    @returns {void}
-  */
-  sparseArrayDidReset: function(sparseArray) {
-  }
-};
-
+; if ((typeof SC !== 'undefined') && SC && SC.Module && SC.Module.scriptDidLoad) SC.Module.scriptDidLoad('sproutcore/core_foundation');
 /* >>>>>>>>>> BEGIN source/system/application.js */
 // ==========================================================================
 // Project:   SproutCore - JavaScript Application Framework
-// Copyright: Â©2006-2011 Strobe Inc. and contributors.
-//            Portions Â©2008-2011 Apple Inc. All rights reserved.
+// Copyright: ©2006-2011 Strobe Inc. and contributors.
+//            Portions ©2008-2011 Apple Inc. All rights reserved.
 // License:   Licensed under MIT license (see license.js)
 // ==========================================================================
 
@@ -7831,7 +7638,7 @@ SC.Application = SC.Responder.extend(SC.ResponderContext,
 /** SC.Application.prototype */ {
 
 });
-
+; if ((typeof SC !== 'undefined') && SC && SC.Module && SC.Module.scriptDidLoad) SC.Module.scriptDidLoad('sproutcore/core_foundation');
 /* >>>>>>>>>> BEGIN source/views/template.js */
 sc_require("ext/handlebars");
 sc_require("ext/handlebars/bind");
@@ -7904,10 +7711,7 @@ SC.TemplateView = SC.CoreView.extend(
         template = this.get('templates').get(templateName);
 
     if (!template) {
-
-      if (templateName) {
-        SC.Logger.warn('%@ - Unable to find template "%@".'.fmt(this, templateName));
-      }
+      
 
 
       return function() { return ''; };
@@ -7964,7 +7768,7 @@ SC.TemplateView = SC.CoreView.extend(
     return NO;
   }
 });
-
+; if ((typeof SC !== 'undefined') && SC && SC.Module && SC.Module.scriptDidLoad) SC.Module.scriptDidLoad('sproutcore/core_foundation');
 /* >>>>>>>>>> BEGIN source/system/bindable_span.js */
 sc_require('views/template');
 
@@ -8130,14 +7934,14 @@ SC._BindableSpan = SC.TemplateView.extend({
   }
 });
 
-
+; if ((typeof SC !== 'undefined') && SC && SC.Module && SC.Module.scriptDidLoad) SC.Module.scriptDidLoad('sproutcore/core_foundation');
 /* >>>>>>>>>> BEGIN source/system/datetime.js */
-
+; if ((typeof SC !== 'undefined') && SC && SC.Module && SC.Module.scriptDidLoad) SC.Module.scriptDidLoad('sproutcore/core_foundation');
 /* >>>>>>>>>> BEGIN source/system/ready.js */
 // ==========================================================================
 // Project:   SproutCore - JavaScript Application Framework
-// Copyright: Â©2006-2011 Strobe Inc. and contributors.
-//            Portions Â©2008-2011 Apple Inc. All rights reserved.
+// Copyright: ©2006-2011 Strobe Inc. and contributors.
+//            Portions ©2008-2011 Apple Inc. All rights reserved.
 // License:   Licensed under MIT license (see license.js)
 // ==========================================================================
 
@@ -8149,22 +7953,22 @@ sc_require('system/event') ;
 
 SC.mixin({
   isReady: NO,
-
+  
   /**
     Allows apps to avoid automatically attach the ready handlers if they
     want to by setting this flag to YES
-
+    
     @property {Boolean}
   */
   suppressOnReady: SC.suppressOnReady ? YES : NO,
-
+  
   /**
     Allows apps to avoid automatically invoking main() when onReady is called
-
+    
     @property {Boolean}
   */
   suppressMain: SC.suppressMain ? YES : NO,
-
+  
   /**
     Add the passed target and method to the queue of methods to invoke when
     the document is ready.  These methods will be called after the document
@@ -8181,7 +7985,7 @@ SC.mixin({
   */
   ready: function(target, method) {
     var queue = SC._readyQueue;
-
+    
     // normalize
     if (method === undefined) {
       method = target; target = null ;
@@ -8196,7 +8000,7 @@ SC.mixin({
       if(!queue) SC._readyQueue = [];
       SC._readyQueue.push(function() { method.call(target); });
     }
-
+    
     return this ;
   },
 
@@ -8204,23 +8008,23 @@ SC.mixin({
     done: function() {
       if(SC.isReady) return;
       SC.isReady = true;
-
+      
       SC.RunLoop.begin();
-
+      
       SC.Locale.createCurrentLocale();
       jQuery("body").addClass(SC.Locale.currentLanguage.toLowerCase());
-
+      
       jQuery("#loading").remove();
-
+      
       var queue = SC._readyQueue, idx, len;
-
+      
       if(queue) {
         for(idx=0,len=queue.length;idx<len;idx++) {
           queue[idx].call();
         }
         SC._readyQueue = null;
       }
-
+      
       if(window.main && !SC.suppressMain && (SC.mode === SC.APP_MODE)) { window.main(); }
       SC.RunLoop.end();
     }
@@ -8237,12 +8041,12 @@ if(!SC.suppressOnReady) {
 SC.APP_MODE = "APP_MODE";
 SC.TEST_MODE = "TEST_MODE";
 SC.mode = SC.APP_MODE;
-
+; if ((typeof SC !== 'undefined') && SC && SC.Module && SC.Module.scriptDidLoad) SC.Module.scriptDidLoad('sproutcore/core_foundation');
 /* >>>>>>>>>> BEGIN source/system/platform.js */
 // ==========================================================================
 // Project:   SproutCore - JavaScript Application Framework
-// Copyright: Â©2006-2011 Strobe Inc. and contributors.
-//            Portions Â©2008-2011 Apple Inc. All rights reserved.
+// Copyright: ©2006-2011 Strobe Inc. and contributors.
+//            Portions ©2008-2011 Apple Inc. All rights reserved.
 // License:   Licensed under MIT license (see license.js)
 // ==========================================================================
 
@@ -8290,7 +8094,7 @@ SC.platform = SC.Object.create({
     @property {Boolean}
   */
   touch: (('createTouch' in document) && SC.browser.chrome < 9) || SC.browser.android,
-
+  
   bounceOnScroll: SC.browser.iOS,
   pinchToZoom: SC.browser.iOS,
 
@@ -8355,7 +8159,7 @@ SC.platform = SC.Object.create({
       //@ endif
       return;
     }
-
+    
     SC.Logger.log("Simulating touch events");
 
     // Tell the app that we now "speak" touch
@@ -8562,26 +8366,26 @@ SC.platform = SC.Object.create({
     // documentMode logic from YUI to filter out IE8 Compat Mode which false positives
     return ('onhashchange' in window) && (document.documentMode === undefined || document.documentMode > 7);
   }(),
-
+  
   /**
     Wether the browser supports HTML5 history.
   */
   supportsHistory: function() {
     return !!(window.history && window.history.pushState);
   }(),
-
+  
   supportsCanvas: function() {
     return !!document.createElement('canvas').getContext;
   }(),
-
+  
   supportsOrientationChange: ('onorientationchange' in window),
-
+  
   /**
     Because iOS is slow to dispatch the window.onorientationchange event,
     we use the window size to determine the orientation on iOS devices
     and desktop environments when SC.platform.touch is YES (ie. when
     SC.platform.simulateTouchEvents has been called)
-
+    
     @property {Boolean}
     @default NO
   */
@@ -8658,12 +8462,12 @@ SC.platform = SC.Object.create({
     SC.platform.supportsAcceleratedLayers = YES;
   }
 })();
-
+; if ((typeof SC !== 'undefined') && SC && SC.Module && SC.Module.scriptDidLoad) SC.Module.scriptDidLoad('sproutcore/core_foundation');
 /* >>>>>>>>>> BEGIN source/system/root_responder.js */
 // ==========================================================================
 // Project:   SproutCore - JavaScript Application Framework
-// Copyright: Â©2006-2011 Strobe Inc. and contributors.
-//            Portions Â©2008-2011 Apple Inc. All rights reserved.
+// Copyright: ©2006-2011 Strobe Inc. and contributors.
+//            Portions ©2008-2011 Apple Inc. All rights reserved.
 // License:   Licensed under MIT license (see license.js)
 // ==========================================================================
 
@@ -9788,7 +9592,7 @@ SC.RootResponder = SC.Object.extend({
     // work down the chain
     for (len = chain.length, idx = 0; idx < len; idx++) {
       view = chain[idx];
-      if (SC.LOG_TOUCH_EVENTS) SC.Logger.info('  -- Checking %@ for captureTouch responseâ€¦'.fmt(view.toString()));
+      if (SC.LOG_TOUCH_EVENTS) SC.Logger.info('  -- Checking %@ for captureTouch response…'.fmt(view.toString()));
 
       // see if it captured the touch
       if (view.tryToPerform('captureTouch', touch)) {
@@ -10840,12 +10644,12 @@ SC.ready(SC.RootResponder, SC.RootResponder.ready = function() {
   r = SC.RootResponder.responder = SC.RootResponder.create() ;
   r.setup() ;
 });
-
+; if ((typeof SC !== 'undefined') && SC && SC.Module && SC.Module.scriptDidLoad) SC.Module.scriptDidLoad('sproutcore/core_foundation');
 /* >>>>>>>>>> BEGIN source/system/device.js */
 // ==========================================================================
 // Project:   SproutCore - JavaScript Application Framework
-// Copyright: Â©2006-2011 Strobe Inc. and contributors.
-//            Portions Â©2008-2011 Apple Inc. All rights reserved.
+// Copyright: ©2006-2011 Strobe Inc. and contributors.
+//            Portions ©2008-2011 Apple Inc. All rights reserved.
 // License:   Licensed under MIT license (see license.js)
 // ==========================================================================
 
@@ -10859,48 +10663,48 @@ SC.LANDSCAPE_ORIENTATION = 'landscape';
 SC.NO_ORIENTATION = 'desktop'; // value 'desktop' for backwards compatibility
 
 /**
-  The device object allows you to check device specific properties such as
-  orientation and if the device is offline, as well as observe when they change
+  The device object allows you to check device specific properties such as 
+  orientation and if the device is offline, as well as observe when they change 
   state.
-
+  
   ## Orientation
   When a touch device changes orientation, the orientation property will be
   set accordingly which you can observe
-
+  
   ## Offline support
-  In order to build a good offline-capable web application, you need to know
-  when your app has gone offline so you can for instance queue your server
+  In order to build a good offline-capable web application, you need to know 
+  when your app has gone offline so you can for instance queue your server 
   requests for a later time or provide a specific UI/message.
-
-  Similarly, you also need to know when your application has returned to an
-  'online' state again, so that you can re-synchronize with the server or do
+  
+  Similarly, you also need to know when your application has returned to an 
+  'online' state again, so that you can re-synchronize with the server or do 
   anything else that might be needed.
-
+  
   By observing the 'isOffline' property you can be notified when this state
   changes. Note that this property is only connected to the navigator.onLine
   property, which is available on most modern browsers.
-
+  
 */
 SC.device = SC.Object.create({
-
+  
   /**
     Sets the orientation for touch devices, either SC.LANDSCAPE_ORIENTATION
     or SC.PORTRAIT_ORIENTATION. Will be SC.NO_ORIENTATION in the case of
     non-touch devices that are also not simulating touch events.
-
+  
     @property {String}
     @default SC.NO_ORIENTATION
   */
   orientation: SC.NO_ORIENTATION,
-
+  
   /**
     Indicates whether the device is currently online or offline. For browsers
     that do not support this feature, the default value is NO.
-
+    
     Is currently inverse of the navigator.onLine property. Most modern browsers
-    will update this property when switching to or from the browser's Offline
+    will update this property when switching to or from the browser's Offline 
     mode, and when losing/regaining network connectivity.
-
+    
     @property {Boolean}
     @default NO
   */
@@ -10929,12 +10733,12 @@ SC.device = SC.Object.create({
   */
   init: function() {
     arguments.callee.base.apply(this,arguments);
-
+    
     if (navigator && navigator.onLine === false) {
       this.set('isOffline', YES);
     }
   },
-
+  
   /**
     As soon as the DOM is up and running, make sure we attach necessary
     event handlers
@@ -10942,14 +10746,14 @@ SC.device = SC.Object.create({
   setup: function() {
     var responder = SC.RootResponder.responder;
     responder.listenFor(['online', 'offline'], window, this);
-
+    
     this.orientationHandlingShouldChange();
   },
-
+  
   // ..........................................................
   // ORIENTATION HANDLING
   //
-
+  
   /**
     Determines which method to use for orientation changes.
     Either detects orientation changes via the current size
@@ -10964,7 +10768,7 @@ SC.device = SC.Object.create({
       this.orientationchange();
     }
   },
-
+  
   /**
     @param {Hash} newSize The new size of the window
     @returns YES if the method altered the orientation, NO otherwise
@@ -10999,7 +10803,7 @@ SC.device = SC.Object.create({
     }
     return NO;
   },
-
+  
   /**
     Called when the window.onorientationchange event is fired.
   */
@@ -11012,33 +10816,33 @@ SC.device = SC.Object.create({
       }
     });
   },
-
+  
   orientationObserver: function(){
     var body = SC.$(document.body),
         orientation = this.get('orientation');
-
+    
     if (orientation === SC.PORTRAIT_ORIENTATION) {
       body.addClass('portrait');
     } else {
       body.removeClass('portrait');
     }
-
+    
     if (orientation === SC.LANDSCAPE_ORIENTATION) {
       body.addClass('landscape');
     } else {
       body.removeClass('landscape');
     }
   }.observes('orientation'),
-
-
+  
+  
   // ..........................................................
   // CONNECTION HANDLING
-  //
-
+  // 
+  
   online: function(evt) {
     this.set('isOffline', NO);
   },
-
+  
   offline: function(evt) {
     this.set('isOffline', YES);
   }
@@ -11052,12 +10856,12 @@ SC.device = SC.Object.create({
 SC.ready(function() {
   SC.device.setup() ;
 });
-
+; if ((typeof SC !== 'undefined') && SC && SC.Module && SC.Module.scriptDidLoad) SC.Module.scriptDidLoad('sproutcore/core_foundation');
 /* >>>>>>>>>> BEGIN source/system/page.js */
 // ==========================================================================
 // Project:   SproutCore - JavaScript Application Framework
-// Copyright: Â©2006-2011 Strobe Inc. and contributors.
-//            Portions Â©2008-2011 Apple Inc. All rights reserved.
+// Copyright: ©2006-2011 Strobe Inc. and contributors.
+//            Portions ©2008-2011 Apple Inc. All rights reserved.
 // License:   Licensed under MIT license (see license.js)
 // ==========================================================================
 
@@ -11067,28 +10871,28 @@ SC.ready(function() {
   A Page object is used to store a set of views that can be lazily configured
   as needed.  The page object works by overloading the get() method.  The
   first time you try to get the page
-
+  
   @extends SC.Object
 */
 SC.Page = SC.Object.extend(
 /** @scope SC.Page.prototype */ {
-
+  
   /**
     When you create a page, you can set it's "owner" property to an
     object outside the page definition. This allows views in the page
     to use the owner object as a target, (as well as other objects
     accessible through the owner object). E.g.
-
+    
         myButton: SC.ButtonView.design({
           title: 'Click me',
           target: SC.outlet('page.owner'),
           action: 'buttonClicked'
         })
-
+    
     Usually, you'll set 'owner' to the object defined in core.js.
   */
   owner: null,
-
+  
   get: function(key) {
     var value = this[key] ;
     if (value && value.isClass) {
@@ -11097,13 +10901,13 @@ SC.Page = SC.Object.extend(
       return value ;
     } else return arguments.callee.base.apply(this,arguments);
   },
-
+  
   /**
-    Finds all views defined on this page instances and builds them.  This is
+    Finds all views defined on this page instances and builds them.  This is 
     a quick, brute force way to wake up all of the views in a page object.  It
-    is not generally recommended. Instead, you should use get() or getPath()
+    is not generally recommended. Instead, you should use get() or getPath() 
     to retrieve views and rely on the lazy creation process to set them up.
-
+    
     @return {SC.Page} receiver
   */
   awake: function() {
@@ -11144,14 +10948,14 @@ SC.Page = SC.Object.extend(
   }
 
   //needsDesigner: YES,
-
+  
   //inDesignMode: YES
-
+    
 }) ;
 
 // ..........................................................
 // SUPPORT FOR LOADING PAGE DESIGNS
-//
+// 
 
 /** Calling design() on a page is the same as calling create() */
 SC.Page.design = SC.Page.create ;
@@ -11160,12 +10964,12 @@ SC.Page.design = SC.Page.create ;
 SC.Page.localization = function(attrs) { return attrs; };
 
 
-
+; if ((typeof SC !== 'undefined') && SC && SC.Module && SC.Module.scriptDidLoad) SC.Module.scriptDidLoad('sproutcore/core_foundation');
 /* >>>>>>>>>> BEGIN source/system/render_context.js */
 // ==========================================================================
 // Project:   SproutCore - JavaScript Application Framework
-// Copyright: Â©2006-2011 Strobe Inc. and contributors.
-//            Portions Â©2008-2011 Apple Inc. All rights reserved.
+// Copyright: ©2006-2011 Strobe Inc. and contributors.
+//            Portions ©2008-2011 Apple Inc. All rights reserved.
 // License:   Licensed under MIT license (see license.js)
 // ==========================================================================
 
@@ -12192,12 +11996,12 @@ SC.RenderContext.escapeHTML = function(text) {
   node = elem = null;
   return ret ;
 };
-
+; if ((typeof SC !== 'undefined') && SC && SC.Module && SC.Module.scriptDidLoad) SC.Module.scriptDidLoad('sproutcore/core_foundation');
 /* >>>>>>>>>> BEGIN source/system/selection_set.js */
 // ==========================================================================
 // Project:   SproutCore - JavaScript Application Framework
-// Copyright: Â©2006-2011 Strobe Inc. and contributors.
-//            Portions Â©2008-2011 Apple Inc. All rights reserved.
+// Copyright: ©2006-2011 Strobe Inc. and contributors.
+//            Portions ©2008-2011 Apple Inc. All rights reserved.
 // License:   Licensed under MIT license (see license.js)
 // ==========================================================================
 
@@ -12887,12 +12691,12 @@ SC.SelectionSet.prototype.clone = SC.SelectionSet.prototype.copy;
 */
 SC.SelectionSet.EMPTY = SC.SelectionSet.create().freeze();
 
-
+; if ((typeof SC !== 'undefined') && SC && SC.Module && SC.Module.scriptDidLoad) SC.Module.scriptDidLoad('sproutcore/core_foundation');
 /* >>>>>>>>>> BEGIN source/system/sparse_array.js */
 // ==========================================================================
 // Project:   SproutCore Costello - Property Observing Library
-// Copyright: Â©2006-2011 Strobe Inc. and contributors.
-//            Portions Â©2008-2011 Apple Inc. All rights reserved.
+// Copyright: ©2006-2011 Strobe Inc. and contributors.
+//            Portions ©2008-2011 Apple Inc. All rights reserved.
 // License:   Licensed under MIT license (see license.js)
 // ==========================================================================
 
@@ -12993,7 +12797,7 @@ SC.SparseArray = SC.Object.extend(SC.Observable, SC.Enumerable, SC.Array,
     added as range requests are completed.
   */
   requestedRangeIndex: null,
-
+  
   /**
     Make sure to create the index array during init so that it is not shared
     between all instances.
@@ -13001,13 +12805,13 @@ SC.SparseArray = SC.Object.extend(SC.Observable, SC.Enumerable, SC.Array,
   init: function() {
     arguments.callee.base.apply(this,arguments);
     this.requestedRangeIndex = [];
-
+    
     this._TMP_PROVIDE_ARRAY = [];
     this._TMP_PROVIDE_RANGE = { length: 1 };
     this._TMP_RANGE = {};
   },
-
-  /**
+  
+  /** 
     Returns the object at the specified index.  If the value for the index
     is currently undefined, invokes the didRequestIndex() method to notify
     the delegate.
@@ -13015,9 +12819,9 @@ SC.SparseArray = SC.Object.extend(SC.Observable, SC.Enumerable, SC.Array,
     The omitMaterializing flag ensures that the object will not be materialized,
     but it simply checks for the presence of an object at the specified index
     and will return YES (or undefined if not found). This is useful in the case
-    of SparseArrays, where you might NOT want to request the index to be loaded,
+    of SparseArrays, where you might NOT want to request the index to be loaded, 
     but simply need a shallow check to see if the position has been filled.
-
+    
     @param {Number} idx the index to get
     @param {Boolean} omitMaterializing
     @return {Object} the object
@@ -13191,7 +12995,7 @@ SC.SparseArray = SC.Object.extend(SC.Observable, SC.Enumerable, SC.Array,
         var start = range.start, loc = Math.min(start + range.length, content.length);
         while (--loc>=start) content[loc] = undefined;
       }
-    }
+    }    
     this.arrayContentDidChange(range.start, range.length, range.length) ; // notify
     return this ;
   },
@@ -13290,12 +13094,12 @@ SC.SparseArray = SC.Object.extend(SC.Observable, SC.Enumerable, SC.Array,
 SC.SparseArray.array = function(len) {
   return this.create({ _length: len||0 });
 };
-
+; if ((typeof SC !== 'undefined') && SC && SC.Module && SC.Module.scriptDidLoad) SC.Module.scriptDidLoad('sproutcore/core_foundation');
 /* >>>>>>>>>> BEGIN source/system/timer.js */
 // ==========================================================================
 // Project:   SproutCore - JavaScript Application Framework
-// Copyright: Â©2006-2011 Strobe Inc. and contributors.
-//            Portions Â©2008-2011 Apple Inc. All rights reserved.
+// Copyright: ©2006-2011 Strobe Inc. and contributors.
+//            Portions ©2008-2011 Apple Inc. All rights reserved.
 // License:   Licensed under MIT license (see license.js)
 // ==========================================================================
 
@@ -13840,12 +13644,12 @@ SC.Timer.returnTimerToPool = function(timer) {
 };
 
 
-
+; if ((typeof SC !== 'undefined') && SC && SC.Module && SC.Module.scriptDidLoad) SC.Module.scriptDidLoad('sproutcore/core_foundation');
 /* >>>>>>>>>> BEGIN source/system/utils.js */
 // ==========================================================================
 // Project:   SproutCore - JavaScript Application Framework
-// Copyright: Â©2006-2011 Strobe Inc. and contributors.
-//            Portions Â©2008-2011 Apple Inc. All rights reserved.
+// Copyright: ©2006-2011 Strobe Inc. and contributors.
+//            Portions ©2008-2011 Apple Inc. All rights reserved.
 // License:   Licensed under MIT license (see license.js)
 // ==========================================================================
 
@@ -13997,12 +13801,12 @@ SC.mixin( /** @scope SC */ {
   }
 
 }) ;
-
+; if ((typeof SC !== 'undefined') && SC && SC.Module && SC.Module.scriptDidLoad) SC.Module.scriptDidLoad('sproutcore/core_foundation');
 /* >>>>>>>>>> BEGIN source/system/utils/rect.js */
 // ==========================================================================
 // Project:   SproutCore - JavaScript Application Framework
-// Copyright: Â©2006-2011 Strobe Inc. and contributors.
-//            Â©2008-2011 Apple Inc. All rights reserved.
+// Copyright: ©2006-2011 Strobe Inc. and contributors.
+//            ©2008-2011 Apple Inc. All rights reserved.
 // License:   Licensed under MIT license (see license.js)
 // ==========================================================================
 SC.mixin( /** @scope SC */ {
@@ -14103,7 +13907,7 @@ SC.mixin( /** @scope SC */ {
 
 
 });
-
+; if ((typeof SC !== 'undefined') && SC && SC.Module && SC.Module.scriptDidLoad) SC.Module.scriptDidLoad('sproutcore/core_foundation');
 /* >>>>>>>>>> BEGIN source/views/template_collection.js */
 sc_require('views/template');
 
@@ -14349,7 +14153,7 @@ SC.TemplateCollectionView = SC.TemplateView.extend({
   }
 });
 
-
+; if ((typeof SC !== 'undefined') && SC && SC.Module && SC.Module.scriptDidLoad) SC.Module.scriptDidLoad('sproutcore/core_foundation');
 /* >>>>>>>>>> BEGIN source/views/view/layout_style.js */
 
 sc_require('ext/string');
@@ -14826,21 +14630,21 @@ SC.View.LayoutStyleCalculator = SC.Object.extend({
 
       if (pendingAnimations) {
         if (!activeAnimations) activeAnimations = {};
-
+        
         for (key in pendingAnimations) {
           if (!pendingAnimations.hasOwnProperty(key)) continue;
-
+          
           pendingAnimation = pendingAnimations[key];
           activeAnimation = activeAnimations[key];
           shouldCancel = NO;
-
+          
           if (newStyle[key] !== (currentStyle ? currentStyle[key] : null)) shouldCancel = YES;
-
+          
           // if we have a new animation (an animation property has changed), cancel current
           if (activeAnimation && (activeAnimation.duration !== pendingAnimation.duration || activeAnimation.timing !== pendingAnimation.timing)) {
             shouldCancel = YES;
           }
-
+          
           if (shouldCancel && activeAnimation) {
             if (callback = activeAnimation.callback) {
               if (transformsLength > 0) {
@@ -14852,14 +14656,14 @@ SC.View.LayoutStyleCalculator = SC.Object.extend({
                 this.runAnimationCallback(callback, null, key, YES);
               }
             }
-
+            
             this.removeAnimationFromLayout(key, YES);
           }
-
+          
           activeAnimations[key] = pendingAnimation;
         }
       }
-
+      
       this._activeAnimations = activeAnimations;
       this._pendingAnimations = null;
     }
@@ -14975,7 +14779,7 @@ SC.CoreView.runCallback = function(callback)/** @scope SC.View.prototype */{
 };
 
 SC.View.runCallback = SC.CoreView.runCallback;
-
+; if ((typeof SC !== 'undefined') && SC && SC.Module && SC.Module.scriptDidLoad) SC.Module.scriptDidLoad('sproutcore/core_foundation');
 /* >>>>>>>>>> BEGIN source/views/view/animation.js */
 sc_require("views/view");
 sc_require("views/view/layout_style");
@@ -15159,7 +14963,7 @@ SC.View.reopen(
     return NO;
   }.property('wantsAcceleratedLayer').cacheable()
 });
-
+; if ((typeof SC !== 'undefined') && SC && SC.Module && SC.Module.scriptDidLoad) SC.Module.scriptDidLoad('sproutcore/core_foundation');
 /* >>>>>>>>>> BEGIN source/views/view/cursor.js */
 sc_require("views/view");
 
@@ -15209,7 +15013,7 @@ SC.View.reopen(
   shouldInheritCursor: YES
 
 });
-
+; if ((typeof SC !== 'undefined') && SC && SC.Module && SC.Module.scriptDidLoad) SC.Module.scriptDidLoad('sproutcore/core_foundation');
 /* >>>>>>>>>> BEGIN source/views/view/enabled.js */
 sc_require("views/view");
 
@@ -15268,7 +15072,7 @@ SC.View.reopen({
     context.attr('aria-disabled', !isEnabled ? 'true' : null);
   }.enhance()
 });
-
+; if ((typeof SC !== 'undefined') && SC && SC.Module && SC.Module.scriptDidLoad) SC.Module.scriptDidLoad('sproutcore/core_foundation');
 /* >>>>>>>>>> BEGIN source/views/view/keyboard.js */
 sc_require("views/view");
 
@@ -15493,7 +15297,7 @@ SC.View.reopen({
     return ret ;
   }
 });
-
+; if ((typeof SC !== 'undefined') && SC && SC.Module && SC.Module.scriptDidLoad) SC.Module.scriptDidLoad('sproutcore/core_foundation');
 /* >>>>>>>>>> BEGIN source/views/view/layout.js */
 sc_require("views/view");
 sc_require('views/view/layout_style') ;
@@ -16127,7 +15931,7 @@ SC.View.reopen(
 
   /**
     This method is invoked on your view when the view resizes due to a layout
-    change or potentially due to the parent view resizing (if your viewâ€™s size
+    change or potentially due to the parent view resizing (if your view’s size
     depends on the size of your parent view).  You can override this method
     to implement your own layout if you like, such as performing a grid
     layout.
@@ -16611,7 +16415,7 @@ SC.View.mixin(
     // TODO: [EG] Create Top/Left/Width/Height to a Custom Layout conversion
   }
 });
-
+; if ((typeof SC !== 'undefined') && SC && SC.Module && SC.Module.scriptDidLoad) SC.Module.scriptDidLoad('sproutcore/core_foundation');
 /* >>>>>>>>>> BEGIN source/views/view/manipulation.js */
 sc_require("views/view");
 
@@ -17014,7 +16818,7 @@ SC.View.reopen({
     this.buildOut();
   }
 });
-
+; if ((typeof SC !== 'undefined') && SC && SC.Module && SC.Module.scriptDidLoad) SC.Module.scriptDidLoad('sproutcore/core_foundation');
 /* >>>>>>>>>> BEGIN source/views/view/theming.js */
 sc_require("views/view");
 
@@ -17385,9 +17189,9 @@ SC.View._RenderDelegateProxy = {
   Generates a computed property that will look up the specified property from
   the view's render delegate, if present. You may specify a default value to
   return if there is no such property or is no render delegate.
-
+  
   The generated property is read+write, so it may be overriden.
-
+  
   @param {String} propertyName The name of the property to get from the render delegate..
   @param {Value} def The default value to use if the property is not present.
 */
@@ -17410,13 +17214,13 @@ SC.propertyFromRenderDelegate = function(propertyName, def) {
     }
 
     if (ret !== undefined) return ret;
-
+    
     return def;
   }.property('renderDelegate').cacheable();
 };
 
 
-
+; if ((typeof SC !== 'undefined') && SC && SC.Module && SC.Module.scriptDidLoad) SC.Module.scriptDidLoad('sproutcore/core_foundation');
 /* >>>>>>>>>> BEGIN source/views/view/touch.js */
 sc_require("views/view");
 
@@ -17485,7 +17289,7 @@ SC.View.reopen(
     return YES;
   }
 });
-
+; if ((typeof SC !== 'undefined') && SC && SC.Module && SC.Module.scriptDidLoad) SC.Module.scriptDidLoad('sproutcore/core_foundation');
 /* >>>>>>>>>> BEGIN source/views/view/visibility.js */
 sc_require("views/view");
 
@@ -17605,12 +17409,12 @@ SC.View.reopen(
     this.recomputeIsVisibleInWindow();
   }.observes('isVisible')
 })
-
+; if ((typeof SC !== 'undefined') && SC && SC.Module && SC.Module.scriptDidLoad) SC.Module.scriptDidLoad('sproutcore/core_foundation');
 /* >>>>>>>>>> BEGIN source/panes/main.js */
 // ==========================================================================
 // Project:   SproutCore - JavaScript Application Framework
-// Copyright: Â©2006-2011 Strobe Inc. and contributors.
-//            Portions Â©2008-2011 Apple Inc. All rights reserved.
+// Copyright: ©2006-2011 Strobe Inc. and contributors.
+//            Portions ©2008-2011 Apple Inc. All rights reserved.
 // License:   Licensed under MIT license (see license.js)
 // ==========================================================================
 
@@ -17618,18 +17422,18 @@ sc_require('panes/pane');
 
 /** @class
 
-  Most SproutCore applications have a main pane, which dominates the
-  application page.  You can extend from this view to implement your own main
-  pane.  This class will automatically make itself main whenever you append it
-  to a document, removing any other main pane that might be currently in
-  place.  If you do have another already focused as the keyPane, this view
-  will also make itself key automatically.  The default way to use the main
+  Most SproutCore applications have a main pane, which dominates the 
+  application page.  You can extend from this view to implement your own main 
+  pane.  This class will automatically make itself main whenever you append it 
+  to a document, removing any other main pane that might be currently in 
+  place.  If you do have another already focused as the keyPane, this view 
+  will also make itself key automatically.  The default way to use the main 
   pane is to simply add it to your page like this:
-
+  
       SC.MainPane.create().append();
-
-  This will cause your root view to display.  The default layout for a
-  MainPane is to cover the entire document window and to resize with the
+  
+  This will cause your root view to display.  The default layout for a 
+  MainPane is to cover the entire document window and to resize with the 
   window.
 
   @extends SC.Pane
@@ -17638,7 +17442,7 @@ sc_require('panes/pane');
 SC.MainPane = SC.Pane.extend({
   /** @private */
   layout: { top: 0, left: 0, bottom: 0, right: 0, minHeight:200, minWidth:200 },
-
+  
   /** @private - extends SC.Pane's method */
   paneDidAttach: function() {
     var ret = arguments.callee.base.apply(this,arguments);
@@ -17647,14 +17451,14 @@ SC.MainPane = SC.Pane.extend({
     if (!responder.get('keyRootView')) responder.makeKeyPane(this);
     return ret ;
   },
-
+  
   /** @private */
   acceptsKeyPane: YES,
 
   /** @private */
   classNames: ['sc-main'],
-
+  
   ariaRole: 'application'
-
+  
 });
-
+; if ((typeof SC !== 'undefined') && SC && SC.Module && SC.Module.scriptDidLoad) SC.Module.scriptDidLoad('sproutcore/core_foundation');

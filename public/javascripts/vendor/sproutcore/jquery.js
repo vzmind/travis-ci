@@ -7178,11 +7178,11 @@ jQuery.each([ "Height", "Width" ], function( i, name ) {
 
 
 })(window);
-
+; if ((typeof SC !== 'undefined') && SC && SC.Module && SC.Module.scriptDidLoad) SC.Module.scriptDidLoad('sproutcore/jquery');
 /* >>>>>>>>>> BEGIN source/jquery-buffer.js */
 // ==========================================================================
 // Project:   SproutCore - JavaScript Application Framework
-// Copyright: Â©2008-2011 Apple Inc. All rights reserved.
+// Copyright: ©2008-2011 Apple Inc. All rights reserved.
 // License:   Licensed under MIT license (see license.js)
 // ==========================================================================
 // sc_require("jquery");
@@ -7570,11 +7570,11 @@ jQuery.Buffer = (function() {
 
   return Buffer;
 })();
-
+; if ((typeof SC !== 'undefined') && SC && SC.Module && SC.Module.scriptDidLoad) SC.Module.scriptDidLoad('sproutcore/jquery');
 /* >>>>>>>>>> BEGIN source/jquery-buffered.js */
 // ==========================================================================
 // Project:   SproutCore - JavaScript Application Framework
-// Copyright: Â©2008-2011 Apple Inc. All rights reserved.
+// Copyright: ©2008-2011 Apple Inc. All rights reserved.
 // License:   Licensed under MIT license (see license.js)
 // ==========================================================================
 /*global Buffer */
@@ -7782,11 +7782,11 @@ jQuery.extend(jQuery.bufferedJQuery.prototype, {
 
 
 })();
-
+; if ((typeof SC !== 'undefined') && SC && SC.Module && SC.Module.scriptDidLoad) SC.Module.scriptDidLoad('sproutcore/jquery');
 /* >>>>>>>>>> BEGIN source/jquery-sc.js */
 // ==========================================================================
 // Project:   SproutCore - JavaScript Application Framework
-// Copyright: Â©2008-2011 Apple Inc. All rights reserved.
+// Copyright: ©2008-2011 Apple Inc. All rights reserved.
 // License:   Licensed under MIT license (see license.js)
 // ==========================================================================
 // sc_require("jquery-buffer");
@@ -7796,4 +7796,4 @@ jQuery.Buffer.scheduleFlushing = function() {
   });
   this.flushingScheduled = true;
 };
-
+; if ((typeof SC !== 'undefined') && SC && SC.Module && SC.Module.scriptDidLoad) SC.Module.scriptDidLoad('sproutcore/jquery');

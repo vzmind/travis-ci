@@ -3,8 +3,8 @@
  * @license
  * ==========================================================================
  * SproutCore Costello -- Property Observing Library
- * Copyright Â©2006-2011, Strobe Inc. and contributors.
- * Portions copyright Â©2008-2011 Apple Inc. All rights reserved.
+ * Copyright ©2006-2011, Strobe Inc. and contributors.
+ * Portions copyright ©2008-2011 Apple Inc. All rights reserved.
  * 
  * Permission is hereby granted, free of charge, to any person obtaining a 
  * copy of this software and associated documentation files (the "Software"), 
@@ -28,12 +28,12 @@
  * 
  * ==========================================================================
  */
-
+; if ((typeof SC !== 'undefined') && SC && SC.Module && SC.Module.scriptDidLoad) SC.Module.scriptDidLoad('sproutcore/runtime');
 /* >>>>>>>>>> BEGIN source/core.js */
 // ==========================================================================
 // Project:   SproutCore Costello - Property Observing Library
-// Copyright: Â©2006-2011 Strobe Inc. and contributors.
-//            Portions Â©2008-2011 Apple Inc. All rights reserved.
+// Copyright: ©2006-2011 Strobe Inc. and contributors.
+//            Portions ©2008-2011 Apple Inc. All rights reserved.
 // License:   Licensed under MIT license (see license.js)
 // ==========================================================================
 
@@ -788,1438 +788,12 @@ SC.ORDER_DEFINITION = [ SC.T_ERROR,
                         SC.T_OBJECT,
                         SC.T_FUNCTION,
                         SC.T_CLASS ];
-
-/* >>>>>>>>>> BEGIN source/debug/test_suites/array/base.js */
-// ==========================================================================
-// Project:   SproutCore Costello - Property Observing Library
-// Copyright: Â©2006-2011 Strobe Inc. and contributors.
-//            Portions Â©2008-2011 Apple Inc. All rights reserved.
-// License:   Licensed under MIT license (see license.js)
-// ==========================================================================
-
-/*globals module test ok equals same SC */
-
-/**
-  Adds a new module of unit tests to verify that the passed object implements
-  the SC.Array interface.  To generate, call the ArrayTests array with a 
-  test descriptor.  Any properties you pass will be applied to the ArrayTests
-  descendent created by the create method.
-  
-  You should pass at least a newObject() method, which should return a new 
-  instance of the object you want to have tested.  You can also implement the
-  destroyObject() method, which should destroy a passed object.
-  
-      SC.ArrayTests.generate("Array", {
-        newObject:  function() { return []; }
-      });
-  
-  newObject must accept an optional array indicating the number of items
-  that should be in the array.  You should initialize the the item with 
-  that many items.  The actual objects you add are up to you.
-  
-  Unit tests themselves can be added by calling the define() method.  The
-  function you pass will be invoked whenever the ArrayTests are generated. The
-  parameter passed will be the instance of ArrayTests you should work with.
-  
-      SC.ArrayTests.define(function(T) {
-        T.module("length");
-      
-        test("verify length", function() {
-          var ary = T.newObject();
-          equals(ary.get('length'), 0, 'should have 0 initial length');
-        });
-      }
-*/
-
-SC.TestSuite = /** @scope SC.TestSuite.prototype */ {
-
-  /**
-    Call this method to define a new test suite.  Pass one or more hashes of
-    properties you want added to the new suite.  
-    
-    @param {Hash} attrs one or more attribute hashes
-    @returns {SC.TestSuite} subclass of suite.
-  */
-  create: function(desc, attrs) {
-    var len = arguments.length,
-        ret = SC.beget(this),
-        idx;
-        
-    // copy any attributes
-    for(idx=1;idx<len;idx++) SC.mixin(ret, arguments[idx]);
-    
-    if (desc) ret.basedesc = desc;
-    
-    // clone so that new definitions will be kept separate
-    ret.definitions = ret.definitions.slice();
-    
-    return ret ;
-  },
-
-  /**
-    Generate a new test suite instance, adding the suite definitions to the 
-    current test plan.  Pass a description of the test suite as well as one or
-    more attribute hashes to apply to the test plan.
-    
-    The description you add will be prefixed in front of the 'desc' property
-    on the test plan itself.
-    
-    @param {String} desc suite description
-    @param {Hash} attrs one or more attribute hashes
-    @returns {SC.TestSuite} suite instance
-  */
-  generate: function(desc, attrs) {
-    var len = arguments.length,
-        ret = SC.beget(this),
-        idx, defs;
-        
-    // apply attributes - skip first argument b/c it is a string
-    for(idx=1;idx<len;idx++) SC.mixin(ret, arguments[idx]);    
-    ret.subdesc = desc ;
-    
-    // invoke definitions
-    defs = ret.definitions ;
-    len = defs.length;
-    for(idx=0;idx<len;idx++) defs[idx].call(ret, ret);
-    
-    return ret ;
-  },
-  
-  /**
-    Adds the passed function to the array of definitions that will be invoked
-    when the suite is generated.
-    
-    The passed function should expect to have the TestSuite instance passed
-    as the first and only parameter.  The function should actually define 
-    a module and tests, which will be added to the test suite.
-    
-    @param {Function} func definition function
-    @returns {SC.TestSuite} receiver
-  */
-  define: function(func) {
-    this.definitions.push(func);
-    return this ;
-  },
-  
-  /** 
-    Definition functions.  These are invoked in order when  you generate a 
-    suite to add unit tests and modules to the test plan.
-  */
-  definitions: [],
-  
-  /**
-    Generates a module description by merging the based description, sub 
-    description and the passed description.  This is usually used inside of 
-    a suite definition function.
-    
-    @param {String} str detailed description for this module
-    @returns {String} generated description
-  */
-  desc: function(str) {
-    return this.basedesc.fmt(this.subdesc, str);
-  },
-  
-  /**
-    The base description string.  This should accept two formatting options,
-    a sub description and a detailed description.  This is the description
-    set when you call extend()
-  */
-  basedesc: "%@ > %@",
-  
-  /**
-    Default setup method for use with modules.  This method will call the
-    newObject() method and set its return value on the object property of 
-    the receiver.
-  */
-  setup: function() {
-    this.object = this.newObject();
-  },
-  
-  /**
-    Default teardown method for use with modules.  This method will call the
-    destroyObejct() method, passing the current object property on the 
-    receiver.  It will also clear the object property.
-  */
-  teardown: function() {
-    if (this.object) this.destroyObject(this.object);
-    this.object = null;
-  },
-  
-  /**
-    Default method to create a new object instance.  You will probably want
-    to override this method when you generate() a suite with a function that
-    can generate the type of object you want to test.
-    
-    @returns {Object} generated object
-  */
-  newObject: function() { return null; },
-  
-  /**
-    Default method to destroy a generated object instance after a test has 
-    completed.  If you override newObject() you can also overried this method
-    to cleanup the object you just created.
-    
-    Default method does nothing.
-  */
-  destroyObject: function(obj) { 
-    // do nothing.
-  },
-  
-  /**
-    Generates a default module with the description you provide.  This is 
-    a convenience function for use inside of a definition function.  You could
-    do the same thing by calling:
-    
-        var T = this ;
-        module(T.desc(description), {
-          setup: function() { T.setup(); },
-          teardown: function() { T.teardown(); }
-        }
-    
-    @param {String} desc detailed descrition
-    @returns {SC.TestSuite} receiver
-  */
-  module: function(desc) {
-    var T = this ;
-    module(T.desc(desc), {
-      setup: function() { T.setup(); },
-      teardown: function() { T.teardown(); }
-    });
-  }
-  
-};
-
-SC.ArraySuite = SC.TestSuite.create("Verify SC.Array compliance: %@#%@", {
-  
-  /** 
-    Override to return a set of simple values such as numbers or strings.
-    Return null if your set does not support primitives.
-  */
-  simple: function(amt) {
-    var ret = [];
-    if (amt === undefined) amt = 0;
-    while(--amt >= 0) ret[amt] = amt ;
-    return ret ;
-  },
-
-  /**  Override with the name of the key we should get/set on hashes */
-  hashValueKey: 'foo',
-  
-  /**
-    Override to return hashes of values if supported.  Or return null.
-  */
-  hashes: function(amt) {
-    var ret = [];  
-    if (amt === undefined) amt = 0;
-    while(--amt >= 0) {
-      ret[amt] = {};
-      ret[amt][this.hashValueKey] = amt ;
-    }
-    return ret ;
-  },
-  
-  /** Override with the name of the key we should get/set on objects */
-  objectValueKey: "foo",
-  
-  /**
-    Override to return observable objects if supported.  Or return null.
-  */
-  objects: function(amt) {
-    var ret = [];  
-    if (amt === undefined) amt = 0;
-    while(--amt >= 0) {
-      var o = {};
-      o[this.objectValueKey] = amt ;
-      ret[amt] = SC.Object.create(o);
-    }
-    return ret ;
-  },
-
-  /**
-    Returns an array of content items in your preferred format.  This will
-    be used whenever the test does not care about the specific object content.
-  */
-  expected: function(amt) {
-    return this.simple(amt);
-  },
-  
-  /**
-    Example of how to implement newObject
-  */
-  newObject: function(expected) {
-    if (!expected || SC.typeOf(expected) === SC.T_NUMBER) {
-      expected = this.expected(expected);
-    }
-    
-    return expected.slice();
-  },
-  
-  
-  /**
-    Creates an observer object for use when tracking object modifications.
-  */
-  observer: function(obj) {
-    return SC.Object.create({
-
-      // ..........................................................
-      // NORMAL OBSERVER TESTING
-      // 
-      
-      observer: function(target, key, value) {
-        this.notified[key] = true ;
-        this.notifiedValue[key] = value ;
-      },
-
-      resetObservers: function() {
-        this.notified = {} ;
-        this.notifiedValue = {} ;
-      },
-
-      observe: function() {
-        var keys = SC.$A(arguments) ;
-        var loc = keys.length ;
-        while(--loc >= 0) {
-          obj.addObserver(keys[loc], this, this.observer) ;
-        }
-        return this ;
-      },
-
-      didNotify: function(key) {
-        return !!this.notified[key] ;
-      },
-
-      init: function() {
-        arguments.callee.base.apply(this,arguments) ;
-        this.resetObservers() ;
-      },
-      
-      // ..........................................................
-      // RANGE OBSERVER TESTING
-      // 
-      
-      callCount: 0,
-
-      // call afterward to verify
-      expectRangeChange: function(source, object, key, indexes, context) {
-        equals(this.callCount, 1, 'expects one callback');
-        
-        if (source !== undefined && source !== NO) {
-          ok(this.source, source, 'source should equal array');
-        }
-        
-        if (object !== undefined && object !== NO) {
-          equals(this.object, object, 'object');
-        }
-        
-        if (key !== undefined && key !== NO) {
-          equals(this.key, key, 'key');
-        }
-        
-        if (indexes !== undefined && indexes !== NO) {
-          if (indexes.isIndexSet) {
-            ok(this.indexes && this.indexes.isIndexSet, 'indexes should be index set');
-            ok(indexes.isEqual(this.indexes), 'indexes should match %@ (actual: %@)'.fmt(indexes, this.indexes));
-          } else equals(this.indexes, indexes, 'indexes');
-        }
-          
-        if (context !== undefined && context !== NO) {
-          equals(this.context, context, 'context should match');
-        }
-        
-      },
-      
-      rangeDidChange: function(source, object, key, indexes, context) {
-        this.callCount++ ;
-        this.source = source ;
-        this.object = object ;
-        this.key    = key ;
-        
-        // clone this because the index set may be reused after this callback
-        // runs.
-        this.indexes = (indexes && indexes.isIndexSet) ? indexes.clone() : indexes;
-        this.context = context ;          
-      }
-      
-    });  
-  },
-  
-  /**
-    Verifies that the passed object matches the passed array.
-  */
-  validateAfter: function(obj, after, observer, lengthDidChange, enumerableDidChange) {
-    var loc = after.length;
-    equals(obj.get('length'), loc, 'length should update (%@)'.fmt(obj)) ;
-    while(--loc >= 0) {
-      equals(obj.objectAt(loc), after[loc], 'objectAt(%@)'.fmt(loc)) ;
-    }
-
-    // note: we only test that the length notification happens when we expect
-    // it.  If we don't expect a length notification, it is OK for a class
-    // to trigger a change anyway so we don't check for this case.
-    if (enumerableDidChange !== NO) {
-      equals(observer.didNotify("[]"), YES, 'should notify []') ;
-    }
-    
-    if (lengthDidChange) {
-      equals(observer.didNotify('length'), YES, 'should notify length change');
-    }
-  }
-  
-});
-
-// Simple verfication of length
-SC.ArraySuite.define(function(T) {
-  T.module("length");
-  
-  test("should return 0 on empty array", function() {
-    equals(T.object.get('length'), 0, 'should have empty length');
-  });
-  
-  test("should return array length", function() {
-    var obj = T.newObject(3);
-    equals(obj.get('length'), 3, 'should return length');
-  });
-  
-});
-
-/* >>>>>>>>>> BEGIN source/debug/test_suites/array/indexOf.js */
-// ==========================================================================
-// Project:   SproutCore Costello - Property Observing Library
-// Copyright: Â©2006-2011 Strobe Inc. and contributors.
-//            Portions Â©2008-2011 Apple Inc. All rights reserved.
-// License:   Licensed under MIT license (see license.js)
-// ==========================================================================
-
-/*globals module test ok equals same CoreTest */
-
-sc_require('debug/test_suites/array/base');
-
-SC.ArraySuite.define(function(T) {
-  
-  T.module("indexOf");
-  
-  test("should return index of object", function() {
-    var expected = T.expected(3), 
-        obj      = T.newObject(3), 
-        len      = 3,
-        idx;
-        
-    for(idx=0;idx<len;idx++) {
-      equals(obj.indexOf(expected[idx]), idx, 'obj.indexOf(%@) should match idx'.fmt(expected[idx]));
-    }
-    
-  });
-  
-  test("should return -1 when requesting object not in index", function() {
-    var obj = T.newObject(3), foo = {};
-    equals(obj.indexOf(foo), -1, 'obj.indexOf(foo) should be < 0');
-  });
-  
-});
-
-/* >>>>>>>>>> BEGIN source/debug/test_suites/array/insertAt.js */
-// ==========================================================================
-// Project:   SproutCore Costello - Property Observing Library
-// Copyright: Â©2006-2011 Strobe Inc. and contributors.
-//            Portions Â©2008-2011 Apple Inc. All rights reserved.
-// License:   Licensed under MIT license (see license.js)
-// ==========================================================================
-
-/*globals module test ok equals same CoreTest */
-
-sc_require('debug/test_suites/array/base');
-
-SC.ArraySuite.define(function(T) {
-  
-  var observer, obj ;
-  
-  module(T.desc("insertAt"), {
-    setup: function() {
-      obj = T.newObject();
-      observer = T.observer(obj);
-    }
-  });
-
-  test("[].insertAt(0, X) => [X] + notify", function() {
-
-    var after = T.expected(1);
-    
-    observer.observe('[]') ;
-    obj.insertAt(0, after) ;
-    T.validateAfter(obj, after, observer);
-  });
-  
-  test("[].insertAt(200,X) => OUT_OF_RANGE_EXCEPTION exception", function() {
-    var didThrow = NO ;
-    try {
-      obj.insertAt(200, T.expected(1));
-    } catch (e) {
-      equals(e, SC.OUT_OF_RANGE_EXCEPTION, 'should throw SC.OUT_OF_RANGE_EXCEPTION');
-      didThrow = YES ;
-    }
-    ok(didThrow, 'should raise exception');
-  });
-
-  test("[A].insertAt(0, X) => [X,A] + notify", function() {
-    var exp = T.expected(2), 
-        before  = exp.slice(0,1),
-        replace = exp[1],
-        after   = [replace, before[0]];
-    
-    obj.replace(0,0,before);
-    observer.observe('[]');
-    
-    obj.insertAt(0, replace);
-    T.validateAfter(obj, after, observer);
-  });
-  
-  test("[A].insertAt(1, X) => [A,X] + notify", function() {
-    var exp = T.expected(2), 
-        before  = exp.slice(0,1),
-        replace = exp[1],
-        after   = [before[0], replace];
-    
-    obj.replace(0,0,before);
-    observer.observe('[]');
-    
-    obj.insertAt(1, replace);
-    T.validateAfter(obj, after, observer);
-  });
-
-  test("[A].insertAt(200,X) => OUT_OF_RANGE exception", function() {
-    obj.replace(0,0, T.expected(1)); // add an item
-    
-    var didThrow = NO ;
-    try {
-      obj.insertAt(200, T.expected(1));
-    } catch (e) {
-      equals(e, SC.OUT_OF_RANGE_EXCEPTION, 'should throw SC.OUT_OF_RANGE_EXCEPTION');
-      didThrow = YES ;
-    }
-    ok(didThrow, 'should raise exception');
-  });
-  
-  test("[A,B,C].insertAt(0,X) => [X,A,B,C] + notify", function() {
-    var exp = T.expected(4), 
-        before  = exp.slice(1),
-        replace = exp[0],
-        after   = [replace, before[0], before[1], before[2]];
-    
-    obj.replace(0,0,before);
-    observer.observe('[]');
-    
-    obj.insertAt(0, replace);
-    T.validateAfter(obj, after, observer);
-  });
-  
-  test("[A,B,C].insertAt(1,X) => [A,X,B,C] + notify", function() {
-    var exp = T.expected(4), 
-        before  = exp.slice(1),
-        replace = exp[0],
-        after   = [before[0], replace, before[1], before[2]];
-    
-    obj.replace(0,0,before);
-    observer.observe('[]');
-    
-    obj.insertAt(1, replace);
-    T.validateAfter(obj, after, observer);
-  });
-
-  test("[A,B,C].insertAt(3,X) => [A,B,C,X] + notify", function() {
-    var exp = T.expected(4), 
-        before  = exp.slice(1),
-        replace = exp[0],
-        after   = [before[0], before[1], before[2], replace];
-    
-    obj.replace(0,0,before);
-    observer.observe('[]');
-    
-    obj.insertAt(3, replace);
-    T.validateAfter(obj, after, observer);
-  });
-  
-});
-
-/* >>>>>>>>>> BEGIN source/debug/test_suites/array/objectAt.js */
-// ==========================================================================
-// Project:   SproutCore Costello - Property Observing Library
-// Copyright: Â©2006-2011 Strobe Inc. and contributors.
-//            Portions Â©2008-2011 Apple Inc. All rights reserved.
-// License:   Licensed under MIT license (see license.js)
-// ==========================================================================
-
-/*globals module test ok equals same CoreTest */
-
-sc_require('debug/test_suites/array/base');
-
-SC.ArraySuite.define(function(T) {
-  
-  T.module("objectAt");
-  
-  test("should return object at specified index", function() {
-    var expected = T.expected(3), 
-        obj      = T.newObject(3), 
-        len      = 3,
-        idx;
-        
-    for(idx=0;idx<len;idx++) {
-      equals(obj.objectAt(idx), expected[idx], 'obj.objectAt(%@) should match'.fmt(idx));
-    }
-    
-  });
-  
-  test("should return undefined when requesting objects beyond index", function() {
-    var obj = T.newObject(3);
-    equals(obj.objectAt(5), undefined, 'should return undefined for obj.objectAt(5) when len = 3');
-    equals(T.object.objectAt(0), undefined, 'should return undefined for obj.objectAt(0) when len = 0');
-  });
-  
-});
-
-/* >>>>>>>>>> BEGIN source/debug/test_suites/array/popObject.js */
-// ==========================================================================
-// Project:   SproutCore Costello - Property Observing Library
-// Copyright: Â©2006-2011 Strobe Inc. and contributors.
-//            Portions Â©2008-2011 Apple Inc. All rights reserved.
-// License:   Licensed under MIT license (see license.js)
-// ==========================================================================
-
-/*globals module test ok equals same CoreTest */
-
-sc_require('debug/test_suites/array/base');
-
-SC.ArraySuite.define(function(T) {
-  
-  var observer, obj ;
-  
-  module(T.desc("popObject"), {
-    setup: function() {
-      obj = T.newObject();
-      observer = T.observer(obj);
-    }
-  });
-
-  test("[].popObject() => [] + returns undefined + NO notify", function() {
-    observer.observe('[]', 'length') ;
-    equals(obj.popObject(), undefined, 'should return undefined') ;
-    T.validateAfter(obj, [], observer, NO, NO);
-  });
-
-  test("[X].popObject() => [] + notify", function() {
-    var exp = T.expected(1)[0];
-    
-    obj.replace(0,0, [exp]);
-    observer.observe('[]', 'length') ;
-
-    equals(obj.popObject(), exp, 'should return popped object') ;
-    T.validateAfter(obj, [], observer, YES, YES);
-  });
-
-  test("[A,B,C].popObject() => [A,B] + notify", function() {
-    var before  = T.expected(3),
-        value   = before[2],
-        after   = before.slice(0,2);
-        
-    obj.replace(0,0,before);
-    observer.observe('[]', 'length') ;
-    equals(obj.popObject(), value, 'should return popped object') ;
-    T.validateAfter(obj, after, observer, YES);
-  });
-  
-});
-
-/* >>>>>>>>>> BEGIN source/debug/test_suites/array/pushObject.js */
-// ==========================================================================
-// Project:   SproutCore Costello - Property Observing Library
-// Copyright: Â©2006-2011 Strobe Inc. and contributors.
-//            Portions Â©2008-2011 Apple Inc. All rights reserved.
-// License:   Licensed under MIT license (see license.js)
-// ==========================================================================
-
-/*globals module test ok equals same CoreTest */
-
-sc_require('debug/test_suites/array/base');
-
-SC.ArraySuite.define(function(T) {
-  
-  var observer, obj ;
-  
-  module(T.desc("pushObject"), {
-    setup: function() {
-      obj = T.newObject();
-      observer = T.observer(obj);
-    }
-  });
-
-  test("returns pushed object", function() {
-    var exp = T.expected(1)[0];
-    equals(obj.pushObject(exp), exp, 'should return receiver');
-  });
-  
-  test("[].pushObject(X) => [X] + notify", function() {
-    var exp = T.expected(1);
-    observer.observe('[]', 'length') ;
-    obj.pushObject(exp[0]) ;
-    T.validateAfter(obj, exp, observer, YES);
-  });
-
-  test("[A,B,C].pushObject(X) => [A,B,C,X] + notify", function() {
-    var after  = T.expected(4),
-        before = after.slice(0,3),
-        value  = after[3];
-        
-    obj.replace(0,0,before);
-    observer.observe('[]', 'length') ;
-    obj.pushObject(value) ;
-    T.validateAfter(obj, after, observer, YES);
-  });
-  
-});
-
-/* >>>>>>>>>> BEGIN source/debug/test_suites/array/rangeObserver.js */
-// ==========================================================================
-// Project:   SproutCore Costello - Property Observing Library
-// Copyright: Â©2006-2011 Strobe Inc. and contributors.
-//            Portions Â©2008-2011 Apple Inc. All rights reserved.
-// License:   Licensed under MIT license (see license.js)
-// ==========================================================================
-
-/*globals module test ok equals same CoreTest */
-
-sc_require('debug/test_suites/array/base');
-
-SC.ArraySuite.define(function(T) {
-
-  var expected, array, observer, rangeObserver ;
-
-  // ..........................................................
-  // MODULE: isDeep = YES
-  //
-  module(T.desc("RangeObserver Methods"), {
-    setup: function() {
-      expected = T.objects(10);
-      array = T.newObject(expected);
-
-      observer = T.observer();
-      rangeObserver = array.addRangeObserver(SC.IndexSet.create(2,3),
-                observer, observer.rangeDidChange, null, NO);
-
-    },
-
-    teardown: function() {
-      T.destroyObject(array);
-    }
-  });
-
-  test("returns RangeObserver object", function() {
-    ok(rangeObserver && rangeObserver.isRangeObserver, 'returns a range observer object');
-  });
-
-  // NOTE: Deep Property Observing is disabled for SproutCore 1.0
-  //
-  // // ..........................................................
-  // // EDIT PROPERTIES
-  // //
-  //
-  // test("editing property on object in range should fire observer", function() {
-  //   var obj = array.objectAt(3);
-  //   obj.set('foo', 'BAR');
-  //   observer.expectRangeChange(array, obj, 'foo', SC.IndexSet.create(3));
-  // });
-  //
-  // test("editing property on object outside of range should NOT fire observer", function() {
-  //   var obj = array.objectAt(0);
-  //   obj.set('foo', 'BAR');
-  //   equals(observer.callCount, 0, 'observer should not fire');
-  // });
-  //
-  //
-  // test("updating property after changing observer range", function() {
-  //   array.updateRangeObserver(rangeObserver, SC.IndexSet.create(8,2));
-  //   observer.callCount = 0 ;// reset b/c callback should happen here
-  //
-  //   var obj = array.objectAt(3);
-  //   obj.set('foo', 'BAR');
-  //   equals(observer.callCount, 0, 'modifying object in old range should not fire observer');
-  //
-  //   obj = array.objectAt(9);
-  //   obj.set('foo', 'BAR');
-  //   observer.expectRangeChange(array, obj, 'foo', SC.IndexSet.create(9));
-  //
-  // });
-  //
-  // test("updating a property after removing an range should not longer update", function() {
-  //   array.removeRangeObserver(rangeObserver);
-  //
-  //   observer.callCount = 0 ;// reset b/c callback should happen here
-  //
-  //   var obj = array.objectAt(3);
-  //   obj.set('foo', 'BAR');
-  //   equals(observer.callCount, 0, 'modifying object in old range should not fire observer');
-  //
-  // });
-
-  // ..........................................................
-  // REPLACE
-  //
-
-  test("replacing object in range fires observer with index set covering only the effected item", function() {
-    array.replace(2, 1, T.objects(1));
-    observer.expectRangeChange(array, null, '[]', SC.IndexSet.create(2,1));
-  });
-
-  test("replacing object before range", function() {
-    array.replace(0, 1, T.objects(1));
-    equals(observer.callCount, 0, 'observer should not fire');
-  });
-
-  test("replacing object after range", function() {
-    array.replace(9, 1, T.objects(1));
-    equals(observer.callCount, 0, 'observer should not fire');
-  });
-
-  test("updating range should be reflected by replace operations", function() {
-    array.updateRangeObserver(rangeObserver, SC.IndexSet.create(9,1));
-
-    observer.callCount = 0 ;
-    array.replace(2, 1, T.objects(1));
-    equals(observer.callCount, 0, 'observer should not fire');
-
-    observer.callCount = 0 ;
-    array.replace(0, 1, T.objects(1));
-    equals(observer.callCount, 0, 'observer should not fire');
-
-    observer.callCount = 0 ;
-    array.replace(9, 1, T.objects(1));
-    observer.expectRangeChange(array, null, '[]', SC.IndexSet.create(9));
-  });
-
-  test("removing range should no longer fire observers", function() {
-    array.removeRangeObserver(rangeObserver);
-
-    observer.callCount = 0 ;
-    array.replace(2, 1, T.objects(1));
-    equals(observer.callCount, 0, 'observer should not fire');
-
-    observer.callCount = 0 ;
-    array.replace(0, 1, T.objects(1));
-    equals(observer.callCount, 0, 'observer should not fire');
-
-    observer.callCount = 0 ;
-    array.replace(9, 1, T.objects(1));
-    equals(observer.callCount, 0, 'observer should not fire');
-  });
-
-  // ..........................................................
-  // GROUPED CHANGES
-  //
-
-  test("grouping property changes should notify observer only once at end with single IndexSet", function() {
-
-    array.beginPropertyChanges();
-    array.replace(2, 1, T.objects(1));
-    array.replace(4, 1, T.objects(1));
-    array.endPropertyChanges();
-
-    var set = SC.IndexSet.create().add(2).add(4); // both edits
-    observer.expectRangeChange(array, null, '[]', set);
-  });
-
-  test("should notify observer when some but not all grouped changes are inside range", function() {
-
-    array.beginPropertyChanges();
-    array.replace(2, 1, T.objects(1));
-    array.replace(9, 1, T.objects(1));
-    array.endPropertyChanges();
-
-    var set = SC.IndexSet.create().add(2).add(9); // both edits
-    observer.expectRangeChange(array, null, '[]', set);
-  });
-
-  test("should NOT notify observer when grouping changes all outside of observer", function() {
-
-    array.beginPropertyChanges();
-    array.replace(0, 1, T.objects(1));
-    array.replace(9, 1, T.objects(1));
-    array.endPropertyChanges();
-
-    equals(observer.callCount, 0, 'observer should not fire');
-  });
-
-  // ..........................................................
-  // INSERTING
-  //
-
-  test("insertAt in range fires observer with index set covering edit to end of array", function() {
-    var newItem = T.objects(1)[0],
-        set     = SC.IndexSet.create(3,array.get('length')-2);
-
-    array.insertAt(3, newItem);
-    observer.expectRangeChange(array, null, '[]', set);
-  });
-
-  test("insertAt BEFORE range fires observer with index set covering edit to end of array", function() {
-    var newItem = T.objects(1)[0],
-        set     = SC.IndexSet.create(0,array.get('length')+1);
-
-    array.insertAt(0, newItem);
-    observer.expectRangeChange(array, null, '[]', set);
-  });
-
-  test("insertAt AFTER range does not fire observer", function() {
-    var newItem = T.objects(1)[0];
-
-    array.insertAt(9, newItem);
-    equals(observer.callCount, 0, 'observer should not fire');
-  });
-
-  // ..........................................................
-  // REMOVING
-  //
-
-  test("removeAt IN range fires observer with index set covering edit to end of array plus delta", function() {
-    var set     = SC.IndexSet.create(3,array.get('length')-3);
-    array.removeAt(3);
-    observer.expectRangeChange(array, null, '[]', set);
-  });
-
-  test("removeAt BEFORE range fires observer with index set covering edit to end of array plus delta", function() {
-    var set     = SC.IndexSet.create(0,array.get('length'));
-    array.removeAt(0);
-    observer.expectRangeChange(array, null, '[]', set);
-  });
-
-  test("removeAt AFTER range does not fire observer", function() {
-    array.removeAt(9);
-    equals(observer.callCount, 0, 'observer should not fire');
-  });
-
-
-
-
-  // ..........................................................
-  // MODULE: No explicit range
-  //
-  module(T.desc("RangeObserver Methods - No explicit range"), {
-    setup: function() {
-      expected = T.objects(10);
-      array = T.newObject(expected);
-
-      observer = T.observer();
-      rangeObserver = array.addRangeObserver(null, observer,
-                          observer.rangeDidChange, null, NO);
-
-    },
-
-    teardown: function() {
-      T.destroyObject(array);
-    }
-  });
-
-  test("returns RangeObserver object", function() {
-    ok(rangeObserver && rangeObserver.isRangeObserver, 'returns a range observer object');
-  });
-
-  // ..........................................................
-  // REPLACE
-  //
-
-  test("replacing object in range fires observer with index set covering only the effected item", function() {
-    array.replace(2, 1, T.objects(1));
-    observer.expectRangeChange(array, null, '[]', SC.IndexSet.create(2,1));
-  });
-
-  test("replacing at start of array", function() {
-    array.replace(0, 1, T.objects(1));
-    observer.expectRangeChange(array, null, '[]', SC.IndexSet.create(0,1));
-  });
-
-  test("replacing object at end of array", function() {
-    array.replace(9, 1, T.objects(1));
-    observer.expectRangeChange(array, null, '[]', SC.IndexSet.create(9,1));
-  });
-
-  test("removing range should no longer fire observers", function() {
-    array.removeRangeObserver(rangeObserver);
-
-    observer.callCount = 0 ;
-    array.replace(2, 1, T.objects(1));
-    equals(observer.callCount, 0, 'observer should not fire');
-
-    observer.callCount = 0 ;
-    array.replace(0, 1, T.objects(1));
-    equals(observer.callCount, 0, 'observer should not fire');
-
-    observer.callCount = 0 ;
-    array.replace(9, 1, T.objects(1));
-    equals(observer.callCount, 0, 'observer should not fire');
-  });
-
-  // ..........................................................
-  // GROUPED CHANGES
-  //
-
-  test("grouping property changes should notify observer only once at end with single IndexSet", function() {
-
-    array.beginPropertyChanges();
-    array.replace(2, 1, T.objects(1));
-    array.replace(4, 1, T.objects(1));
-    array.endPropertyChanges();
-
-    var set = SC.IndexSet.create().add(2).add(4); // both edits
-    observer.expectRangeChange(array, null, '[]', set);
-  });
-
-  // ..........................................................
-  // INSERTING
-  //
-
-  test("insertAt in range fires observer with index set covering edit to end of array", function() {
-    var newItem = T.objects(1)[0],
-        set     = SC.IndexSet.create(3,array.get('length')-2);
-
-    array.insertAt(3, newItem);
-    observer.expectRangeChange(array, null, '[]', set);
-  });
-
-  test("adding object fires observer", function() {
-    var newItem = T.objects(1)[0];
-    var set = SC.IndexSet.create(array.get('length'));
-
-    array.pushObject(newItem);
-    observer.expectRangeChange(array, null, '[]', set);
-  });
-
-  // ..........................................................
-  // REMOVING
-  //
-
-  test("removeAt fires observer with index set covering edit to end of array", function() {
-    var set     = SC.IndexSet.create(3,array.get('length')-3);
-    array.removeAt(3);
-    observer.expectRangeChange(array, null, '[]', set);
-  });
-
-  test("popObject fires observer with index set covering removed range", function() {
-    var set = SC.IndexSet.create(array.get('length')-1);
-    array.popObject();
-    observer.expectRangeChange(array, null, '[]', set);
-  });
-
-
-  // ..........................................................
-  // MODULE: isDeep = NO
-  //
-  module(T.desc("RangeObserver Methods - isDeep NO"), {
-    setup: function() {
-      expected = T.objects(10);
-      array = T.newObject(expected);
-
-      observer = T.observer();
-      rangeObserver = array.addRangeObserver(SC.IndexSet.create(2,3),
-                observer, observer.rangeDidChange, null, NO);
-
-    },
-
-    teardown: function() {
-      T.destroyObject(array);
-    }
-  });
-
-  test("editing property on object at any point should not fire observer", function() {
-
-    var indexes = [0,3,9],
-        loc     = 3,
-        obj,idx;
-
-    while(--loc>=0) {
-      idx = indexes[loc];
-      obj = array.objectAt(idx);
-      obj.set('foo', 'BAR');
-      equals(observer.callCount, 0, 'observer should not fire when editing object at index %@'.fmt(idx));
-    }
-  });
-
-  test("replacing object in range fires observer with index set", function() {
-    array.replace(2, 1, T.objects(1));
-    observer.expectRangeChange(array, null, '[]', SC.IndexSet.create(2,1));
-  });
-
-
-});
-
-
-/* >>>>>>>>>> BEGIN source/debug/test_suites/array/removeAt.js */
-// ==========================================================================
-// Project:   SproutCore Costello - Property Observing Library
-// Copyright: Â©2006-2011 Strobe Inc. and contributors.
-//            Portions Â©2008-2011 Apple Inc. All rights reserved.
-// License:   Licensed under MIT license (see license.js)
-// ==========================================================================
-
-/*globals module test ok equals same CoreTest */
-
-sc_require('debug/test_suites/array/base');
-
-SC.ArraySuite.define(function(T) {
-  
-  var observer, obj ;
-  
-  module(T.desc("removeAt"), {
-    setup: function() {
-      obj = T.newObject();
-      observer = T.observer(obj);
-    }
-  });
-
-  test("[X].removeAt(0) => [] + notify", function() {
-
-    var before = T.expected(1);
-    obj.replace(0,0, before);
-    observer.observe('[]', 'length') ;
-    
-    obj.removeAt(0) ;
-    T.validateAfter(obj, [], observer, YES);
-  });
-  
-  test("[].removeAt(200) => OUT_OF_RANGE_EXCEPTION exception", function() {
-    var didThrow = NO ;
-    try {
-      obj.removeAt(200);
-    } catch (e) {
-      equals(e, SC.OUT_OF_RANGE_EXCEPTION, 'should throw SC.OUT_OF_RANGE_EXCEPTION');
-      didThrow = YES ;
-    }
-    ok(didThrow, 'should raise exception');
-  });
-
-  test("[A,B].removeAt(0) => [B] + notify", function() {
-    var before = T.expected(2), 
-        after   = [before[1]];
-    
-    obj.replace(0,0,before);
-    observer.observe('[]', 'length') ;
-    
-    obj.removeAt(0);
-    T.validateAfter(obj, after, observer, YES);
-  });
-
-  test("[A,B].removeAt(1) => [A] + notify", function() {
-    var before = T.expected(2), 
-        after   = [before[0]];
-    
-    obj.replace(0,0,before);
-    observer.observe('[]', 'length') ;
-    
-    obj.removeAt(1);
-    T.validateAfter(obj, after, observer, YES);
-  });
-
-  test("[A,B,C].removeAt(1) => [A,C] + notify", function() {
-    var before = T.expected(3), 
-        after   = [before[0], before[2]];
-    
-    obj.replace(0,0,before);
-    observer.observe('[]', 'length') ;
-    
-    obj.removeAt(1);
-    T.validateAfter(obj, after, observer, YES);
-  });
-  
-  test("[A,B,C,D].removeAt(1,2) => [A,D] + notify", function() {
-    var before = T.expected(4), 
-        after   = [before[0], before[3]];
-    
-    obj.replace(0,0,before);
-    observer.observe('[]', 'length') ;
-    
-    obj.removeAt(1,2);
-    T.validateAfter(obj, after, observer, YES);
-  });
-
-  test("[A,B,C,D].removeAt(IndexSet<0,2-3>) => [B] + notify", function() {
-    var before = T.expected(4), 
-        after   = [before[1]];
-    
-    obj.replace(0,0,before);
-    observer.observe('[]', 'length') ;
-    
-    obj.removeAt(SC.IndexSet.create(0).add(2,2));
-    T.validateAfter(obj, after, observer, YES);
-  });
-  
-});
-
-
-/* >>>>>>>>>> BEGIN source/debug/test_suites/array/removeObject.js */
-// ==========================================================================
-// Project:   SproutCore Costello - Property Observing Library
-// Copyright: Â©2006-2011 Strobe Inc. and contributors.
-//            Portions Â©2008-2011 Apple Inc. All rights reserved.
-// License:   Licensed under MIT license (see license.js)
-// ==========================================================================
-
-/*globals module test ok equals same CoreTest */
-
-sc_require('debug/test_suites/array/base');
-
-SC.ArraySuite.define(function(T) {
-  
-  var observer, obj ;
-  
-  module(T.desc("removeObject"), {
-    setup: function() {
-      obj = T.newObject();
-      observer = T.observer(obj);
-    }
-  });
-
-  test("should return receiver", function() {
-    obj = T.newObject(3);
-    equals(obj.removeObject(obj.objectAt(0)), obj, 'should return receiver');
-  });
-  
-  test("[A,B,C].removeObject(B) => [A,C] + notify", function() {
-
-    var before = T.expected(3),
-        after  = [before[0], before[2]];
-    obj.replace(0,0, before);
-    observer.observe('[]', 'length') ;
-    
-    obj.removeObject(before[1]) ;
-    T.validateAfter(obj, after, observer, YES);
-  });
-  
-  test("[A,B,C].removeObject(D) => [A,B,C]", function() {
-    var exp = T.expected(4),
-        extra = exp.pop();
-    obj.replace(0,0,exp);
-    observer.observe('[]', 'length') ;
-    
-    obj.removeObject(extra);
-    T.validateAfter(obj, exp, observer, NO, NO);
-  });
-  
-});
-
-/* >>>>>>>>>> BEGIN source/debug/test_suites/array/replace.js */
-// ==========================================================================
-// Project:   SproutCore Costello - Property Observing Library
-// Copyright: Â©2006-2011 Strobe Inc. and contributors.
-//            Portions Â©2008-2011 Apple Inc. All rights reserved.
-// License:   Licensed under MIT license (see license.js)
-// ==========================================================================
-
-/*globals module test ok equals same CoreTest */
-
-sc_require('debug/test_suites/array/base');
-
-SC.ArraySuite.define(function(T) {
-  
-  var observer, obj ;
-  
-  module(T.desc("replace"), {
-    setup: function() {
-      obj = T.newObject();
-      observer = T.observer(obj);
-    }
-  });
-  
-  test("[].replace(0,0,'X') => ['X'] + notify", function() {
-
-    var exp = T.expected(1);
-    
-    observer.observe('[]', 'length') ;
-    obj.replace(0,0,exp) ;
-
-    T.validateAfter(obj, exp, observer, YES);
-  });
-
-  test("[A,B,C,D].replace(1,2,X) => [A,X,D] + notify", function() {
-    
-    var exp = T.expected(5), 
-        before = exp.slice(0,4),
-        replace = exp.slice(4),
-        after = [before[0], replace[0], before[3]];
-        
-    obj.replace(0,0, before) ; // precond
-    observer.observe('[]', 'length') ;
-
-    obj.replace(1,2,replace) ;
-
-    T.validateAfter(obj, after, observer, YES);
-  });
-
-  test("[A,B,C,D].replace(1,2,[X,Y]) => [A,X,Y,D] + notify", function() {
-    
-    // setup the before, after, and replace arrays.  Use generated objects
-    var exp  = T.expected(6),
-        before  = exp.slice(0, 4),
-        replace = exp.slice(4),
-        after   = [before[0], replace[0], replace[1], before[3]]; 
-        
-    obj.replace(0,0, before) ;
-    observer.observe('[]', 'length') ;
-
-    obj.replace(1,2, replace) ;
-
-    T.validateAfter(obj, after, observer, YES);
-  });
-  
-  test("[A,B].replace(1,0,[X,Y]) => [A,X,Y,B] + notify", function() {
-
-    // setup the before, after, and replace arrays.  Use generated objects
-    var exp  = T.expected(4),
-        before  = exp.slice(0, 2),
-        replace = exp.slice(2),
-        after   = [before[0], replace[0], replace[1], before[1]] ;
-
-    obj.replace(0,0, before);
-    observer.observe('[]', 'length') ;
-  
-    obj.replace(1,0, replace) ;
-    
-    T.validateAfter(obj, after, observer, YES);
-  });
-  
-  test("[A,B,C,D].replace(2,2) => [A,B] + notify", function() {
-
-    // setup the before, after, and replace arrays.  Use generated objects
-    var before  = T.expected(4),
-        after   = [before[0], before[1]];
-
-    obj.replace(0,0, before);
-    observer.observe('[]', 'length') ;
-  
-    obj.replace(2,2) ;
-    
-    T.validateAfter(obj, after, observer, YES);
-  });
-  
-});
-
-/* >>>>>>>>>> BEGIN source/debug/test_suites/array/shiftObject.js */
-// ==========================================================================
-// Project:   SproutCore Costello - Property Observing Library
-// Copyright: Â©2006-2011 Strobe Inc. and contributors.
-//            Portions Â©2008-2011 Apple Inc. All rights reserved.
-// License:   Licensed under MIT license (see license.js)
-// ==========================================================================
-
-/*globals module test ok equals same CoreTest */
-
-sc_require('debug/test_suites/array/base');
-
-SC.ArraySuite.define(function(T) {
-  
-  var observer, obj ;
-  
-  module(T.desc("shiftObject"), {
-    setup: function() {
-      obj = T.newObject();
-      observer = T.observer(obj);
-    }
-  });
-
-  test("[].shiftObject() => [] + returns undefined + NO notify", function() {
-    observer.observe('[]', 'length') ;
-    equals(obj.shiftObject(), undefined, 'should return undefined') ;
-    T.validateAfter(obj, [], observer, NO, NO);
-  });
-
-  test("[X].shiftObject() => [] + notify", function() {
-    var exp = T.expected(1)[0];
-    
-    obj.replace(0,0, [exp]);
-    observer.observe('[]', 'length') ;
-
-    equals(obj.shiftObject(), exp, 'should return shifted object') ;
-    T.validateAfter(obj, [], observer, YES, YES);
-  });
-
-  test("[A,B,C].shiftObject() => [B,C] + notify", function() {
-    var before  = T.expected(3),
-        value   = before[0],
-        after   = before.slice(1);
-        
-    obj.replace(0,0,before);
-    observer.observe('[]', 'length') ;
-    equals(obj.shiftObject(), value, 'should return shifted object') ;
-    T.validateAfter(obj, after, observer, YES);
-  });
-  
-});
-
-/* >>>>>>>>>> BEGIN source/debug/test_suites/array/unshiftObject.js */
-// ==========================================================================
-// Project:   SproutCore Costello - Property Observing Library
-// Copyright: Â©2006-2011 Strobe Inc. and contributors.
-//            Portions Â©2008-2011 Apple Inc. All rights reserved.
-// License:   Licensed under MIT license (see license.js)
-// ==========================================================================
-
-/*globals module test ok equals same CoreTest */
-
-sc_require('debug/test_suites/array/base');
-
-SC.ArraySuite.define(function(T) {
-  
-  var observer, obj ;
-  
-  module(T.desc("unshiftObject"), {
-    setup: function() {
-      obj = T.newObject();
-      observer = T.observer(obj);
-    }
-  });
-
-  test("returns unshifted object", function() {
-    var exp = T.expected(1)[0];
-    equals(obj.pushObject(exp), exp, 'should return receiver');
-  });
-  
-
-  test("[].unshiftObject(X) => [X] + notify", function() {
-    var exp = T.expected(1);
-    observer.observe('[]', 'length') ;
-    obj.unshiftObject(exp[0]) ;
-    T.validateAfter(obj, exp, observer, YES);
-  });
-
-  test("[A,B,C].unshiftObject(X) => [X,A,B,C] + notify", function() {
-    var after  = T.expected(4),
-        before = after.slice(1),
-        value  = after[0];
-        
-    obj.replace(0,0,before);
-    observer.observe('[]', 'length') ;
-    obj.unshiftObject(value) ;
-    T.validateAfter(obj, after, observer, YES);
-  });
-  
-});
-
-/* >>>>>>>>>> BEGIN source/debug/test_suites/array.js */
-// Convenience file for requiring all of the ArraySuite
-
-sc_require('debug/test_suites/array/base');
-sc_require('debug/test_suites/array/indexOf');
-sc_require('debug/test_suites/array/insertAt');
-sc_require('debug/test_suites/array/objectAt');
-sc_require('debug/test_suites/array/popObject');
-sc_require('debug/test_suites/array/pushObject');
-sc_require('debug/test_suites/array/rangeObserver');
-sc_require('debug/test_suites/array/removeAt');
-sc_require('debug/test_suites/array/removeObject');
-sc_require('debug/test_suites/array/replace');
-sc_require('debug/test_suites/array/shiftObject');
-sc_require('debug/test_suites/array/unshiftObject');
-
+; if ((typeof SC !== 'undefined') && SC && SC.Module && SC.Module.scriptDidLoad) SC.Module.scriptDidLoad('sproutcore/runtime');
 /* >>>>>>>>>> BEGIN source/system/function.js */
 // ==========================================================================
 // Project:   SproutCore Costello - Property Observing Library
-// Copyright: Â©2006-2011 Strobe Inc. and contributors.
-//            Portions Â©2008-2011 Apple Inc. All rights reserved.
+// Copyright: ©2006-2011 Strobe Inc. and contributors.
+//            Portions ©2008-2011 Apple Inc. All rights reserved.
 // License:   Licensed under MIT license (see license.js)
 // ==========================================================================
 
@@ -2292,12 +866,12 @@ SC.Function = /** @scope SC.Function.prototype */{
   }
 
 };
-
+; if ((typeof SC !== 'undefined') && SC && SC.Module && SC.Module.scriptDidLoad) SC.Module.scriptDidLoad('sproutcore/runtime');
 /* >>>>>>>>>> BEGIN source/ext/function.js */
 // ==========================================================================
 // Project:   SproutCore Costello - Property Observing Library
-// Copyright: Â©2006-2011 Strobe Inc. and contributors.
-//            Portions Â©2008-2011 Apple Inc. All rights reserved.
+// Copyright: ©2006-2011 Strobe Inc. and contributors.
+//            Portions ©2008-2011 Apple Inc. All rights reserved.
 // License:   Licensed under MIT license (see license.js)
 // ==========================================================================
 
@@ -2483,12 +1057,12 @@ SC.mixin(Function.prototype,
   }
 
 });
-
+; if ((typeof SC !== 'undefined') && SC && SC.Module && SC.Module.scriptDidLoad) SC.Module.scriptDidLoad('sproutcore/runtime');
 /* >>>>>>>>>> BEGIN source/private/observer_set.js */
 // ==========================================================================
 // Project:   SproutCore Costello - Property Observing Library
-// Copyright: Â©2006-2011 Strobe Inc. and contributors.
-//            Portions Â©2008-2011 Apple Inc. All rights reserved.
+// Copyright: ©2006-2011 Strobe Inc. and contributors.
+//            Portions ©2008-2011 Apple Inc. All rights reserved.
 // License:   Licensed under MIT license (see license.js)
 // ==========================================================================
 
@@ -2609,12 +1183,12 @@ SC.ObserverSet = {
 SC.ObserverSet.constructor.prototype = SC.ObserverSet;
 SC.ObserverSet.slice = SC.ObserverSet.clone ;
 
-
+; if ((typeof SC !== 'undefined') && SC && SC.Module && SC.Module.scriptDidLoad) SC.Module.scriptDidLoad('sproutcore/runtime');
 /* >>>>>>>>>> BEGIN source/private/chain_observer.js */
 // ==========================================================================
 // Project:   SproutCore Costello - Property Observing Library
-// Copyright: Â©2006-2011 Strobe Inc. and contributors.
-//            Portions Â©2008-2011 Apple Inc. All rights reserved.
+// Copyright: ©2006-2011 Strobe Inc. and contributors.
+//            Portions ©2008-2011 Apple Inc. All rights reserved.
 // License:   Licensed under MIT license (see license.js)
 // ==========================================================================
 
@@ -2792,12 +1366,12 @@ SC._ChainObserver.prototype = {
   }
 
 } ;
-
+; if ((typeof SC !== 'undefined') && SC && SC.Module && SC.Module.scriptDidLoad) SC.Module.scriptDidLoad('sproutcore/runtime');
 /* >>>>>>>>>> BEGIN source/mixins/observable.js */
 // ==========================================================================
 // Project:   SproutCore Costello - Property Observing Library
-// Copyright: Â©2006-2011 Strobe Inc. and contributors.
-//            Portions Â©2008-2011 Apple Inc. All rights reserved.
+// Copyright: ©2006-2011 Strobe Inc. and contributors.
+//            Portions ©2008-2011 Apple Inc. All rights reserved.
 // License:   Licensed under MIT license (see license.js)
 // ==========================================================================
 
@@ -4008,7 +2582,7 @@ SC.Observable = /** @scope SC.Observable.prototype */{
       revision count from the last time this method was called.
 
       @param {String|Object} context a unique identifier
-      @param {Stringâ€¦} propertyNames one or more property names
+      @param {String…} propertyNames one or more property names
     */
     didChangeFor: function(context) {
       var valueCache, revisionCache, seenValues, seenRevisions, ret,
@@ -4293,12 +2867,12 @@ SC.Observable = /** @scope SC.Observable.prototype */{
 
   // Make all Array's observable
   SC.mixin(Array.prototype, SC.Observable) ;
-
+; if ((typeof SC !== 'undefined') && SC && SC.Module && SC.Module.scriptDidLoad) SC.Module.scriptDidLoad('sproutcore/runtime');
 /* >>>>>>>>>> BEGIN source/system/enumerator.js */
 // ==========================================================================
 // Project:   SproutCore Costello - Property Observing Library
-// Copyright: Â©2006-2011 Strobe Inc. and contributors.
-//            Portions Â©2008-2011 Apple Inc. All rights reserved.
+// Copyright: ©2006-2011 Strobe Inc. and contributors.
+//            Portions ©2008-2011 Apple Inc. All rights reserved.
 // License:   Licensed under MIT license (see license.js)
 // ==========================================================================
 
@@ -4402,12 +2976,12 @@ SC.Enumerator._pushContext = function(context) {
   return null ;
 };
 
-
+; if ((typeof SC !== 'undefined') && SC && SC.Module && SC.Module.scriptDidLoad) SC.Module.scriptDidLoad('sproutcore/runtime');
 /* >>>>>>>>>> BEGIN source/mixins/enumerable.js */
 // ==========================================================================
 // Project:   SproutCore Costello - Property Observing Library
-// Copyright: Â©2006-2011 Strobe Inc. and contributors.
-//            Portions Â©2008-2011 Apple Inc. All rights reserved.
+// Copyright: ©2006-2011 Strobe Inc. and contributors.
+//            Portions ©2008-2011 Apple Inc. All rights reserved.
 // License:   Licensed under MIT license (see license.js)
 // ==========================================================================
 
@@ -5745,12 +4319,12 @@ Array.prototype.isEnumerable = YES ;
 
 })() ;
 
-
+; if ((typeof SC !== 'undefined') && SC && SC.Module && SC.Module.scriptDidLoad) SC.Module.scriptDidLoad('sproutcore/runtime');
 /* >>>>>>>>>> BEGIN source/system/range_observer.js */
 // ==========================================================================
 // Project:   SproutCore Costello - Property Observing Library
-// Copyright: Â©2006-2011 Strobe Inc. and contributors.
-//            Portions Â©2008-2011 Apple Inc. All rights reserved.
+// Copyright: ©2006-2011 Strobe Inc. and contributors.
+//            Portions ©2008-2011 Apple Inc. All rights reserved.
 // License:   Licensed under MIT license (see license.js)
 // ==========================================================================
 
@@ -6020,12 +4594,12 @@ SC.RangeObserver = /** @scope SC.RangeObserver.prototype */{
   }
 
 };
-
+; if ((typeof SC !== 'undefined') && SC && SC.Module && SC.Module.scriptDidLoad) SC.Module.scriptDidLoad('sproutcore/runtime');
 /* >>>>>>>>>> BEGIN source/mixins/array.js */
 // ==========================================================================
 // Project:   SproutCore Costello - Property Observing Library
-// Copyright: Â©2006-2011 Strobe Inc. and contributors.
-//            Portions Â©2008-2011 Apple Inc. All rights reserved.
+// Copyright: ©2006-2011 Strobe Inc. and contributors.
+//            Portions ©2008-2011 Apple Inc. All rights reserved.
 // License:   Licensed under MIT license (see license.js)
 // ==========================================================================
 
@@ -6591,6 +5165,14 @@ SC.CoreArray = /** @lends SC.Array.prototype */ {
     var target, action;
     var didChangeObservers = this._kvo_array_did_change;
     if (didChangeObservers) {
+      // If arrayContentDidChange is called with no parameters, assume the
+      // entire array has changed.
+      if (start === undefined) {
+        start = 0;
+        removedCount = this.get('length');
+        addedCount = 0;
+      }
+
       members = didChangeObservers.members;
       membersLen = members.length;
 
@@ -6925,12 +5507,12 @@ SC.CoreArray = /** @lends SC.Array.prototype */ {
   @since SproutCore 0.9.0
 */
 SC.Array = SC.mixin({}, SC.Enumerable, SC.CoreArray);
-
+; if ((typeof SC !== 'undefined') && SC && SC.Module && SC.Module.scriptDidLoad) SC.Module.scriptDidLoad('sproutcore/runtime');
 /* >>>>>>>>>> BEGIN source/ext/array.js */
 // ==========================================================================
 // Project:   SproutCore Costello - Property Observing Library
-// Copyright: Â©2006-2011 Strobe Inc. and contributors.
-//            Portions Â©2008-2011 Apple Inc. All rights reserved.
+// Copyright: ©2006-2011 Strobe Inc. and contributors.
+//            Portions ©2008-2011 Apple Inc. All rights reserved.
 // License:   Licensed under MIT license (see license.js)
 // ==========================================================================
 
@@ -7019,12 +5601,12 @@ if (Array.prototype.lastIndexOf === SC.CoreArray.lastIndexOf) {
     return -1;
   };
 }
-
+; if ((typeof SC !== 'undefined') && SC && SC.Module && SC.Module.scriptDidLoad) SC.Module.scriptDidLoad('sproutcore/runtime');
 /* >>>>>>>>>> BEGIN source/ext/date.js */
 // ==========================================================================
 // Project:   SproutCore Costello - Property Observing Library
-// Copyright: Â©2006-2011 Strobe Inc. and contributors.
-//            Portions Â©2008-2011 Apple Inc. All rights reserved.
+// Copyright: ©2006-2011 Strobe Inc. and contributors.
+//            Portions ©2008-2011 Apple Inc. All rights reserved.
 // License:   Licensed under MIT license (see license.js)
 // ==========================================================================
 
@@ -7036,12 +5618,12 @@ if (!Date.now) {
     return new Date().getTime() ;
   };
 }
-
+; if ((typeof SC !== 'undefined') && SC && SC.Module && SC.Module.scriptDidLoad) SC.Module.scriptDidLoad('sproutcore/runtime');
 /* >>>>>>>>>> BEGIN source/system/string.js */
 // ==========================================================================
 // Project:   SproutCore Costello - Property Observing Library
-// Copyright: Â©2006-2011 Strobe Inc. and contributors.
-//            Portions Â©2008-2011 Apple Inc. All rights reserved.
+// Copyright: ©2006-2011 Strobe Inc. and contributors.
+//            Portions ©2008-2011 Apple Inc. All rights reserved.
 // License:   Licensed under MIT license (see license.js)
 // ==========================================================================
 
@@ -7098,12 +5680,12 @@ SC.String = /** @scope SC.String.prototype */ {
     return ary ;
   }
 };
-
+; if ((typeof SC !== 'undefined') && SC && SC.Module && SC.Module.scriptDidLoad) SC.Module.scriptDidLoad('sproutcore/runtime');
 /* >>>>>>>>>> BEGIN source/ext/string.js */
 // ==========================================================================
 // Project:   SproutCore Costello - Property Observing Library
-// Copyright: Â©2006-2011 Strobe Inc. and contributors.
-//            Portions Â©2008-2011 Apple Inc. All rights reserved.
+// Copyright: ©2006-2011 Strobe Inc. and contributors.
+//            Portions ©2008-2011 Apple Inc. All rights reserved.
 // License:   Licensed under MIT license (see license.js)
 // ==========================================================================
 
@@ -7131,12 +5713,12 @@ SC.mixin(String.prototype,
   }
 
 });
-
+; if ((typeof SC !== 'undefined') && SC && SC.Module && SC.Module.scriptDidLoad) SC.Module.scriptDidLoad('sproutcore/runtime');
 /* >>>>>>>>>> BEGIN source/mixins/comparable.js */
 // ==========================================================================
 // Project:   SproutCore Costello - Property Observing Library
-// Copyright: Â©2006-2011 Strobe Inc. and contributors.
-//            Portions Â©2008-2011 Apple Inc. All rights reserved.
+// Copyright: ©2006-2011 Strobe Inc. and contributors.
+//            Portions ©2008-2011 Apple Inc. All rights reserved.
 // License:   Licensed under MIT license (see license.js)
 // ==========================================================================
 
@@ -7181,12 +5763,12 @@ SC.Comparable = {
   }
 
 };
-
+; if ((typeof SC !== 'undefined') && SC && SC.Module && SC.Module.scriptDidLoad) SC.Module.scriptDidLoad('sproutcore/runtime');
 /* >>>>>>>>>> BEGIN source/mixins/copyable.js */
 // ==========================================================================
 // Project:   SproutCore Costello - Property Observing Library
-// Copyright: Â©2006-2011 Strobe Inc. and contributors.
-//            Portions Â©2008-2011 Apple Inc. All rights reserved.
+// Copyright: ©2006-2011 Strobe Inc. and contributors.
+//            Portions ©2008-2011 Apple Inc. All rights reserved.
 // License:   Licensed under MIT license (see license.js)
 // ==========================================================================
 
@@ -7262,12 +5844,12 @@ Array.prototype.copy = function(deep) {
 	}
 	return ret;
 }
-
+; if ((typeof SC !== 'undefined') && SC && SC.Module && SC.Module.scriptDidLoad) SC.Module.scriptDidLoad('sproutcore/runtime');
 /* >>>>>>>>>> BEGIN source/mixins/freezable.js */
 // ==========================================================================
 // Project:   SproutCore Costello - Property Observing Library
-// Copyright: Â©2006-2011 Strobe Inc. and contributors.
-//            Portions Â©2008-2011 Apple Inc. All rights reserved.
+// Copyright: ©2006-2011 Strobe Inc. and contributors.
+//            Portions ©2008-2011 Apple Inc. All rights reserved.
 // License:   Licensed under MIT license (see license.js)
 // ==========================================================================
 
@@ -7373,12 +5955,12 @@ SC.Freezable = /** @scope SC.Freezable.prototype */ {
 
 // Add to Array
 SC.mixin(Array.prototype, SC.Freezable);
-
+; if ((typeof SC !== 'undefined') && SC && SC.Module && SC.Module.scriptDidLoad) SC.Module.scriptDidLoad('sproutcore/runtime');
 /* >>>>>>>>>> BEGIN source/system/set.js */
 // ==========================================================================
 // Project:   SproutCore Costello - Property Observing Library
-// Copyright: Â©2006-2011 Strobe Inc. and contributors.
-//            Portions Â©2008-2011 Apple Inc. All rights reserved.
+// Copyright: ©2006-2011 Strobe Inc. and contributors.
+//            Portions ©2008-2011 Apple Inc. All rights reserved.
 // License:   Licensed under MIT license (see license.js)
 // ==========================================================================
 
@@ -7913,12 +6495,12 @@ SC.CoreSet.isObservable = NO ;
 
 /** @private */
 SC.CoreSet.constructor = SC.CoreSet;
-
+; if ((typeof SC !== 'undefined') && SC && SC.Module && SC.Module.scriptDidLoad) SC.Module.scriptDidLoad('sproutcore/runtime');
 /* >>>>>>>>>> BEGIN source/private/observer_queue.js */
 // ==========================================================================
 // Project:   SproutCore Costello - Property Observing Library
-// Copyright: Â©2006-2011 Strobe Inc. and contributors.
-//            Portions Â©2008-2011 Apple Inc. All rights reserved.
+// Copyright: ©2006-2011 Strobe Inc. and contributors.
+//            Portions ©2008-2011 Apple Inc. All rights reserved.
 // License:   Licensed under MIT license (see license.js)
 // ==========================================================================
 
@@ -8094,12 +6676,12 @@ SC.Observers = {
   }
 
 } ;
-
+; if ((typeof SC !== 'undefined') && SC && SC.Module && SC.Module.scriptDidLoad) SC.Module.scriptDidLoad('sproutcore/runtime');
 /* >>>>>>>>>> BEGIN source/system/object.js */
 // ==========================================================================
 // Project:   SproutCore Costello - Property Observing Library
-// Copyright: Â©2006-2011 Strobe Inc. and contributors.
-//            Portions Â©2008-2011 Apple Inc. All rights reserved.
+// Copyright: ©2006-2011 Strobe Inc. and contributors.
+//            Portions ©2008-2011 Apple Inc. All rights reserved.
 // License:   Licensed under MIT license (see license.js)
 // ==========================================================================
 
@@ -9036,7 +7618,7 @@ SC._object_className = function(obj) {
   return (ret && ret._object_className) ? ret._object_className : 'Anonymous';
 } ;
 
-
+; if ((typeof SC !== 'undefined') && SC && SC.Module && SC.Module.scriptDidLoad) SC.Module.scriptDidLoad('sproutcore/runtime');
 /* >>>>>>>>>> BEGIN source/private/property_chain.js */
 sc_require('system/object');
 
@@ -9233,12 +7815,12 @@ SC._PropertyChain.createChain = function(path, target, toInvalidate) {
 
   return root;
 };
-
+; if ((typeof SC !== 'undefined') && SC && SC.Module && SC.Module.scriptDidLoad) SC.Module.scriptDidLoad('sproutcore/runtime');
 /* >>>>>>>>>> BEGIN source/system/binding.js */
 // ==========================================================================
 // Project:   SproutCore Costello - Property Observing Library
-// Copyright: Â©2006-2011 Strobe Inc. and contributors.
-//            Portions Â©2008-2011 Apple Inc. All rights reserved.
+// Copyright: ©2006-2011 Strobe Inc. and contributors.
+//            Portions ©2008-2011 Apple Inc. All rights reserved.
 // License:   Licensed under MIT license (see license.js)
 // ==========================================================================
 
@@ -9893,11 +8475,7 @@ SC.Binding = /** @scope SC.Binding.prototype */{
       // If we have a target, it is ready, but if it is invalid, that is WRONG.
       //
       
-      if (!target.isObservable) {
-        SC.Logger.warn("Cannot bind '%@' to property '%@' on non-observable '%@'".fmt(this._toPropertyPath, key, target));
-        return this;
-      }
-      
+
 
       // get the new value
       var v = target.getPath(key) ;
@@ -10248,12 +8826,12 @@ SC.Binding = /** @scope SC.Binding.prototype */{
 */
 SC.binding = function(path, root) { return SC.Binding.from(path,root); } ;
 
-
+; if ((typeof SC !== 'undefined') && SC && SC.Module && SC.Module.scriptDidLoad) SC.Module.scriptDidLoad('sproutcore/runtime');
 /* >>>>>>>>>> BEGIN source/system/error.js */
 // ==========================================================================
 // Project:   SproutCore - JavaScript Application Framework
-// Copyright: Â©2006-2011 Strobe Inc. and contributors.
-//            Portions Â©2008-2011 Apple Inc. All rights reserved.
+// Copyright: ©2006-2011 Strobe Inc. and contributors.
+//            Portions ©2008-2011 Apple Inc. All rights reserved.
 // License:   Licensed under MIT license (see license.js)
 // ==========================================================================
 // @global SC
@@ -10412,12 +8990,12 @@ SC.$val = SC.val;
   @type Number
 */
 SC.Error.HAS_MULTIPLE_VALUES = -100 ;
-
+; if ((typeof SC !== 'undefined') && SC && SC.Module && SC.Module.scriptDidLoad) SC.Module.scriptDidLoad('sproutcore/runtime');
 /* >>>>>>>>>> BEGIN source/system/index_set.js */
 // ==========================================================================
 // Project:   SproutCore Costello - Property Observing Library
-// Copyright: Â©2006-2011 Strobe Inc. and contributors.
-//            Portions Â©2008-2011 Apple Inc. All rights reserved.
+// Copyright: ©2006-2011 Strobe Inc. and contributors.
+//            Portions ©2008-2011 Apple Inc. All rights reserved.
 // License:   Licensed under MIT license (see license.js)
 // ==========================================================================
 
@@ -11623,12 +10201,12 @@ SC.IndexSet = SC.mixin({},
 
 SC.IndexSet.slice = SC.IndexSet.copy = SC.IndexSet.clone ;
 SC.IndexSet.EMPTY = SC.IndexSet.create().freeze();
-
+; if ((typeof SC !== 'undefined') && SC && SC.Module && SC.Module.scriptDidLoad) SC.Module.scriptDidLoad('sproutcore/runtime');
 /* >>>>>>>>>> BEGIN source/system/json.js */
 // ==========================================================================
 // Project:   SproutCore - JavaScript Application Framework
-// Copyright: Â©2006-2011 Strobe Inc. and contributors.
-//            Portions Â©2008-2011 Apple Inc. All rights reserved.
+// Copyright: ©2006-2011 Strobe Inc. and contributors.
+//            Portions ©2008-2011 Apple Inc. All rights reserved.
 // License:   Licensed under MIT license (see license.js)
 // ==========================================================================
 
@@ -12140,12 +10718,12 @@ replace(/(?:^|:|,)(?:\s*\[)+/g, ''))) {
         };
     }
 }());
-
+; if ((typeof SC !== 'undefined') && SC && SC.Module && SC.Module.scriptDidLoad) SC.Module.scriptDidLoad('sproutcore/runtime');
 /* >>>>>>>>>> BEGIN source/system/logger.js */
 // ==========================================================================
 // Project:   SproutCore - JavaScript Application Framework
-// Copyright: Â©2006-2011 Strobe Inc. and contributors.
-//            Portions Â©2008-2011 Apple Inc. All rights reserved.
+// Copyright: ©2006-2011 Strobe Inc. and contributors.
+//            Portions ©2008-2011 Apple Inc. All rights reserved.
 // License:   Licensed under MIT license (see license.js)
 // ==========================================================================
 
@@ -12206,7 +10784,7 @@ SC.LOGGER_LOG_DEBUG = "DEBUG: ";
 SC.LOGGER_LOG_GROUP_HEADER = "** %@";       // The variable is the group title
 
 /**
-  If the reporter does not support group(), then weâ€™ll add our own indentation
+  If the reporter does not support group(), then we’ll add our own indentation
   to our output.  This constant represents one level of indentation.
 
   @property {String}
@@ -12236,7 +10814,7 @@ SC.LOGGER_LEVEL_NONE  = 'none';
   In addition to being output to the console, logs can be optionally recorded
   in memory, to be accessed by your application as appropriate.
 
-  This class also adds in the concept of a â€œcurrent log levelâ€, which allows
+  This class also adds in the concept of a “current log level”, which allows
   your application to potentially determine a subset of logging messages to
   output and/or record.  The order of levels is:
 
@@ -12245,7 +10823,7 @@ SC.LOGGER_LEVEL_NONE  = 'none';
     -  warn         SC.LOGGER_LEVEL_WARN
     -  error        SC.LOGGER_LEVEL_ERROR
 
-  All messages at the level or â€œaboveâ€ will be output/recorded.  So, for
+  All messages at the level or “above” will be output/recorded.  So, for
   example, if you set the level to 'info', all 'info', 'warn', and 'error'
   messages will be output/recorded, but no 'debug' messages will be.  Also,
   there are two separate log levels:  one for output, and one for recording.
@@ -12256,12 +10834,12 @@ SC.LOGGER_LEVEL_NONE  = 'none';
   non-zero cost in many browsers) in the general case, but turning up the log
   level when necessary for debugging.  Note that there can still be a
   performance cost for preparing log messages (calling {@link String.fmt},
-  etc.), so itâ€™s still a good idea to be selective about what log messages are
+  etc.), so it’s still a good idea to be selective about what log messages are
   output even to 'debug', especially in hot code.
 
   Similarly, you should be aware that if you wish to log objects without
-  stringification â€” using the {@link SC.Logger.debugWithoutFmt} variants â€” and
-  you enable recording, the â€œrecorded messagesâ€ array will hold onto a
+  stringification — using the {@link SC.Logger.debugWithoutFmt} variants — and
+  you enable recording, the “recorded messages” array will hold onto a
   reference to the arguments, potentially increasing the amount of memory
   used.
 
@@ -12272,7 +10850,7 @@ SC.LOGGER_LEVEL_NONE  = 'none';
     -  SC.warn()    ==>   SC.Logger.warn()
     -  SC.error()   ==>   SC.Logger.error()
 
-  â€¦although note that no shorthand versions exist for the less-common
+  …although note that no shorthand versions exist for the less-common
   functions, such as defining groups.
 
   The FireFox plugin Firebug was used as a function reference. Please see
@@ -12280,7 +10858,7 @@ SC.LOGGER_LEVEL_NONE  = 'none';
   for further information.
 
   @author Colin Campbell
-  @author Benedikt BÃ¶hm
+  @author Benedikt Böhm
   @author William Kakes
   @extends SC.Object
   @since SproutCore 1.0
@@ -12295,7 +10873,7 @@ SC.Logger = SC.Object.create(
 
   /**
     The current log level determining what is output to the reporter object
-    (usually your browserâ€™s console).  Valid values are:
+    (usually your browser’s console).  Valid values are:
 
       -  SC.LOGGER_LEVEL_DEBUG
       -  SC.LOGGER_LEVEL_INFO
@@ -12314,7 +10892,7 @@ SC.Logger = SC.Object.create(
 
   /**
     The current log level determining what is output to the reporter object
-    (usually your browserâ€™s console).  Valid values are the same as with
+    (usually your browser’s console).  Valid values are the same as with
     'logOutputLevel':
 
       -  SC.LOGGER_LEVEL_DEBUG
@@ -12342,8 +10920,8 @@ SC.Logger = SC.Object.create(
 
     For efficiency, each entry in the array is a simple hash rather than a
     full SC.Object instance.  Furthermore, to minimize memory usage, niceties
-    like â€œtype of entry: messageâ€ are avoided; if you need to parse this
-    structure, you can determine which type of entry youâ€™re looking at by
+    like “type of entry: message” are avoided; if you need to parse this
+    structure, you can determine which type of entry you’re looking at by
     checking for the 'message' and 'indentation' fields.
 <pre>
     Log entry:
@@ -12435,7 +11013,7 @@ SC.Logger = SC.Object.create(
   /**
     The reporter is the object which implements the actual logging functions.
 
-    @default The browserâ€™s console
+    @default The browser’s console
     @property {Object}
   */
   reporter: console,
@@ -12457,7 +11035,7 @@ SC.Logger = SC.Object.create(
 
         SC.Logger.debug("%@:  My debug message", this);       // good
 
-    â€¦and not:
+    …and not:
 
         SC.Logger.debug("%@:  My debug message".fmt(this));        // bad
 
@@ -12466,7 +11044,7 @@ SC.Logger = SC.Object.create(
     String.fmt() call will never actually be performed.
 
     @param {String}              A message or a format string
-    @param {â€¦}       (optional)  Other arguments to pass to String.fmt() when using a format string
+    @param {…}       (optional)  Other arguments to pass to String.fmt() when using a format string
   */
   debug: function(message, optionalFormatArgs) {
     // Implementation note:  To avoid having to put the SC.debug() shorthand
@@ -12500,9 +11078,9 @@ SC.Logger = SC.Object.create(
     and you can create as many levels as you want.
 
     Assuming you are using 'debug' messages elsewhere, it is preferable to
-    group them using this method over simply {@link SC.Logger.group} â€” the log
+    group them using this method over simply {@link SC.Logger.group} — the log
     levels could be set such that the 'debug' messages are never seen, and you
-    wouldnâ€™t want an empty/needless group!
+    wouldn’t want an empty/needless group!
 
     You can optionally provide a title for the group.  If there are any
     additional arguments, the first argument is assumed to be a format string.
@@ -12510,7 +11088,7 @@ SC.Logger = SC.Object.create(
 
           SC.Logger.debugGroup("%@:  My debug group", this);       // good
 
-    â€¦and not:
+    …and not:
 
           SC.Logger.debugGroup("%@:  My debug group".fmt(this));   // bad
 
@@ -12519,7 +11097,7 @@ SC.Logger = SC.Object.create(
     String.fmt() call will never actually be performed.
 
     @param {String}  (optional)  A title or format string to display above the group
-    @param {â€¦}       (optional)  Other arguments to pass to String.fmt() when using a format string as the title
+    @param {…}       (optional)  Other arguments to pass to String.fmt() when using a format string as the title
   */
   debugGroup: function(message, optionalFormatArgs) {
     // Implementation note:  To avoid having to put the SC.debugGroup()
@@ -12552,7 +11130,7 @@ SC.Logger = SC.Object.create(
 
           SC.Logger.info("%@:  My info message", this);       // good
 
-    â€¦and not:
+    …and not:
 
           SC.Logger.info("%@:  My info message".fmt(this));   // bad
 
@@ -12561,7 +11139,7 @@ SC.Logger = SC.Object.create(
     String.fmt() call will never actually be performed.
 
     @param {String}              A message or a format string
-    @param {â€¦}       (optional)  Other arguments to pass to String.fmt() when using a format string
+    @param {…}       (optional)  Other arguments to pass to String.fmt() when using a format string
   */
   info: function(message, optionalFormatArgs) {
     // Implementation note:  To avoid having to put the SC.info() shorthand
@@ -12595,9 +11173,9 @@ SC.Logger = SC.Object.create(
     and you can create as many levels as you want.
 
     Assuming you are using 'info' messages elsewhere, it is preferable to
-    group them using this method over simply {@link SC.Logger.group} â€” the log
+    group them using this method over simply {@link SC.Logger.group} — the log
     levels could be set such that the 'info' messages are never seen, and you
-    wouldnâ€™t want an empty/needless group!
+    wouldn’t want an empty/needless group!
 
     You can optionally provide a title for the group.  If there are any
     additional arguments, the first argument is assumed to be a format string.
@@ -12605,7 +11183,7 @@ SC.Logger = SC.Object.create(
 
           SC.Logger.infoGroup("%@:  My info group", this);       // good
 
-    â€¦and not:
+    …and not:
 
           SC.Logger.infoGroup("%@:  My info group".fmt(this));   // bad
 
@@ -12614,7 +11192,7 @@ SC.Logger = SC.Object.create(
     String.fmt() call will never actually be performed.
 
     @param {String}  (optional)  A title or format string to display above the group
-    @param {â€¦}       (optional)  Other arguments to pass to String.fmt() when using a format string as the title
+    @param {…}       (optional)  Other arguments to pass to String.fmt() when using a format string as the title
   */
   infoGroup: function(message, optionalFormatArgs) {
     // Implementation note:  To avoid having to put the SC.infoGroup()
@@ -12647,7 +11225,7 @@ SC.Logger = SC.Object.create(
 
           SC.Logger.warn("%@:  My warning message", this);       // good
 
-    â€¦and not:
+    …and not:
 
           SC.Logger.warn("%@:  My warning message".fmt(this));   // bad
 
@@ -12656,7 +11234,7 @@ SC.Logger = SC.Object.create(
     String.fmt() call will never actually be performed.
 
     @param {String}              A message or a format string
-    @param {â€¦}       (optional)  Other arguments to pass to String.fmt() when using a format string
+    @param {…}       (optional)  Other arguments to pass to String.fmt() when using a format string
   */
   warn: function(message, optionalFormatArgs) {
     // Implementation note:  To avoid having to put the SC.warn() shorthand
@@ -12691,9 +11269,9 @@ SC.Logger = SC.Object.create(
     and you can create as many levels as you want.
 
     Assuming you are using 'warn' messages elsewhere, it is preferable to
-    group them using this method over simply {@link SC.Logger.group} â€” the log
+    group them using this method over simply {@link SC.Logger.group} — the log
     levels could be set such that the 'warn' messages are never seen, and you
-    wouldnâ€™t want an empty/needless group!
+    wouldn’t want an empty/needless group!
 
     You can optionally provide a title for the group.  If there are any
     additional arguments, the first argument is assumed to be a format string.
@@ -12701,7 +11279,7 @@ SC.Logger = SC.Object.create(
 
           SC.Logger.warnGroup("%@:  My warn group", this);       // good
 
-    â€¦and not:
+    …and not:
 
           SC.Logger.warnGroup("%@:  My warn group".fmt(this));   // bad
 
@@ -12710,7 +11288,7 @@ SC.Logger = SC.Object.create(
     String.fmt() call will never actually be performed.
 
     @param {String}  (optional)  A title or format string to display above the group
-    @param {â€¦}       (optional)  Other arguments to pass to String.fmt() when using a format string as the title
+    @param {…}       (optional)  Other arguments to pass to String.fmt() when using a format string as the title
   */
   warnGroup: function(message, optionalFormatArgs) {
     // Implementation note:  To avoid having to put the SC.warnGroup()
@@ -12742,7 +11320,7 @@ SC.Logger = SC.Object.create(
 
           SC.Logger.error("%@:  My error message", this);       // good
 
-    â€¦and not:
+    …and not:
 
           SC.Logger.warn("%@:  My error message".fmt(this));    // bad
 
@@ -12751,7 +11329,7 @@ SC.Logger = SC.Object.create(
     String.fmt() call will never actually be performed.
 
     @param {String}              A message or a format string
-    @param {â€¦}       (optional)  Other arguments to pass to String.fmt() when using a format string
+    @param {…}       (optional)  Other arguments to pass to String.fmt() when using a format string
   */
   error: function(message, optionalFormatArgs) {
     // Implementation note:  To avoid having to put the SC.error() shorthand
@@ -12785,9 +11363,9 @@ SC.Logger = SC.Object.create(
     and you can create as many levels as you want.
 
     Assuming you are using 'error' messages elsewhere, it is preferable to
-    group them using this method over simply {@link SC.Logger.group} â€” the log
+    group them using this method over simply {@link SC.Logger.group} — the log
     levels could be set such that the 'error' messages are never seen, and you
-    wouldnâ€™t want an empty/needless group!
+    wouldn’t want an empty/needless group!
 
     You can optionally provide a title for the group.  If there are any
     additional arguments, the first argument is assumed to be a format string.
@@ -12795,7 +11373,7 @@ SC.Logger = SC.Object.create(
 
           SC.Logger.errorGroup("%@:  My error group", this);       // good
 
-    â€¦and not:
+    …and not:
 
           SC.Logger.errorGroup("%@:  My error group".fmt(this));   // bad
 
@@ -12804,7 +11382,7 @@ SC.Logger = SC.Object.create(
     String.fmt() call will never actually be performed.
 
     @param {String}  (optional)  A title or format string to display above the group
-    @param {â€¦}       (optional)  Other arguments to pass to String.fmt() when using a format string as the title
+    @param {…}       (optional)  Other arguments to pass to String.fmt() when using a format string as the title
   */
   errorGroup: function(message, optionalFormatArgs) {
     // Implementation note:  To avoid having to put the SC.errorGroup()
@@ -12829,7 +11407,7 @@ SC.Logger = SC.Object.create(
 
   /**
     This method will output all recorded log messages to the reporter.  This
-    provides a convenient way to see the messages â€œon-demandâ€ without having
+    provides a convenient way to see the messages “on-demand” without having
     to have them always output.  The timestamp of each message will be
     included as a prefix if you specify 'includeTimestamps' as YES, although
     in some browsers the native group indenting can make the timestamp
@@ -12872,8 +11450,8 @@ SC.Logger = SC.Object.create(
           disparity      = newIndentation - indentation;
 
           // If the reporter implements group() and the indentation level
-          // changes by more than 1, that implies that some earlier â€œbegin
-          // groupâ€ / â€œend groupâ€ directives were pruned from the beginning of
+          // changes by more than 1, that implies that some earlier “begin
+          // group” / “end group” directives were pruned from the beginning of
           // the buffer and we need to insert empty groups to compensate.
           if (reporter.group) {
             if (Math.abs(disparity) > 1) {
@@ -13244,7 +11822,7 @@ SC.Logger = SC.Object.create(
     @param {String}               type                 Expected to be SC.LOGGER_LEVEL_DEBUG, etc.
     @param {Boolean}              automaticallyFormat  Whether or not to treat 'message' as a format string if there are additional arguments
     @param {String}               message              Expected to a string format (for String.fmt()) if there are other arguments
-    @param {String}   (optional)  originalArguments    All arguments passed into debug(), etc. (which includes 'message'; for efficiency, we donâ€™t copy it)
+    @param {String}   (optional)  originalArguments    All arguments passed into debug(), etc. (which includes 'message'; for efficiency, we don’t copy it)
   */
   _handleMessage: function(type, automaticallyFormat, message, originalArguments) {
     // Are we configured to show this type?
@@ -13316,7 +11894,7 @@ SC.Logger = SC.Object.create(
 
     @param {String}              type                 Expected to be SC.LOGGER_LEVEL_DEBUG, etc.
     @param {String}  (optional)  title                Expected to a string format (for String.fmt()) if there are other arguments
-    @param {String}  (optional)  originalArguments    All arguments passed into debug(), etc. (which includes 'title'; for efficiency, we donâ€™t copy it)
+    @param {String}  (optional)  originalArguments    All arguments passed into debug(), etc. (which includes 'title'; for efficiency, we don’t copy it)
   */
   _handleGroup: function(type, title, originalArguments) {
     // Are we configured to show this type?
@@ -13368,7 +11946,7 @@ SC.Logger = SC.Object.create(
 
 
   /** @private
-    Outputs and/or records a â€œgroup endâ€ assuming the respective current log
+    Outputs and/or records a “group end” assuming the respective current log
     levels allow for it.  This will remove one level of indentation from all
     further messages (of any type).
 
@@ -13399,7 +11977,7 @@ SC.Logger = SC.Object.create(
       }
     }
 
-    // If we're recording the â€œgroup endâ€, append the entry now.
+    // If we're recording the “group end”, append the entry now.
     if (shouldRecord) {
       // Decrease our indentation level to accommodate the group.
       indentation = --this._recordingIndentationLevel;
@@ -13479,11 +12057,11 @@ SC.Logger = SC.Object.create(
     //          var nativeFunction = console[type];
     //          nativeFunction(output);
     //
-    //        â€¦doesn't work in Safari 4, and:
+    //        …doesn't work in Safari 4, and:
     //
     //          nativeFunction.call(console, output);
     //
-    //        â€¦doesn't work in IE8 because the console.* methods are
+    //        …doesn't work in IE8 because the console.* methods are
     //       reported as being objects.
     func = reporter[type];
     if (func) {
@@ -13542,7 +12120,7 @@ SC.Logger = SC.Object.create(
 
 
   /** @private
-    Outputs the specified â€œbegin groupâ€ directive to the current reporter.  If
+    Outputs the specified “begin group” directive to the current reporter.  If
     the reporter does not handle the group() method, it will fall back to
     simulating using log() if possible.
 
@@ -13673,9 +12251,9 @@ SC.Logger = SC.Object.create(
 
 
   /** @private
-    The current â€œfor outputâ€ indentation level.  The reporter (browser
+    The current “for output” indentation level.  The reporter (browser
     console) is expected to keep track of this for us for output, but we need
-    to do our own bookkeeping if the browser doesnâ€™t support console.group.
+    to do our own bookkeeping if the browser doesn’t support console.group.
     This is incremented by _debugGroup() and friends, and decremented by
     _debugGroupEnd() and friends.
   */
@@ -13683,8 +12261,8 @@ SC.Logger = SC.Object.create(
 
 
   /** @private
-    The current â€œfor recordingâ€ indentation level.  This can be different than
-    the â€œfor outputâ€ indentation level if the respective log levels are set
+    The current “for recording” indentation level.  This can be different than
+    the “for output” indentation level if the respective log levels are set
     differently.  This is incremented by _debugGroup() and friends, and
     decremented by _debugGroupEnd() and friends.
   */
@@ -13693,10 +12271,10 @@ SC.Logger = SC.Object.create(
 
   /** @private
     A mapping of the log level constants (SC.LOGGER_LEVEL_DEBUG, etc.) to
-    their priority.  This makes it easy to determine which levels are â€œhigherâ€
+    their priority.  This makes it easy to determine which levels are “higher”
     than the current level.
 
-    Implementation note:  Weâ€™re hardcoding the values of the constants defined
+    Implementation note:  We’re hardcoding the values of the constants defined
     earlier here for a tiny bit of efficiency (we can create the hash all at
     once rather than having to push in keys).
   */
@@ -13705,10 +12283,10 @@ SC.Logger = SC.Object.create(
 
   /** @private
     If the current reporter does not support a particular type of log message
-    (for example, some older browsersâ€™ consoles support console.log but not
-    console.debug), weâ€™ll use the specified prefixes.
+    (for example, some older browsers’ consoles support console.log but not
+    console.debug), we’ll use the specified prefixes.
 
-    Implementation note:  Weâ€™re hardcoding the values of the constants defined
+    Implementation note:  We’re hardcoding the values of the constants defined
     earlier here for a tiny bit of efficiency (we can create the hash all at
     once rather than having to push in keys).
   */
@@ -13727,12 +12305,12 @@ SC.debug = SC.Logger.debug;
 SC.info  = SC.Logger.info;
 SC.warn  = SC.Logger.warn;
 SC.error = SC.Logger.error;
-
+; if ((typeof SC !== 'undefined') && SC && SC.Module && SC.Module.scriptDidLoad) SC.Module.scriptDidLoad('sproutcore/runtime');
 /* >>>>>>>>>> BEGIN source/system/run_loop.js */
 // ==========================================================================
 // Project:   SproutCore Costello - Property Observing Library
-// Copyright: Â©2006-2011 Strobe Inc. and contributors.
-//            Portions Â©2008-2011 Apple Inc. All rights reserved.
+// Copyright: ©2006-2011 Strobe Inc. and contributors.
+//            Portions ©2008-2011 Apple Inc. All rights reserved.
 // License:   Licensed under MIT license (see license.js)
 // ==========================================================================
 
@@ -14037,4 +12615,4 @@ SC.run = function(callback, target, forceNested) {
     if(forceNested || !alreadyRunning) SC.RunLoop.end();
   }
 };
-
+; if ((typeof SC !== 'undefined') && SC && SC.Module && SC.Module.scriptDidLoad) SC.Module.scriptDidLoad('sproutcore/runtime');

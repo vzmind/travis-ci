@@ -1,3 +1,4 @@
+/* >>>>>>>>>> BEGIN source/system/routes.js */
 // ==========================================================================
 // Project:   SproutCore - JavaScript Application Framework
 // Copyright: ©2006-2011 Strobe Inc. and contributors.
@@ -387,8 +388,6 @@ SC.routes = SC.Object.create({
       delete params.route;
       delete params.params;
       route = firstRoute.routeForParts(location.split('/'), params);
-      // changed: sven
-      // if (route && route.target && route.method) {
       if (route && route.method) {
         route.method.call(route.target, params);
       }
@@ -503,5 +502,4 @@ SC.routes = SC.Object.create({
   })
 
 });
-
-
+; if ((typeof SC !== 'undefined') && SC && SC.Module && SC.Module.scriptDidLoad) SC.Module.scriptDidLoad('sproutcore/routing');

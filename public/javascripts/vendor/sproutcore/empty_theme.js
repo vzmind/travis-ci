@@ -1,8 +1,8 @@
 /* >>>>>>>>>> BEGIN source/theme.js */
 // ==========================================================================
 // Project:   SproutCore - JavaScript Application Framework
-// Copyright: Â©2006-2011 Strobe Inc. and contributors.
-//            Portions Â©2008-2011 Apple Inc. All rights reserved.
+// Copyright: ©2006-2011 Strobe Inc. and contributors.
+//            Portions ©2008-2011 Apple Inc. All rights reserved.
 // License:   Licensed under MIT license (see license.js)
 // ==========================================================================
 
@@ -15,4 +15,4 @@ SC.EmptyTheme = SC.BaseTheme.create({
 });
 
 SC.Theme.addTheme(SC.EmptyTheme);
-
+; if ((typeof SC !== 'undefined') && SC && SC.Module && SC.Module.scriptDidLoad) SC.Module.scriptDidLoad('sproutcore/empty_theme');
