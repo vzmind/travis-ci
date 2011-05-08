@@ -15,9 +15,9 @@ javascripts:
     - public/javascripts/vendor/sproutcore/runtime.js
     - public/javascripts/vendor/sproutcore/handlebars.js
     - public/javascripts/vendor/sproutcore/core_foundation.js
-    - public/javascripts/vendor/sproutcore/datetime/core.js
+    - public/javascripts/vendor/sproutcore/datetime.js
     - public/javascripts/vendor/sproutcore/datastore.js
-    - public/javascripts/vendor/sproutcore/routes.js
+    - public/javascripts/vendor/sproutcore/routing.js
     - public/javascripts/vendor/sproutcore/ajax.js
   travis:
     - public/javascripts/app.js
