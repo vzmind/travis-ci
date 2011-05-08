@@ -20,13 +20,13 @@ javascripts:
     - public/javascripts/vendor/sproutcore/routing.js
     - public/javascripts/vendor/sproutcore/ajax.js
   travis:
+    - public/javascripts/lib/*.js
     - public/javascripts/app.js
     - public/javascripts/app/data_source.js
     - public/javascripts/app/helpers/*.js
     - public/javascripts/app/models/*.js
     - public/javascripts/app/views.js
     - public/javascripts/app/controllers.js
-    - public/javascripts/lib/*.js
   jasmine:
     - public/javascripts/fixtures/build.js
     - public/javascripts/fixtures/repository.js

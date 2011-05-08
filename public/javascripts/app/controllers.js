@@ -4,7 +4,7 @@ Travis.controllers = SC.Object.create({
       this.set('content', Travis.Repository.latest());
     }
   }),
-  repository: SC.ObjectController.create({
+  repository: SC.SingleObjectController.create({
     tabs: SC.Object.create({
       current: SC.ObjectController.create(Travis.Helpers.Build, {
         name: 'current',
