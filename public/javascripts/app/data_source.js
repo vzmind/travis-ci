@@ -42,8 +42,11 @@ Travis.DataSource = SC.DataSource.extend({
   },
 
   _urlForRecord: function(storeKey, id) {
-    if (SC.Store.recordTypeFor(storeKey) === Travis.Build) {
+    var recordType = SC.Store.recordTypeFor(storeKey);
+    if (recordType === Travis.Build) {
       return '/builds/%@.json'.fmt(id);
+    } else if (recordType === Travis.Repository) {
+      return '/repositories/%@.json'.fmt(id);
     } else {
       console.log('can not generate url for ' + recordType)
     }
