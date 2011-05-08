@@ -1,13 +1,13 @@
 namespace :heroku do
   task :config do
     remote = ENV['REMOTE']
-    remote = " --remote #{remote}" if remote
+    remote_flag = " --remote #{remote}" if remote
 
     Bundler.with_clean_env do
-      puts "Reading config/travis.yml and sending config vars to Heroku#{remote} ..."
+      puts "Reading config/travis.yml and sending config vars to Heroku #{remote} ..."
       config = YAML.load_file('config/travis.yml')[remote || 'production'] rescue {}
-      system("heroku config:add travis_config=#{Shellwords.escape(YAML.dump(config))}#{remote}")
-      system("heroku restart#{remote}")
+      system("heroku config:add travis_config=#{Shellwords.escape(YAML.dump(config))}#{remote_flag}")
+      system("heroku restart#{remote_flag}")
     end
   end
 
