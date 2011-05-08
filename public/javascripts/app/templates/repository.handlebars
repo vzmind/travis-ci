@@ -1,34 +1,32 @@
-{{#view SC.TemplateView id="repository" contentBinding="Travis.repositoryController"}}
-  {{#with content}}
-    <h3><a {{bindAttr href="urlGithubRepository"}}>{{slug}}</a></h3>
-    <ul class="github-stats">
-      <li><a class="watchers" {{bindAttr href="urlGithubWatchers"}}></a></li>
-      <li><a class="forks" {{bindAttr href="urlGithubNetwork"}}></a></li>
-    </ul>
-    <ul class="tabs">
-      <li id="tab_current">
-        <h5><a {{bindAttr href="urlCurrent"}}>Current</a></h5>
-        <div class="tab">
-          {{view SC.TemplateView templateName="summary" contentBinding="Travis.currentTabController"}}
-          {{view SC.TemplateView templateName="build" contentBinding="Travis.currentTabController"}}
-        </div>
-      </li>
-      <li id="tab_builds">
-        <h5><a {{bindAttr href="urlBuilds"}}>Build History</a></h5>
-        <div class="tab">
-          {{view SC.TemplateView templateName="builds" contentBinding="Travis.buildsTabController"}}
-        </div>
-      </li>
-      <li id="tab_parent">
-        <h5><a {{bindAttr href="urlBuild"}}>Build</a></h5>
-      </li>
-      <li id="tab_build">
-        <h5><a {{bindAttr href="urlBuild"}}>{{#view SC.TemplateView contentBinding="Travis.buildTabController"}}Build #{{number}}{{/view}}</a></h5>
-        <div class="tab">
-          {{view SC.TemplateView templateName="summary" contentBinding="Travis.buildTabController"}}
-          {{view SC.TemplateView templateName="build" contentBinding="Travis.buildTabController"}}
-        </div>
-      </li>
-    </ul>
-  {{/with}}
-{{/view}}
+{{#with content}}
+  <h3><a {{bindAttr href="urlGithubRepository"}}>{{slug}}</a></h3>
+  <ul class="github-stats">
+    <li><a class="watchers" {{bindAttr href="urlGithubWatchers"}}></a></li>
+    <li><a class="forks" {{bindAttr href="urlGithubNetwork"}}></a></li>
+  </ul>
+  <ul class="tabs">
+    <li id="tab_current">
+      <h5><a {{bindAttr href="urlCurrent"}}>Current</a></h5>
+      <div class="tab">
+        {{view SC.TemplateView templateName="summary" contentBinding="Travis.controllers.repository.tabs.current"}}
+        {{view SC.TemplateView templateName="build" contentBinding="Travis.controllers.repository.tabs.current"}}
+      </div>
+    </li>
+    <li id="tab_builds">
+      <h5><a {{bindAttr href="urlBuilds"}}>Build History</a></h5>
+      <div class="tab">
+        {{view SC.TemplateView templateName="builds" contentBinding="Travis.controllers.repository.tabs.builds"}}
+      </div>
+    </li>
+    <li id="tab_parent">
+      <h5><a {{bindAttr href="urlBuild"}}>Build</a></h5>
+    </li>
+    <li id="tab_build">
+      <h5><a {{bindAttr href="urlBuild"}}>{{#view SC.TemplateView contentBinding="Travis.controllers.repository.tabs.build"}}Build #{{content.number}}{{/view}}</a></h5>
+      <div class="tab">
+        {{view SC.TemplateView templateName="summary" contentBinding="Travis.controllers.repository.tabs.build"}}
+        {{view SC.TemplateView templateName="build" contentBinding="Travis.controllers.repository.tabs.build"}}
+      </div>
+    </li>
+  </ul>
+{{/with}}

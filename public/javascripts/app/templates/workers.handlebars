@@ -1,0 +1,6 @@
+<div id="workers" class="list">
+  <h4>Workers</h4>
+  {{#collection SC.TemplateCollectionView tagName="ul" itemTagName="li" itemClass="worker" contentBinding="Travis.controllers.workers"}}
+    {{content.id}}
+  {{/collection}}
+</div>

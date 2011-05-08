@@ -9,7 +9,7 @@
     </tr>
   </thead>
 
-  {{#collection SC.TemplateCollectionView tagName="tbody" itemClass="build" contentBinding="Travis.buildsTabController"}}
+  {{#collection SC.TemplateCollectionView tagName="tbody" itemClass="build" contentBinding="Travis.controllers.repository.tabs.builds"}}
     {{#with content}}
       <td class="number"><a {{bindAttr href="urlBuild"}}>{{number}}</a></td>
       <td class="commit"><a {{bindAttr href="urlGithubCommit"}}>{{commit}}{{#if branch}} ({{branch}}){{/if}}</a></td>

@@ -1,4 +1,4 @@
-{{#collection SC.TemplateCollectionView tagName="ul" id="repositories" contentBinding="Travis.repositoriesController" itemClass="repository" itemClassBinding="content.finished"}}
+{{#collection SC.TemplateCollectionView tagName="ul" id="repositories" contentBinding="Travis.controllers.repositories" itemClass="repository" itemClassBinding="content.finished"}}
   {{#with content}}
     <a {{bindAttr href="urlCurrent"}} class="slug">{{slug}}</a>
     <a {{bindAttr href="urlBuild"}} class="build">#{{lastBuildNumber}}</a>

@@ -30,6 +30,10 @@ Travis.DataSource = SC.DataSource.extend({
       return query.url
     } else if(query.recordType == Travis.Repository) {
       return '/repositories.json';
+    } else if(query.recordType == Travis.Job) {
+      return '/jobs.json';
+    } else if(query.recordType == Travis.Worker) {
+      return '/workers.json';
     } else if(query.recordType == Travis.Build) {
       var parameters = query.parameters || {};
       return '/builds/%@.json'.fmt(parameters.id);
@@ -54,22 +58,13 @@ Travis.DataSource = SC.DataSource.extend({
   _didGetQuery: function(response, params) {
     var store     = params.store,
         query     = params.query,
-        type      = params.query.get('recordType'),
-        deferred  = params.deferred;
+        type      = params.query.get('recordType');
 
     if (SC.ok(response)) {
       if (query.get('isLocal')) {
-        // console.log('fetch local');
-        var storeKeys = store.loadRecords(type, response.get('body'));
+        store.loadRecords(type, response.get('body'));
         store.dataSourceDidFetchQuery(query);
-      } else if (deferred) {
-        // console.log("fetch remote deferred");
-        var storeKeys = response.get('body').map(function(id) {
-          return Md.Person.storeKeyFor(id);
-        }, this);
-        store.loadQueryResults(query, storeKeys);
       } else {
-        // console.log("fetch remote");
         var storeKeys = store.loadRecords(type, response.get('body'));
         store.loadQueryResults(query, storeKeys);
       }
@@ -83,7 +78,6 @@ Travis.DataSource = SC.DataSource.extend({
         type  = params.type;
     if (SC.ok(response)) {
       var data = response.get('body');
-      // console.log(data, type);
       store.loadRecords(type, data.isEnumerable ? data : [data]);
     } else {
       store.dataSourceDidError(storeKey, response.get('body'));
