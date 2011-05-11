@@ -1,6 +1,6 @@
 Travis.controllers = SC.Object.create({
   repositories: SC.ArrayController.create({
-    init: function() {
+    load: function() {
       this.set('content', Travis.Repository.latest());
     }
   }),
@@ -12,11 +12,11 @@ Travis.controllers = SC.Object.create({
           this.set('content', repository.lastBuild());
         }
       }),
-      builds: SC.ArrayController.create({
+      builds: SC.ArrayController.create(Travis.Helpers.Build, {
         name: 'builds',
         load: function(repository, params) {
           this.set('content', repository.builds());
-        }
+        },
       }),
       build: SC.ObjectController.create(Travis.Helpers.Build, {
         name: 'build',
@@ -52,12 +52,12 @@ Travis.controllers = SC.Object.create({
     }.observes('*content'),
   }),
   jobs: SC.ArrayController.create({
-    init: function() {
+    load: function() {
       this.set('content', Travis.Job.all());
     }
   }),
   workers: SC.ArrayController.create({
-    init: function() {
+    load: function() {
       this.set('content', Travis.Worker.all());
     }
   }),

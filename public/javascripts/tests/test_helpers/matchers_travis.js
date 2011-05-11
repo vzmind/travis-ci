@@ -66,13 +66,18 @@ beforeEach(function() {
       var actual = $(this.actual);
       var errors = [];
 
+      var commit       = build.get('commit').slice(0, 7) + (build.get('branch') ? ' (%@)'.fmt(build.get('branch')) : '');
+      var commitUrl    = 'http://github.com/' + build.getPath('repository.slug') + '/commit/' + build.get('commit');
+      var committerUrl = 'mailto:' + build.get('committerEmail');
+      var authorUrl    = 'mailto:' + build.get('authorEmail');
+
       var expected = {
         '.summary .number':        build.get('number'),
-        '.summary .commit-hash a': { text: build.get('commit'), href: 'http://github.com/' + build.getPath('repository.slug') + '/commit/' + build.get('commit') },
-        '.summary .committer a':   { text: build.get('committerName'), href: 'mailto:' + build.get('committerEmail') },
-        '.summary .author a':      { text: build.get('authorName'), href: 'mailto:' + build.get('authorEmail') },
+        '.summary .commit-hash a': { text: commit, href: commitUrl },
+        '.summary .committer a':   { text: build.get('committerName'), href: committerUrl },
+        '.summary .author a':      { text: build.get('authorName'), href: authorUrl },
         '.summary .duration':      build.get('duration') || '-',
-        '.summary .finished_at':   build.get('finished_at') || '-',
+        '.summary .finished_at':   { title: build.get('finished_at') },
       }
       $.each(expected, function(selector, text) {
         jasmine.matchSelectorValues(selector, text, errors, actual);

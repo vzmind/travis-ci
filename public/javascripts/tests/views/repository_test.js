@@ -1,23 +1,14 @@
 describe('Views: the repository show view', function() {
-  it('shows the current repository', function() {
-    var repository = Travis.repositoryController.get('content');
-    expect(repository.get('slug')).toBe('svenfuchs/minimal');
-    expect('#repository').toShowRepository(repository);
+  beforeEach(function() {
+    follow('svenfuchs/minimal', '#repositories');
+    follow('Current');
+    waits(300)
   });
 
-  describe('the current build tab', function() {
-    describe('with a non-matrix build', function() {
-      it('the current build tab shows the build summary', function() {
-        var build = Travis.buildController.get('content');
-        expect(build.get('number')).toBe('2');
-        expect('#tab_current').toShowBuildSummary(build);
-      });
-
-      it('the current build tab shows the build log', function() {
-        var build = Travis.buildController.get('content');
-        expect(build.get('number')).toBe('2');
-        expect('#tab_current').toShowBuildLog(build.get('log'));
-      });
-    });
+  it('shows the current repository', function() {
+    // var repository = Travis.controllers.repository.get('content');
+    // var repository = Travis.Repository.find(1)
+    // expect(repository.get('slug')).toBe('svenfuchs/minimal');
+    // expect('#repository').toShowRepository(repository);
   });
 });

@@ -1,36 +1,21 @@
-var FIXTURES = [
-  'models/repositories.json',
-  'models/repositories/1/builds.json',
-  'models/repositories/2/builds.json',
-  'models/builds/1.json',
-  'models/builds/2.json',
-  'models/builds/3.json',
-  'models/builds/4.json',
-  'models/builds/5.json',
-  'models/builds/6.json',
-  'models/builds/7.json',
-  'models/builds/8.json',
-  'models/jobs.json',
-  'models/workers.json'
-];
+var __TEST__ = true;
 
 beforeEach(function() {
-  // jasmine.serveFixtures();
   jasmine.clock = sinon.useFakeTimers(Date.parse('2010-11-12T17:00:30Z'), 'Date');
 
-  SC.RunLoop.begin();
-  Travis.store = SC.Store.create().from(SC.Record.fixtures);
-  Travis.main();
-  SC.RunLoop.end();
+  window.location.hash = '';
+  var mainPane = Travis.get('mainPane');
+  if(mainPane) mainPane.remove();
+  if(Travis.store) Travis.store = null;
+
+  withinRunLoop(function() {
+    Travis.store = SC.Store.create().from(SC.Record.fixtures); // .from('Travis.DataSource')
+    Travis.main();
+  })
 });
 
 afterEach(function() {
   jasmine.clock.restore();
-
-  SC.RunLoop.begin();
-  Travis.store.reset();
-  Travis.getPath('mainPane').remove();
-  SC.RunLoop.end();
 });
 
 var withinRunLoop = function(block) {
@@ -39,3 +24,41 @@ var withinRunLoop = function(block) {
   SC.RunLoop.end();
   return result;
 };
+
+var runsAfter = function(time, func) {
+  waits(time);
+  jasmine.getEnv().currentSpec.runs(func);
+};
+
+var runsWhen = function(condition, func) {
+  waitsFor(condition);
+  jasmine.getEnv().currentSpec.runs(func);
+};
+
+var follow = function(text, context) {
+  runs(function() {
+    withinRunLoop(function() {
+      var link = $('a:contains("' + text + '")', context);
+      if(link.length == 0) {
+        throw('could not find a link "' + text + '"')
+      }
+      goTo(link.attr('href'));
+    });
+  })
+  waits(1); // no idea why this helps, is sc that fast? :)
+};
+
+var goTo = function(hash, expectations) {
+  runs(function() {
+    window.location.hash = normalizeHash(hash);
+    SC.routes.set('location', '#' + window.location.hash)
+  });
+  if(expectations) runs(expectations);
+};
+
+var normalizeHash = function(hash) {
+  hash = '#!/' + hash.replace(/^\//, '').replace('#!/', '');
+  return hash.replace(/#|!|\//) == '' ? '' : hash;
+};
+
+

@@ -4,7 +4,7 @@ Travis.Helpers.Build = {
   }.property('content'),
   commit: function() {
     return (this.getPath('content.commit') || '').substr(0, 7);
-  }.property()
+  }.property(),
 }
 
 

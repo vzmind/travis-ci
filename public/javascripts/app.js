@@ -1,6 +1,8 @@
 Travis = SC.Application.create({
   Helpers: {},
   main: function() {
+    $.extend(SC.TEMPLATES, Utils.loadTemplates(SC.Handlebars.compile));
+
     SC.routes.add('!/:owner/:repository/builds/:id', function(params) { Travis.controllers.repository.load($.extend(params, { tab: 'build'   })) });
     SC.routes.add('!/:owner/:repository/builds',     function(params) { Travis.controllers.repository.load($.extend(params, { tab: 'builds'  })) });
     SC.routes.add('!/:owner/:repository',            function(params) { Travis.controllers.repository.load($.extend(params, { tab: 'current' })) });
@@ -10,11 +12,14 @@ Travis = SC.Application.create({
       layerId: 'travis',
       templateName: 'travis'
     });
+
+    Travis.controllers.repositories.load();
+    Travis.controllers.workers.load();
+    Travis.controllers.jobs.load();
   },
   store: SC.Store.create().from('Travis.DataSource')
 });
 
 SC.ready(function() {
-  $.extend(SC.TEMPLATES, Utils.loadTemplates(SC.Handlebars.compile));
-  Travis.main();
+  if(__TEST__ !== undefined) Travis.main();
 });

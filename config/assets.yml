@@ -28,8 +28,7 @@ javascripts:
     - public/javascripts/app/views.js
     - public/javascripts/app/controllers.js
   jasmine:
-    - public/javascripts/fixtures/build.js
-    - public/javascripts/fixtures/repository.js
+    - public/javascripts/tests/fixtures.js
     - public/javascripts/tests/vendor/jasmine.js
     - public/javascripts/tests/vendor/**/*.js
     - public/javascripts/tests/test_helper.js

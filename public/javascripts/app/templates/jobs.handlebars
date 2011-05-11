@@ -1,9 +1,9 @@
 <div id="jobs" class="list">
   <h4>Queue</h4>
-  {{#collection Travis.Views.Jobs}}
+  {{#collection SC.TemplateCollectionView tagName="ul" itemClass="job" contentBinding="Travis.controllers.jobs"}}
     {{content.repository.slug}} #{{content.number}}
   {{else}}
-    <li>No jobs</li>
+    No jobs
   {{/collection}}
 </div>
 

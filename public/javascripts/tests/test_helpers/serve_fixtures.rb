@@ -1,3 +1,39 @@
+// Fixtures = function() {
+//   this.cache = {};
+// }
+// $.extend(Fixtures, {
+//   instance: function() {
+//     this._instance = this._instance || new Fixtures();
+//     return this._instance;
+//   },
+//   recordAndServe: function() {
+//     this.instance().recordAndServe();
+//   }
+// });
+// $.extend(Fixtures.prototype, {
+//   recordAndServe: function() {
+//     this.createServer();
+//     this.server.suspend();
+//   }
+//   createServer: function() {
+//     var server  = sinon.fakeServer.create();
+//     this.server = $.extend(server, {
+//       autoRespond: true,
+//       _processRequest: server.processRequest,
+//       processRequest: function(request) {
+//         this._processRequest(request);
+//       },
+//       suspend: function(callback) {
+//         this.server.xhr.restore();
+//         if(callback) callback();
+//         this.server.xhr = sinon.useFakeXMLHttpRequest();
+//       }
+//     });
+//   }
+// });
+//
+// Fixtures.recordAndServe();
+
 jasmine.serveFixtures = function() {
   if(jasmine.fixtures) return;
 
@@ -42,3 +78,5 @@ jasmine.retrieveFixture = function(fixtureName) {
 
   return xhr.responseText;
 };
+
+

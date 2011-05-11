@@ -16,6 +16,10 @@ Travis.Build = SC.Record.extend(Travis.Helpers.Urls, {
   duration:       SC.Record.attr(Number),
   finishedAt:     SC.Record.attr(String, { key: 'finished_at'}), // Date
 
+  commitAndBranch: function() {
+    return (this.get('commit') || '').substr(0, 7) + (this.get('branch') ? ' (%@)'.fmt(this.get('branch')) : '');
+  }.property(),
+
   repository: function() {
     return Travis.Repository.find(this.get('repositoryId'));
   }.property(),
@@ -41,7 +45,8 @@ Travis.Build.mixin({
     var key = [id, parameters.limit].join('-');
     var query = this._queries.byRepositoryId[key] = this._queries.byRepositoryId[key] || SC.Query.local(Travis.Build, {
       conditions: 'repositoryId = %@ AND parentId = null'.fmt(id),
-      url: '/repositories/%@/builds.json?limit=%@'.fmt(id, parameters.limit)
+      url: '/repositories/%@/builds.json?limit=%@'.fmt(id, parameters.limit),
+      orderBy: 'number DESC'
     });
     return Travis.store.find(query);
   },

@@ -47,13 +47,13 @@ beforeEach(function() {
       return errors.length == 0;
     },
     toMatchTable: function(table) {
-      table = _.clone(table);
+      // table = $.clone(table);
 
       this.actual = $(this.actual);
       var errors = [];
       var headers = table.shift();
 
-      _.each(headers, function(text, ix) {
+      $.each(headers, function(ix, text) {
         var selector = 'thead th:nth-child(' + (ix + 1) + ')';
         var actual = $.trim($(this.actual).find(selector).text());
         if(!jasmine.doesMatchText(actual, text)) {
@@ -61,8 +61,8 @@ beforeEach(function() {
         }
       }.bind(this));
 
-      _.each(table, function(cells, row) {
-        _.each(cells, function(text, cell) {
+      $.each(table, function(row, cells) {
+        $.each(cells, function(cell, text) {
           var selector = 'tbody tr:nth-child(' + (row + 1) + ') td:nth-child(' + (cell + 1) + ')';
           var actual = this.actual.find(selector).text();
           if(!jasmine.doesMatchText(actual, text)) {

@@ -18,7 +18,11 @@ Travis.Repository = SC.Record.extend(Travis.Helpers.Urls, {
 
   lastBuild: function() {
     return Travis.Build.find(this.get('lastBuildId'));
-  }.property().cacheable()
+  }.property().cacheable(),
+
+  scguid: function() {
+    return SC.guidFor(repository);
+  }.property()
 });
 
 Travis.Repository.mixin({
