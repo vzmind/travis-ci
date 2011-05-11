@@ -16,10 +16,18 @@ Travis = SC.Application.create({
     Travis.controllers.repositories.load();
     Travis.controllers.workers.load();
     Travis.controllers.jobs.load();
+
+    Utils.updateTimes();
+
+    $('.tool-tip').tipsy({ gravity: 'n', fade: true });
+    $('.fold').live('click', function() { $(this).hasClass('open') ? $(this).removeClass('open') : $(this).addClass('open'); })
+
+    $('#top .profile').mouseover(function() { $('#top .profile ul').show(); });
+    $('#top .profile').mouseout(function() { $('#top .profile ul').hide(); });
   },
   store: SC.Store.create().from('Travis.DataSource')
 });
 
 SC.ready(function() {
-  if(__TEST__ !== undefined) Travis.main();
+  if(typeof Jasmine !== undefined) Travis.main();
 });

@@ -13,16 +13,20 @@ Travis.Build = SC.Record.extend(Travis.Helpers.Urls, {
   authorName:     SC.Record.attr(String, { key: 'author_name' }),
   authorEmail:    SC.Record.attr(String, { key: 'author_email' }),
   log:            SC.Record.attr(String),
-  duration:       SC.Record.attr(Number),
+  startedAt:      SC.Record.attr(String, { key: 'started_at'}), // Date
   finishedAt:     SC.Record.attr(String, { key: 'finished_at'}), // Date
+
+  repository: function() {
+    return Travis.Repository.find(this.get('repositoryId'));
+  }.property(),
 
   commitAndBranch: function() {
     return (this.get('commit') || '').substr(0, 7) + (this.get('branch') ? ' (%@)'.fmt(this.get('branch')) : '');
   }.property(),
 
-  repository: function() {
-    return Travis.Repository.find(this.get('repositoryId'));
-  }.property(),
+  duration: function() {
+    return Utils.duration(this.get('startedAt'), this.get('finishedAt'));
+  }.property('startedAt', 'finishedAt'),
 
   configDimensions: function() {
     return $.map($.keys(this.get('config')), function(value) { return $.camelize(value) });

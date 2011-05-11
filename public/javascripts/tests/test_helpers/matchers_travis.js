@@ -22,7 +22,7 @@ beforeEach(function() {
       var errors = [];
       var expected = {
         'a:nth-child(1)': repository.get('slug'),
-        'a:nth-child(2)': '#' + repository.get('lastBuildNumber'),
+        'a:nth-child(2)': { text: '#' + repository.get('lastBuildNumber'), href: '#!/%@/builds/%@'.fmt(repository.get('slug'), repository.get('lastBuildId')) },
         '.duration':      { title: repository.get('lastBuildDuration') },
         '.finished_at':   { title: repository.get('lastBuildFinishedAt') }
       };

@@ -8,10 +8,6 @@ Travis.Repository = SC.Record.extend(Travis.Helpers.Urls, {
   lastBuildStartedAt:  SC.Record.attr(String, { key: 'last_build_started_at' }),  // Date
   lastBuildFinishedAt: SC.Record.attr(String, { key: 'last_build_finished_at' }), // Date
 
-  lastBuildDuration: function() {
-    return Utils.duration(this.get('lastBuildStartedAt'), this.get('lastBuildFinishedAt'));
-  }.property('lastBuildStartedAt', 'lastBuildFinishedAt').cacheable(),
-
   builds: function() {
     return Travis.Build.byRepositoryId(this.get('id'));
   }.property().cacheable(),
@@ -19,6 +15,10 @@ Travis.Repository = SC.Record.extend(Travis.Helpers.Urls, {
   lastBuild: function() {
     return Travis.Build.find(this.get('lastBuildId'));
   }.property().cacheable(),
+
+  lastBuildDuration: function() {
+    return Utils.duration(this.get('lastBuildStartedAt'), this.get('lastBuildFinishedAt'));
+  }.property('lastBuildStartedAt', 'lastBuildFinishedAt').cacheable(),
 
   scguid: function() {
     return SC.guidFor(repository);

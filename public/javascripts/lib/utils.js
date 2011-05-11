@@ -68,7 +68,7 @@ Utils = {
     $('.duration', element).readableTime();
 
     if(!Utils._updateTimesInterval) {
-      Utils._updateTimesInterval = setInterval(function() { Utils.updateTimes() }, 3000);
+      Utils._updateTimesInterval = setInterval(function() { Utils.updateTimes() }, 500);
     }
   },
   readableTime: function(duration) {

@@ -8,6 +8,9 @@ Travis.Helpers.Urls = {
   urlBuild: function() {
     return '#!/' + this.getSlug() + '/builds/' + this.get('id');
   }.property('slug'),
+  urlLastBuild: function() {
+    return '#!/' + this.getSlug() + '/builds/' + this.get('lastBuildId');
+  }.property('slug'),
   urlGithubRepository: function() {
     return 'http://github.com/' + this.getSlug();
   }.property('commit'),

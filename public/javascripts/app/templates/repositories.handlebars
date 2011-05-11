@@ -1,7 +1,7 @@
 {{#collection SC.TemplateCollectionView tagName="ul" id="repositories" contentBinding="Travis.controllers.repositories" itemClass="repository" itemClassBinding="content.finished"}}
   {{#with content}}
     <a {{bindAttr href="urlCurrent"}} class="slug">{{slug}}</a>
-    <a {{bindAttr href="urlBuild"}} class="build">#{{lastBuildNumber}}</a>
+    <a {{bindAttr href="urlLastBuild"}} class="build">#{{lastBuildNumber}}</a>
     <p class="summary">
       <span class="duration_label">Duration:</span> <abbr class="duration" {{bindAttr title="lastBuildDuration"}}>-</abbr>,
       <span class="finished_at_label">Finished:</span> <abbr class="finished_at timeago" {{bindAttr title="lastBuildFinishedAt"}}>-</abbr>

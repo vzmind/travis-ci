@@ -9,14 +9,12 @@ minimal = Repository.create!({
   :owner_name => 'svenfuchs',
   :name => 'minimal',
   :url => 'https://github.com/svenfuchs/minimal',
-  :last_duration => 10
 })
 
 enginex = Repository.create!({
   :owner_name => 'josevalim',
   :name => 'enginex',
   :url => 'https://github.com/josevalim/enginex',
-  :last_duration => 30
 })
 
 builds = [

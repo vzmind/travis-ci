@@ -20,6 +20,8 @@ javascripts:
     - public/javascripts/vendor/sproutcore/routing.js
     - public/javascripts/vendor/sproutcore/ajax.js
   travis:
+    - public/javascripts/vendor/jquery.timeago.js
+    - public/javascripts/vendor/jquery.tipsy.js
     - public/javascripts/lib/*.js
     - public/javascripts/app.js
     - public/javascripts/app/data_source.js
