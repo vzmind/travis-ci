@@ -1,5 +1,5 @@
 {{#if content.matrix.length}}
-  {{view Travis.Views.MatrixTable}}
+  {{view SC.TemplateView templateName="matrix" contentBinding="Travis.controllers.repository.tabs.active"}}
 {{else}}
   <pre class="log">{{content.foldedLog}}</pre>
 {{/if}}
