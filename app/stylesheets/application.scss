@@ -235,7 +235,7 @@ caption {
 #left #repositories li,
 #middle .summary .number a,
 #middle #matrix td:first-child a,
-#middle #builds .build td:first-child a {
+#middle #builds tbody td:first-child a {
   background-image: inline-image('icons/status.yellow.png');
   padding-left: 20px;
   background-repeat: no-repeat;
@@ -243,7 +243,7 @@ caption {
 #left #repositories li.green,
 #middle .summary.green .number a,
 #middle #matrix .green td:first-child a,
-#middle #builds .build.green td:first-child a {
+#middle #builds .green td:first-child a {
   background-image: inline-image('icons/status.green.png');
   color: green;
   padding-left: 20px;
@@ -252,7 +252,7 @@ caption {
 #left #repositories li.red,
 #middle .summary.red .number a,
 #middle #matrix .red td:first-child a,
-#middle #builds .build.red td:first-child a {
+#middle #builds .red td:first-child a {
   background-image: inline-image('icons/status.red.png');
   color: #c00;
   padding-left: 20px;
