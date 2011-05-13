@@ -68,7 +68,7 @@ if (typeof console === 'undefined') {
 // rest of the methods go into the mixin defined below.
 
 /**
-  @version 1.6.0.beta.1
+  @version 1.6.0.beta.3
   @namespace
 
   All SproutCore methods and functions are defined
@@ -89,7 +89,7 @@ if (typeof console === 'undefined') {
 window.SC = window.SC || {} ;
 window.SproutCore = window.SproutCore || SC ;
 
-SC.VERSION = '1.6.0.beta.1';
+SC.VERSION = '1.6.0.beta.3';
 
 /**
   @private
@@ -5260,7 +5260,7 @@ SC.CoreArray = /** @lends SC.Array.prototype */ {
         chain.notifyPropertyDidChange();
 
         for (idx = 0; idx < len; idx++) {
-          item = removedObjects[idx];
+          item = removedObjects.objectAt(idx);
           clonedChain = item[kvoChainList][chainGuid];
           clonedChain.deactivate();
           delete item[kvoChainList][chainGuid];
@@ -5289,7 +5289,7 @@ SC.CoreArray = /** @lends SC.Array.prototype */ {
 
         len = addedObjects.get('length');
         for (idx = 0; idx < len; idx++) {
-          this._clonePropertyChainToItem(chain, addedObjects[idx]);
+          this._clonePropertyChainToItem(chain, addedObjects.objectAt(idx));
         }
       }, this);
     }
@@ -11432,7 +11432,7 @@ SC.Logger = SC.Object.create(
         type         = entry.type;
 
         if (includeTimestamps) {
-          timestampStr = timestampFormat.fmt(entry.timestamp.utcFormat());
+          timestampStr = timestampFormat.fmt(entry.timestamp.toUTCString());
         }
 
         // Is this a message or a group directive?
@@ -11519,7 +11519,7 @@ SC.Logger = SC.Object.create(
         type  = entry.type;
 
         // First determine the prefix.
-        prefix = timestampFormat.fmt(entry.timestamp.utcFormat());
+        prefix = timestampFormat.fmt(entry.timestamp.toUTCString());
         prefix += prefixMapping[type] || "";
 
         // Is this a message or a group directive?

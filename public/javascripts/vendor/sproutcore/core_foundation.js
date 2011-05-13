@@ -9,15 +9,15 @@
 /**
   Indicates that the collection view expects to accept a drop ON the specified
   item.
-
+  
   @property {Number}
 */
 SC.DROP_ON = 0x01 ;
 
 /**
-  Indicates that the collection view expects to accept a drop BEFORE the
+  Indicates that the collection view expects to accept a drop BEFORE the 
   specified item.
-
+  
   @property {Number}
 */
 SC.DROP_BEFORE = 0x02 ;
@@ -26,15 +26,15 @@ SC.DROP_BEFORE = 0x02 ;
   Indicates that the collection view expects to accept a drop AFTER the
   specified item.  This is treated just like SC.DROP_BEFORE is most views
   except for tree lists.
-
+  
   @property {Number}
 */
 SC.DROP_AFTER = 0x04 ;
 
 /**
-  Indicates that the collection view want's to know which operations would
+  Indicates that the collection view want's to know which operations would 
   be allowed for either drop operation.
-
+  
   @property {Number}
 */
 SC.DROP_ANY = 0x07 ;
@@ -91,18 +91,18 @@ SC.ALIGN_BOTTOM_RIGHT = 'bottom-right';
 
 
 SC.mixin(/** @lends SC */ {
-
+  
   /**
     Reads or writes data from a global cache.  You can use this facility to
     store information about an object without actually adding properties to
     the object itself.  This is needed especially when working with DOM,
     which can leak easily in IE.
-
+    
     To read data, simply pass in the reference element (used as a key) and
     the name of the value to read.  To write, also include the data.
-
+    
     You can also just pass an object to retrieve the entire cache.
-
+    
     @param elem {Object} An object or Element to use as scope
     @param name {String} Optional name of the value to read/write
     @param data {Object} Optional data.  If passed, write.
@@ -111,54 +111,54 @@ SC.mixin(/** @lends SC */ {
   data: function(elem, name, data) {
     elem = (elem === window) ? "@window" : elem ;
     var hash = SC.hashFor(elem) ; // get the hash key
-
+    
     // Generate the data cache if needed
     var cache = SC._data_cache ;
     if (!cache) SC._data_cache = cache = {} ;
-
+    
     // Now get cache for element
     var elemCache = cache[hash] ;
     if (name && !elemCache) cache[hash] = elemCache = {} ;
-
-    // Write data if provided
+    
+    // Write data if provided 
     if (elemCache && (data !== undefined)) elemCache[name] = data ;
-
+    
     return (name) ? elemCache[name] : elemCache ;
   },
-
+  
   /**
     Removes data from the global cache.  This is used throughout the
     framework to hold data without creating memory leaks.
-
-    You can remove either a single item on the cache or all of the cached
+    
+    You can remove either a single item on the cache or all of the cached 
     data for an object.
-
+    
     @param elem {Object} An object or Element to use as scope
-    @param name {String} optional name to remove.
+    @param name {String} optional name to remove. 
     @returns {Object} the value or cache that was removed
   */
   removeData: function(elem, name) {
     elem = (elem === window) ? "@window" : elem ;
     var hash = SC.hashFor(elem) ;
-
+    
     // return undefined if no cache is defined
     var cache = SC._data_cache ;
     if (!cache) return undefined ;
-
+    
     // return undefined if the elem cache is undefined
     var elemCache = cache[hash] ;
     if (!elemCache) return undefined;
-
+    
     // get the return value
     var ret = (name) ? elemCache[name] : elemCache ;
-
+    
     // and delete as appropriate
     if (name) {
       delete elemCache[name] ;
     } else {
       delete cache[hash] ;
     }
-
+    
     return ret ;
   },
 
@@ -202,36 +202,36 @@ if (typeof CHANCE_SLICES === 'undefined') var CHANCE_SLICES = [];CHANCE_SLICES =
 
 /**
   @class
-
+  
   The controller base class provides some common functions you will need
   for controllers in your applications, especially related to maintaining
   an editing context.
-
+  
   In general you will not use this class, but you can use a subclass such
   as ObjectController, TreeController, or ArrayController.
-
+  
   ## EDITING CONTEXTS
-
+  
   One major function of a controller is to mediate between changes in the
-  UI and changes in the model.  In particular, you usually do not want
-  changes you make in the UI to be applied to a model object directly.
+  UI and changes in the model.  In particular, you usually do not want 
+  changes you make in the UI to be applied to a model object directly.  
   Instead, you often will want to collect changes to an object and then
   apply them only when the user is ready to commit their changes.
-
+  
   The editing contact support in the controller class will help you
   provide this capability.
-
+  
   @extends SC.Object
   @since SproutCore 1.0
 */
 SC.Controller = SC.Object.extend(
 /** @scope SC.Controller.prototype */ {
-
+  
   /**
-    Makes a controller editable or not editable.  The SC.Controller class
-    itself does not do anything with this property but subclasses will
+    Makes a controller editable or not editable.  The SC.Controller class 
+    itself does not do anything with this property but subclasses will 
     respect it when modifying content.
-
+    
     @property {Boolean}
   */
   isEditable: YES
@@ -940,6 +940,8 @@ SC.ArrayController = SC.Controller.extend(SC.Array, SC.SelectionSupport,
       }
 
       lastContent.removeObserver('status', this, sfunc);
+
+      this.teardownEnumerablePropertyChains(lastContent);
     }
 
     // save new cached values
@@ -972,6 +974,8 @@ SC.ArrayController = SC.Controller.extend(SC.Array, SC.SelectionSupport,
       // Observer for changes to the status property, in case this is an
       // SC.Record or SC.RecordArray.
       content.addObserver('status', this, sfunc);
+
+      this.setupEnumerablePropertyChains(content);
     } else {
       newlen = SC.none(content) ? 0 : 1;
     }
@@ -979,6 +983,7 @@ SC.ArrayController = SC.Controller.extend(SC.Array, SC.SelectionSupport,
     // finally, notify enumerable content has changed.
     this._scac_length = newlen;
     this._scac_contentStatusDidChange();
+
     this.arrayContentDidChange(0, 0, newlen);
     this.updateSelectionAfterContentChange();
   }.observes('content'),
@@ -1030,40 +1035,40 @@ sc_require('controllers/controller') ;
   An ObjectController gives you a simple way to manage the editing state of
   an object.  You can use an ObjectController instance as a "proxy" for your
   model objects.
-
-  Any properties you get or set on the object controller, will be passed
+  
+  Any properties you get or set on the object controller, will be passed 
   through to its content object.  This allows you to setup bindings to your
-  object controller one time for all of your views and then swap out the
+  object controller one time for all of your views and then swap out the 
   content as needed.
-
+  
   ## Working with Arrays
-
-  An ObjectController can accept both arrays and single objects as content.
-  If the content is an array, the ObjectController will do its best to treat
+  
+  An ObjectController can accept both arrays and single objects as content.  
+  If the content is an array, the ObjectController will do its best to treat 
   the array as a single object.  For example, if you set the content of an
   ObjectController to an array of Contact records and then call:
-
+  
       contactController.get('name');
 
-  The controller will check the name property of each Contact in the array.
-  If the value of the property for each Contact is the same, that value will
-  be returned.  If the any values are different, then an array will be
-  returned with the values from each Contact in them.
-
-  Most SproutCore views can work with both arrays and single content, which
+  The controller will check the name property of each Contact in the array.  
+  If the value of the property for each Contact is the same, that value will 
+  be returned.  If the any values are different, then an array will be 
+  returned with the values from each Contact in them. 
+  
+  Most SproutCore views can work with both arrays and single content, which 
   means that most of the time, you can simply hook up your views and this will
   work.
-
-  If you would prefer to make sure that your ObjectController is always
-  working with a single object and you are using bindings, you can always
-  setup your bindings so that they will convert the content to a single object
+  
+  If you would prefer to make sure that your ObjectController is always 
+  working with a single object and you are using bindings, you can always 
+  setup your bindings so that they will convert the content to a single object 
   like so:
-
+  
       contentBinding: SC.Binding.single('MyApp.listController.selection') ;
 
-  This will ensure that your content property is always a single object
+  This will ensure that your content property is always a single object 
   instead of an array.
-
+  
   @extends SC.Controller
   @since SproutCore 1.0
 */
@@ -1072,8 +1077,8 @@ SC.ObjectController = SC.Controller.extend(
 
   // ..........................................................
   // PROPERTIES
-  //
-
+  // 
+  
   /**
     Set to the object you want this controller to manage.  The object should
     usually be a single value; not an array or enumerable.  If you do supply
@@ -1082,21 +1087,21 @@ SC.ObjectController = SC.Controller.extend(
 
     Usually your content object should implement the SC.Observable mixin, but
     this is not required.  All SC.Object-based objects support SC.Observable
-
+    
     @property {Object}
   */
   content: null,
 
   /**
-    If YES, then setting the content to an enumerable or an array with more
+    If YES, then setting the content to an enumerable or an array with more 
     than one item will cause the Controller to attempt to treat the array as
     a single object.  Use of get(), for example, will get every property on
     the enumerable and return it.  set() will set the property on every item
-    in the enumerable.
-
+    in the enumerable. 
+    
     If NO, then setting content to an enumerable with multiple items will be
     treated like setting a null value.  hasContent will be NO.
-
+    
     @property {Boolean}
   */
   allowsMultipleContent: NO,
@@ -1104,95 +1109,95 @@ SC.ObjectController = SC.Controller.extend(
   /**
     Becomes YES whenever this object is managing content.  Usually this means
     the content property contains a single object or an array or enumerable
-    with a single item.  Array's or enumerables with multiple items will
+    with a single item.  Array's or enumerables with multiple items will 
     normally make this property NO unless allowsMultipleContent is YES.
-
+    
     @property {Boolean}
   */
   hasContent: function() {
     return !SC.none(this.get('observableContent'));
   }.property('observableContent'),
-
+  
   /**
-    Makes a controller editable or not editable.  The SC.Controller class
-    itself does not do anything with this property but subclasses will
+    Makes a controller editable or not editable.  The SC.Controller class 
+    itself does not do anything with this property but subclasses will 
     respect it when modifying content.
-
+    
     @property {Boolean}
   */
   isEditable: YES,
-
+  
   /**
-    Primarily for internal use.  Normally you should not access this property
-    directly.
-
-    Returns the actual observable object proxied by this controller.  Usually
-    this property will mirror the content property.  In some cases - notably
+    Primarily for internal use.  Normally you should not access this property 
+    directly.  
+    
+    Returns the actual observable object proxied by this controller.  Usually 
+    this property will mirror the content property.  In some cases - notably 
     when setting content to an enumerable, this may return a different object.
-
+    
     Note that if you set the content to an enumerable which itself contains
     enumerables and allowsMultipleContent is NO, this will become null.
-
+    
     @property {Object}
   */
   observableContent: function() {
     var content = this.get('content'),
         len, allowsMultiple;
-
+        
     // if enumerable, extract the first item or possibly become null
     if (content && content.isEnumerable) {
       len = content.get('length');
       allowsMultiple = this.get('allowsMultipleContent');
-
+      
       if (len === 1) content = content.firstObject();
       else if (len===0 || !allowsMultiple) content = null;
-
+      
       // if we got some new content, it better not be enum also...
       if (content && !allowsMultiple && content.isEnumerable) content=null;
     }
-
+    
     return content;
   }.property('content', 'allowsMultipleContent').cacheable(),
 
   // ..........................................................
   // METHODS
-  //
+  // 
 
   /**
     Override this method to destroy the selected object.
-
+    
     The default just passes this call onto the content object if it supports
-    it, and then sets the content to null.
-
-    Unlike most calls to destroy() this will not actually destroy the
-    controller itself; only the the content.  You continue to use the
+    it, and then sets the content to null.  
+    
+    Unlike most calls to destroy() this will not actually destroy the 
+    controller itself; only the the content.  You continue to use the 
     controller by setting the content to a new value.
-
+    
     @returns {SC.ObjectController} receiver
   */
   destroy: function() {
     var content = this.get('observableContent') ;
     if (content && SC.typeOf(content.destroy) === SC.T_FUNCTION) {
       content.destroy();
-    }
-    this.set('content', null) ;
+    } 
+    this.set('content', null) ;  
     return this;
   },
-
+  
   /**
-    Invoked whenever any property on the content object changes.
+    Invoked whenever any property on the content object changes.  
 
-    The default implementation will simply notify any observers that the
-    property has changed.  You can override this method if you need to do
+    The default implementation will simply notify any observers that the 
+    property has changed.  You can override this method if you need to do 
     some custom work when the content property changes.
-
-    If you have set the content property to an enumerable with multiple
-    objects and you set allowsMultipleContent to YES, this method will be
+    
+    If you have set the content property to an enumerable with multiple 
+    objects and you set allowsMultipleContent to YES, this method will be 
     called anytime any property in the set changes.
 
-    If all properties have changed on the content or if the content itself
+    If all properties have changed on the content or if the content itself 
     has changed, this method will be called with a key of "*".
-
+    
     @param {Object} target the content object
     @param {String} key the property that changes
     @returns {void}
@@ -1201,26 +1206,26 @@ SC.ObjectController = SC.Controller.extend(
     if (key === '*') this.allPropertiesDidChange();
     else this.notifyPropertyChange(key);
   },
-
+  
   /**
-    Called whenver you try to get/set an unknown property.  The default
-    implementation will pass through to the underlying content object but
-    you can override this method to do some other kind of processing if
+    Called whenver you try to get/set an unknown property.  The default 
+    implementation will pass through to the underlying content object but 
+    you can override this method to do some other kind of processing if 
     needed.
-
+    
     @property {String} key key being retrieved
     @property {Object} value value to set or undefined if reading only
     @returns {Object} property value
   */
   unknownProperty: function(key,value) {
-
+    
     // avoid circular references
     if (key==='content') {
       if (value !== undefined) this.content = value;
       return this.content;
     }
-
-    // for all other keys, just pass through to the observable object if
+    
+    // for all other keys, just pass through to the observable object if 
     // there is one.  Use getEach() and setEach() on enumerable objects.
     var content = this.get('observableContent'), loc, cur, isSame;
     if (content===null || content===undefined) return undefined; // empty
@@ -1243,21 +1248,21 @@ SC.ObjectController = SC.Controller.extend(
         } else value = undefined; // empty array.
 
       } else value = (content.isObservable) ? content.get(key) : content[key];
-
+      
     // setter
     } else {
       if (!this.get('isEditable')) {
         throw "%@.%@ is not editable".fmt(this,key);
       }
-
+      
       if (content.isEnumerable) content.setEach(key, value);
       else if (content.isObservable) content.set(key, value);
       else content[key] = value;
     }
-
+    
     return value;
   },
-
+  
   // ...............................
   // INTERNAL SUPPORT
   //
@@ -1272,7 +1277,7 @@ SC.ObjectController = SC.Controller.extend(
   _scoc_contentDidChange: function () {
     var last = this._scoc_content,
         cur  = this.get('content');
-
+        
     if (last !== cur) {
       this._scoc_content = cur;
       var func = this._scoc_enumerableContentDidChange;
@@ -1286,9 +1291,9 @@ SC.ObjectController = SC.Controller.extend(
       }
     }
   }.observes("content"),
-
+  
   /**  @private
-
+    
     Called whenever the observable content property changes.  This will setup
     observers on the content if needed.
   */
@@ -1300,15 +1305,15 @@ SC.ObjectController = SC.Controller.extend(
 
     if (last === cur) return this; // nothing to do
     //console.log('observableContentDidChange');
-
+    
     this._scoc_observableContent = cur; // save old content
-
+    
     // stop observing last item -- if enumerable stop observing set
     if (last) {
       if (last.isEnumerable) last.removeObserver('[]', this, efunc);
       else if (last.isObservable) last.removeObserver('*', this, func);
     }
-
+    
     if (cur) {
       if (cur.isEnumerable) cur.addObserver('[]', this, efunc);
       else if (cur.isObservable) cur.addObserver('*', this, func);
@@ -1320,10 +1325,10 @@ SC.ObjectController = SC.Controller.extend(
     } else this.contentPropertyDidChange(cur, '*');
 
   }.observes("observableContent"),
-
+  
   /** @private
     Called when observed enumerable content has changed.  This will teardown
-    and setup observers on the enumerable content items and then calls
+    and setup observers on the enumerable content items and then calls 
     contentPropertyDidChange().  This method may be called even if the new
     'cur' is not enumerable but the last content was enumerable.
   */
@@ -1331,7 +1336,7 @@ SC.ObjectController = SC.Controller.extend(
     var cur  = this.get('observableContent'),
         set  = this._scoc_observableContentItems,
         func = this.contentPropertyDidChange;
-
+    
     // stop observing each old item
     if (set) {
       set.forEach(function(item) {
@@ -1339,7 +1344,7 @@ SC.ObjectController = SC.Controller.extend(
       }, this);
       set.clear();
     }
-
+    
     // start observing new items if needed
     if (cur && cur.isEnumerable) {
       if (!set) set = SC.Set.create();
@@ -1347,58 +1352,17 @@ SC.ObjectController = SC.Controller.extend(
         if (set.contains(item)) return ; // nothing to do
         set.add(item);
         if (item.isObservable) item.addObserver('*', this, func);
-      }, this);
+      }, this); 
     } else set = null;
-
+    
     this._scoc_observableContentItems = set; // save for later cleanup
-
+  
     // notify
     this.contentPropertyDidChange(cur, '*');
     return this ;
   }
-
+        
 }) ;
-; if ((typeof SC !== 'undefined') && SC && SC.Module && SC.Module.scriptDidLoad) SC.Module.scriptDidLoad('sproutcore/core_foundation');
-/* >>>>>>>>>> BEGIN source/ext/function.js */
-// ==========================================================================
-// Project:   SproutCore - JavaScript Application Framework
-// Copyright: ©2006-2011 Strobe Inc. and contributors.
-//            Portions ©2008-2011 Apple Inc. All rights reserved.
-// License:   Licensed under MIT license (see license.js)
-// ==========================================================================
-
-SC.mixin(Function.prototype, /** @scope Function.prototype */ {
-
-  /**
-    Creates a timer that will execute the function after a specified
-    period of time.
-
-    If you pass an optional set of arguments, the arguments will be passed
-    to the function as well.  Otherwise the function should have the
-    signature:
-
-        function functionName(timer)
-
-    @param target {Object} optional target object to use as this
-    @param interval {Number} the time to wait, in msec
-    @returns {SC.Timer} scheduled timer
-  */
-  invokeLater: function(target, interval) {
-    if (interval === undefined) interval = 1 ;
-    var f = this;
-    if (arguments.length > 2) {
-      var args = SC.$A(arguments).slice(2,arguments.length);
-      args.unshift(target);
-      // f = f.bind.apply(f, args) ;
-      var func = f ;
-      // Use "this" in inner func because it get its scope by
-      // outer func f (=target). Could replace "this" with target for clarity.
-      f = function() { return func.apply(this, args.slice(1)); } ;
-    }
-    return SC.Timer.schedule({ target: target, action: f, interval: interval });
-  }
-
-});
 ; if ((typeof SC !== 'undefined') && SC && SC.Module && SC.Module.scriptDidLoad) SC.Module.scriptDidLoad('sproutcore/core_foundation');
 /* >>>>>>>>>> BEGIN source/ext/handlebars.js */
 /**
@@ -1934,1387 +1898,6 @@ Handlebars.registerHelper('view', function(path, options) {
   return SC.Handlebars.ViewHelper.helper(this, path, options);
 });
 ; if ((typeof SC !== 'undefined') && SC && SC.Module && SC.Module.scriptDidLoad) SC.Module.scriptDidLoad('sproutcore/core_foundation');
-/* >>>>>>>>>> BEGIN source/ext/object.js */
-// ==========================================================================
-// Project:   SproutCore - JavaScript Application Framework
-// Copyright: ©2006-2011 Strobe Inc. and contributors.
-//            Portions ©2008-2011 Apple Inc. All rights reserved.
-// License:   Licensed under MIT license (see license.js)
-// ==========================================================================
-
-// Extensions to the core SC.Object class
-SC.mixin(SC.Object.prototype, /** @scope SC.Object.prototype */ {
-
-  /**
-    Invokes the named method after the specified period of time.
-
-    This is a convenience method that will create a single run timer to
-    invoke a method after a period of time.  The method should have the
-    signature:
-
-        methodName: function(timer)
-
-    If you would prefer to pass your own parameters instead, you can instead
-    call invokeLater() directly on the function object itself.
-
-    @param methodName {String} method name to perform.
-    @param interval {Number} period from current time to schedule.
-    @returns {SC.Timer} scheduled timer.
-  */
-  invokeLater: function(methodName, interval) {
-    if (interval === undefined) { interval = 1 ; }
-    var f = methodName, args, func;
-
-    // if extra arguments were passed - build a function binding.
-    if (arguments.length > 2) {
-      args = SC.$A(arguments).slice(2);
-      if (SC.typeOf(f) === SC.T_STRING) { f = this[methodName] ; }
-      func = f ;
-      f = function() { return func.apply(this, args); } ;
-    }
-
-    // schedule the timer
-    return SC.Timer.schedule({ target: this, action: f, interval: interval });
-  },
-
-  /**
-    Lookup the named property path and then invoke the passed function,
-    passing the resulting value to the function.
-
-    This method is a useful way to handle deferred loading of properties.
-    If you want to defer loading a property, you can override this method.
-    When the method is called, passing a deferred property, you can load the
-    property before invoking the callback method.
-
-    You can even swap out the receiver object.
-
-    The callback method should have the signature:
-
-    function callback(objectAtPath, sourceObject) { ... }
-
-    You may pass either a function itself or a target/method pair.
-
-    @param {String} pathName
-    @param {Object} target target or method
-    @param {Function|String} method
-    @returns {SC.Object} receiver
-  */
-  invokeWith: function(pathName, target, method) {
-    // normalize target/method
-    if (method === undefined) {
-      method = target; target = this;
-    }
-    if (!target) { target = this ; }
-    if (SC.typeOf(method) === SC.T_STRING) { method = target[method]; }
-
-    // get value
-    var v = this.getPath(pathName);
-
-    // invoke method
-    method.call(target, v, this);
-    return this ;
-  }
-
-});
-; if ((typeof SC !== 'undefined') && SC && SC.Module && SC.Module.scriptDidLoad) SC.Module.scriptDidLoad('sproutcore/core_foundation');
-/* >>>>>>>>>> BEGIN source/ext/run_loop.js */
-// ==========================================================================
-// Project:   SproutCore - JavaScript Application Framework
-// Copyright: ©2006-2011 Strobe Inc. and contributors.
-//            Portions ©2008-2011 Apple Inc. All rights reserved.
-// License:   Licensed under MIT license (see license.js)
-// ==========================================================================
-
-// Create anonymous subclass of SC.RunLoop to add support for processing
-// view queues and Timers.
-SC.RunLoop = SC.RunLoop.extend(
-/** @scope SC.RunLoop.prototype */ {
-
-  /**
-    The time the current run loop began executing.
-
-    All timers scheduled during this run loop will begin executing as if
-    they were scheduled at this time.
-
-    @property {Number}
-  */
-  startTime: function() {
-    if (!this._start) { this._start = Date.now(); }
-    return this._start ;
-  }.property(),
-
-  /*
-
-    Override to fire and reschedule timers once per run loop.
-
-    Note that timers should fire only once per run loop to avoid the
-    situation where a timer might cause an infinite loop by constantly
-    rescheduling itself everytime it is fired.
-  */
-  endRunLoop: function() {
-    this.fireExpiredTimers(); // fire them timers!
-    var ret = arguments.callee.base.apply(this,arguments); // do everything else
-    this.scheduleNextTimeout(); // schedule a timout if timers remain
-    return ret;
-  },
-
-  // ..........................................................
-  // TIMER SUPPORT
-  //
-
-  /**
-    Schedules a timer to execute at the specified runTime.  You will not
-    usually call this method directly.  Instead you should work with SC.Timer,
-    which will manage both creating the timer and scheduling it.
-
-    Calling this method on a timer that is already scheduled will remove it
-    from the existing schedule and reschedule it.
-
-    @param {SC.Timer} timer the timer to schedule
-    @param {Time} runTime the time offset when you want this to run
-    @returns {SC.RunLoop} receiver
-  */
-  scheduleTimer: function(timer, runTime) {
-    // if the timer is already in the schedule, remove it.
-    this._timerQueue = timer.removeFromTimerQueue(this._timerQueue);
-
-    // now, add the timer ot the timeout queue.  This will walk down the
-    // chain of timers to find the right place to insert it.
-    this._timerQueue = timer.scheduleInTimerQueue(this._timerQueue, runTime);
-    return this ;
-  },
-
-  /**
-    Removes the named timer from the timeout queue.  If the timer is not
-    currently scheduled, this method will have no effect.
-
-    @param {SC.Timer} timer the timer to schedule
-    @returns {SC.RunLoop} receiver
-  */
-  cancelTimer: function(timer) {
-    this._timerQueue = timer.removeFromTimerQueue(this._timerQueue) ;
-    return this ;
-  },
-
-  /** @private - shared array used by fireExpiredTimers to avoid memory */
-  TIMER_ARRAY: [],
-
-  /**
-    Invokes any timers that have expired since this method was last called.
-    Usually you will not call this method directly, but it will be invoked
-    automatically at the end of the run loop.
-
-    @returns {Boolean} YES if timers were fired, NO otherwise
-  */
-  fireExpiredTimers: function() {
-    if (!this._timerQueue || this._firing) { return NO; } // nothing to do
-
-    // max time we are allowed to run timers
-    var now = this.get('startTime'),
-        timers = this.TIMER_ARRAY,
-        idx, len, didFire;
-
-    // avoid recursive calls
-    this._firing = YES;
-
-    // collect timers to fire.  we do this one time up front to avoid infinite
-    // loops where firing a timer causes it to schedule itself again, causing
-    // it to fire again, etc.
-    this._timerQueue = this._timerQueue.collectExpiredTimers(timers, now);
-
-    // now step through timers and fire them.
-    len = timers.length;
-    for(idx=0;idx<len;idx++) { timers[idx].fire(); }
-
-    // cleanup
-    didFire = timers.length > 0 ;
-    timers.length = 0 ; // reset for later use...
-    this._firing = NO ;
-    return didFire;
-  },
-
-  /** @private
-    Invoked at the end of a runloop, if there are pending timers, a timeout
-    will be scheduled to fire when the next timer expires.  You will not
-    usually call this method yourself.  It is invoked automatically at the
-    end of a run loop.
-
-    @returns {Boolean} YES if a timeout was scheduled
-  */
-  scheduleNextTimeout: function() {
-    var timer = this._timerQueue ;
-
-    var ret = NO ;
-    // if no timer, and there is an existing timeout, cancel it
-    if (!timer) {
-      if (this._timeout) { clearTimeout(this._timeout); }
-
-    // otherwise, determine if the timeout needs to be rescheduled.
-    } else {
-      var nextTimeoutAt = timer._timerQueueRunTime ;
-      if (this._timeoutAt !== nextTimeoutAt) { // need to reschedule
-        if (this._timeout) { clearTimeout(this._timeout); } // clear existing...
-        // reschedule
-        var delay = Math.max(0, nextTimeoutAt - Date.now());
-        this._timeout = setTimeout(this._timeoutDidFire, delay);
-        this._timeoutAt = nextTimeoutAt ;
-      }
-      ret = YES ;
-    }
-
-    return ret ;
-  },
-
-  /** @private
-    Invoked when a timeout actually fires.  Simply cleanup, then begin and end
-    a runloop. This will fire any expired timers and reschedule.  Note that
-    this function will be called with 'this' set to the global context,
-    hence the need to lookup the current run loop.
-  */
-  _timeoutDidFire: function() {
-    var rl = SC.RunLoop.currentRunLoop;
-    rl._timeout = rl._timeoutAt = null ; // cleanup
-    SC.run();  // begin/end runloop to trigger timers.
-  }
-
-});
-
-// Recreate the currentRunLoop with the new methods
-SC.RunLoop.currentRunLoop = SC.RunLoop.create();
-; if ((typeof SC !== 'undefined') && SC && SC.Module && SC.Module.scriptDidLoad) SC.Module.scriptDidLoad('sproutcore/core_foundation');
-/* >>>>>>>>>> BEGIN source/system/locale.js */
-// ==========================================================================
-// Project:   SproutCore - JavaScript Application Framework
-// Copyright: ©2006-2011 Strobe Inc. and contributors.
-//            Portions ©2008-2011 Apple Inc. All rights reserved.
-// License:   Licensed under MIT license (see license.js)
-// ==========================================================================
-
-/**
-  The Locale defined information about a specific locale, including date and
-  number formatting conventions, and localization strings.  You can define
-  various locales by adding them to the SC.locales hash, keyed by language
-  and/or country code.
-
-  On page load, the default locale will be chosen based on the current
-  languages and saved at SC.Locale.current.  This locale is used for
-  localization, etc.
-
-  ## Creating a new locale
-
-  You can create a locale by simply extending the SC.Locale class and adding
-  it to the locales hash:
-
-      SC.Locale.locales['en'] = SC.Locale.extend({ .. config .. }) ;
-
-  Alternatively, you could choose to base your locale on another locale by
-  extending that locale:
-
-      SC.Locale.locales['en-US'] = SC.Locale.locales['en'].extend({ ... }) ;
-
-  Note that if you do not define your own strings property, then your locale
-  will inherit any strings added to the parent locale.  Otherwise you must
-  implement your own strings instead.
-
-  @extends SC.Object
-  @since SproutCore 1.0
-*/
-SC.Locale = SC.Object.extend({
-
-  init: function() {
-    // make sure we know the name of our own locale.
-    if (!this.language) SC.Locale._assignLocales();
-
-    // Make sure we have strings that were set using the new API.  To do this
-    // we check to a bool that is set by one of the string helpers.  This
-    // indicates that the new API was used. If the new API was not used, we
-    // check to see if the old API was used (which places strings on the
-    // String class).
-    if (!this.hasStrings) {
-      var langs = this._deprecatedLanguageCodes || [] ;
-      langs.push(this.language);
-      var idx = langs.length ;
-      var strings = null ;
-      while(!strings && --idx >= 0) {
-        strings = String[langs[idx]];
-      }
-      if (strings) {
-        this.hasStrings = YES;
-        this.strings = strings ;
-      }
-    }
-  },
-
-  /** Set to YES when strings have been added to this locale. */
-  hasStrings: NO,
-
-  /** The strings hash for this locale. */
-  strings: {},
-
-  toString: function() {
-    if (!this.language) SC.Locale._assignLocales() ;
-    return "SC.Locale["+this.language+"]"+SC.guidFor(this) ;
-  },
-
-  /**
-    Returns the localized version of the string or the string if no match
-    was found.
-
-    @param {String} string
-    @param {String} optional default string to return instead
-    @returns {String}
-  */
-  locWithDefault: function(string, def) {
-    var ret = this.strings[string];
-
-    // strings may be blank, so test with typeOf.
-    if (SC.typeOf(ret) === SC.T_STRING) return ret;
-    else if (SC.typeOf(def) === SC.T_STRING) return def;
-    return string;
-  }
-
-
-}) ;
-
-SC.Locale.mixin(/** @scope SC.Locale */ {
-
-  /**
-    If YES, localization will favor the detected language instead of the
-    preferred one.
-  */
-  useAutodetectedLanguage: NO,
-
-  /**
-    This property is set by the build tools to the current build language.
-  */
-  preferredLanguage: null,
-
-  /**
-    Invoked at the start of SproutCore's document onready handler to setup
-    the currentLocale.  This will use the language properties you have set on
-    the locale to make a decision.
-  */
-  createCurrentLocale: function() {
-
-    // get values from String if defined for compatibility with < 1.0 build
-    // tools.
-    var autodetect = (String.useAutodetectedLanguage !== undefined) ? String.useAutodetectedLanguage : this.useAutodetectedLanguage;
-    var preferred = (String.preferredLanguage !== undefined) ? String.preferredLanguage : this.preferredLanguage ;
-
-    // determine the language
-    var lang = ((autodetect) ? SC.browser.language : null) || preferred || SC.browser.language || 'en';
-    lang = SC.Locale.normalizeLanguage(lang) ;
-
-    // get the locale class.  If a class cannot be found, fall back to generic
-    // language then to english.
-    var klass = this.localeClassFor(lang) ;
-
-    // if the detected language does not match the current language (or there
-    // is none) then set it up.
-    if (lang != this.currentLanguage) {
-      this.currentLanguage = lang ; // save language
-      this.currentLocale = klass.create(); // setup locale
-    }
-    return this.currentLocale ;
-  },
-
-  /**
-    Finds the locale class for the names language code or creates on based on
-    its most likely parent.
-  */
-  localeClassFor: function(lang) {
-    lang = SC.Locale.normalizeLanguage(lang) ;
-    var parent, klass = this.locales[lang];
-
-    // if locale class was not found and there is a broader-based locale
-    // present, create a new locale based on that.
-    if (!klass && ((parent = lang.split('-')[0]) !== lang) && (klass = this.locales[parent])) {
-      klass = this.locales[lang] = klass.extend() ;
-    }
-
-    // otherwise, try to create a new locale based on english.
-    if (!klass) klass = this.locales[lang] = this.locales.en.extend();
-
-    return klass;
-  },
-
-  /**
-    Shorthand method to define the settings for a particular locale.
-    The settings you pass here will be applied directly to the locale you
-    designate.
-
-    If you are already holding a reference to a locale definition, you can
-    also use this method to operate on the receiver.
-
-    If the locale you name does not exist yet, this method will create the
-    locale for you, based on the most closely related locale or english.  For
-    example, if you name the locale 'fr-CA', you will be creating a locale for
-    French as it is used in Canada.  This will be based on the general French
-    locale (fr), since that is more generic.  On the other hand, if you create
-    a locale for manadarin (cn), it will be based on generic english (en)
-    since there is no broader language code to match against.
-
-    @param {String} localeName
-    @param {Hash} options
-    @returns {SC.Locale} the defined locale
-  */
-  define: function(localeName, options) {
-    var locale ;
-    if (options===undefined && (SC.typeOf(localeName) !== SC.T_STRING)) {
-      locale = this; options = localeName ;
-    } else locale = SC.Locale.localeClassFor(localeName) ;
-    SC.mixin(locale.prototype, options) ;
-    return locale ;
-  },
-
-  /**
-    Gets the current options for the receiver locale.  This is useful for
-    inspecting registered locales that have not been instantiated.
-
-    @returns {Hash} options + instance methods
-  */
-  options: function() { return this.prototype; },
-
-  /**
-    Adds the passed hash of strings to the locale's strings table.  Note that
-    if the receiver locale inherits its strings from its parent, then the
-    strings table will be cloned first.
-
-    @returns {Object} receiver
-  */
-  addStrings: function(stringsHash) {
-    // make sure the target strings hash exists and belongs to the locale
-    var strings = this.prototype.strings ;
-    if (strings) {
-      if (!this.prototype.hasOwnProperty('strings')) {
-        this.prototype.strings = SC.clone(strings) ;
-      }
-    } else strings = this.prototype.strings = {} ;
-
-    // add strings hash
-    if (stringsHash)  this.prototype.strings = SC.mixin(strings, stringsHash) ;
-    this.prototype.hasStrings = YES ;
-    return this;
-  },
-
-  _map: { english: 'en', french: 'fr', german: 'de', japanese: 'ja', jp: 'ja', spanish: 'es' },
-
-  /**
-    Normalizes the passed language into a two-character language code.
-    This method allows you to specify common languages in their full english
-    name (i.e. English, French, etc). and it will be treated like their two
-    letter code equivalent.
-
-    @param {String} languageCode
-    @returns {String} normalized code
-  */
-  normalizeLanguage: function(languageCode) {
-    if (!languageCode) return 'en' ;
-    return SC.Locale._map[languageCode.toLowerCase()] || languageCode ;
-  },
-
-  // this method is called once during init to walk the installed locales
-  // and make sure they know their own names.
-  _assignLocales: function() {
-    for(var key in this.locales) this.locales[key].prototype.language = key;
-  },
-
-  toString: function() {
-    if (!this.prototype.language) SC.Locale._assignLocales() ;
-    return "SC.Locale["+this.prototype.language+"]" ;
-  },
-
-  // make sure important properties are copied to new class.
-  extend: function() {
-    var ret= SC.Object.extend.apply(this, arguments) ;
-    ret.addStrings= SC.Locale.addStrings;
-    ret.define = SC.Locale.define ;
-    ret.options = SC.Locale.options ;
-    ret.toString = SC.Locale.toString ;
-    return ret ;
-  }
-
-}) ;
-
-/**
-  This locales hash contains all of the locales defined by SproutCore and
-  by your own application.  See the SC.Locale class definition for the
-  various properties you can set on your own locales.
-
-  @property {Hash}
-*/
-SC.Locale.locales = {
-  en: SC.Locale.extend({ _deprecatedLanguageCodes: ['English'] }),
-  fr: SC.Locale.extend({ _deprecatedLanguageCodes: ['French'] }),
-  de: SC.Locale.extend({ _deprecatedLanguageCodes: ['German'] }),
-  ja: SC.Locale.extend({ _deprecatedLanguageCodes: ['Japanese', 'jp'] }),
-  es: SC.Locale.extend({ _deprecatedLanguageCodes: ['Spanish'] })
-} ;
-
-
-
-
-/**
-  This special helper will store the strings you pass in the locale matching
-  the language code.  If a locale is not defined from the language code you
-  specify, then one will be created for you with the english locale as the
-  parent.
-
-  @param {String} languageCode
-  @param {Hash} strings
-  @returns {Object} receiver
-*/
-SC.stringsFor = function(languageCode, strings) {
-  // get the locale, creating one if needed.
-  var locale = SC.Locale.localeClassFor(languageCode);
-  locale.addStrings(strings) ;
-  return this ;
-} ;
-
-
-; if ((typeof SC !== 'undefined') && SC && SC.Module && SC.Module.scriptDidLoad) SC.Module.scriptDidLoad('sproutcore/core_foundation');
-/* >>>>>>>>>> BEGIN source/system/string.js */
-// ==========================================================================
-// Project:   SproutCore - JavaScript Application Framework
-// Copyright: ©2006-2011 Strobe Inc. and contributors.
-//            Portions ©2008-2011 Apple Inc. All rights reserved.
-// License:   Licensed under MIT license (see license.js)
-// ==========================================================================
-
-sc_require('system/locale');
-
-// These are basic enhancements to the string class used throughout
-// SproutCore.
-/** @private */
-SC.STRING_TITLEIZE_REGEXP = (/([\s|\-|\_|\n])([^\s|\-|\_|\n]?)/g);
-SC.STRING_DECAMELIZE_REGEXP = (/([a-z])([A-Z])/g);
-SC.STRING_DASHERIZE_REGEXP = (/[ _]/g);
-SC.STRING_DASHERIZE_CACHE = {};
-
-/**
-  @namespace
-
-  SproutCore implements a variety of enhancements to the built-in String
-  object that make it easy to perform common substitutions and conversions.
-
-  Most of the utility methods defined here mirror those found in Prototype
-  1.6.
-
-  @since SproutCore 1.0
-  @lends String.prototype
-*/
-SC.mixin(SC.String, {
-
-  /**
-    Capitalizes a string.
-
-    ## Examples
-
-        capitalize('my favorite items') // 'My favorite items'
-        capitalize('css-class-name')    // 'Css-class-name'
-        capitalize('action_name')       // 'Action_name'
-        capitalize('innerHTML')         // 'InnerHTML'
-
-    @return {String} capitalized string
-  */
-  capitalize: function(str) {
-    return str.charAt(0).toUpperCase() + str.slice(1);
-  },
-
-  /**
-    Camelizes a string.  This will take any words separated by spaces, dashes
-    or underscores and convert them into camelCase.
-
-    ## Examples
-
-        camelize('my favorite items') // 'myFavoriteItems'
-        camelize('css-class-name')    // 'cssClassName'
-        camelize('action_name')       // 'actionName'
-        camelize('innerHTML')         // 'innerHTML'
-
-    @returns {String} camelized string
-  */
-  camelize: function(str) {
-    var ret = str.replace(SC.STRING_TITLEIZE_REGEXP, function(str, separater, character) {
-      return character ? character.toUpperCase() : '';
-    });
-
-    var first = ret.charAt(0),
-        lower = first.toLowerCase();
-
-    return first !== lower ? lower + ret.slice(1) : ret;
-  },
-
-  /**
-    Converts a camelized string into all lower case separated by underscores.
-
-    ## Examples
-
-    decamelize('my favorite items') // 'my favorite items'
-    decamelize('css-class-name')    // 'css-class-name'
-    decamelize('action_name')       // 'action_name'
-    decamelize('innerHTML')         // 'inner_html'
-
-    @returns {String} the decamelized string.
-  */
-  decamelize: function(str) {
-    return str.replace(SC.STRING_DECAMELIZE_REGEXP, '$1_$2').toLowerCase();
-  },
-
-  /**
-    Converts a camelized string or a string with spaces or underscores into
-    a string with components separated by dashes.
-
-    ## Examples
-
-    | *Input String* | *Output String* |
-    dasherize('my favorite items') // 'my-favorite-items'
-    dasherize('css-class-name')    // 'css-class-name'
-    dasherize('action_name')       // 'action-name'
-    dasherize('innerHTML')         // 'inner-html'
-
-    @returns {String} the dasherized string.
-  */
-  dasherize: function(str) {
-    var cache = SC.STRING_DASHERIZE_CACHE,
-        ret   = cache[str];
-
-    if (ret) {
-      return ret;
-    } else {
-      ret = SC.String.decamelize(str).replace(SC.STRING_DASHERIZE_REGEXP,'-');
-      cache[str] = ret;
-    }
-
-    return ret;
-  },
-
-  /**
-    Localizes the string.  This will look up the reciever string as a key
-    in the current Strings hash.  If the key matches, the loc'd value will be
-    used.  The resulting string will also be passed through fmt() to insert
-    any variables.
-
-    @param str {String} String to localize
-    @param args {Object...} optional arguments to interpolate also
-    @returns {String} the localized and formatted string.
-  */
-  loc: function(str) {
-    // NB: This could be implemented as a wrapper to locWithDefault() but
-    // it would add some overhead to deal with the arguments and adds stack
-    // frames, so we are keeping the implementation separate.
-    if(!SC.Locale.currentLocale) { SC.Locale.createCurrentLocale(); }
-
-    var localized = SC.Locale.currentLocale.locWithDefault(str);
-    if (SC.typeOf(localized) !== SC.T_STRING) { localized = str; }
-
-    var args = SC.$A(arguments);
-    args.shift(); // remove str param
-
-    return SC.String.fmt(localized, args);
-  },
-
-  /**
-    Works just like loc() except that it will return the passed default
-    string if a matching key is not found.
-
-    @param {String} str the string to localize
-    @param {String} def the default to return
-    @param {Object...} args optional formatting arguments
-    @returns {String} localized and formatted string
-  */
-  locWithDefault: function(str, def) {
-    if (!SC.Locale.currentLocale) { SC.Locale.createCurrentLocale(); }
-
-    var localized = SC.Locale.currentLocale.locWithDefault(str, def);
-    if (SC.typeOf(localized) !== SC.T_STRING) { localized = str; }
-
-    var args = SC.$A(arguments);
-    args.shift(); // remove str param
-    args.shift(); // remove def param
-
-    return SC.String.fmt(localized, args);
-  }
-});
-; if ((typeof SC !== 'undefined') && SC && SC.Module && SC.Module.scriptDidLoad) SC.Module.scriptDidLoad('sproutcore/core_foundation');
-/* >>>>>>>>>> BEGIN source/ext/string.js */
-// ==========================================================================
-// Project:   SproutCore - JavaScript Application Framework
-// Copyright: ©2006-2011 Strobe Inc. and contributors.
-//            Portions ©2008-2011 Apple Inc. All rights reserved.
-// License:   Licensed under MIT license (see license.js)
-// ==========================================================================
-
-sc_require('system/string');
-
-SC.supplement(String.prototype,
-/** @scope String.prototype */ {
-
-  /**
-    @see SC.String.capitalize
-  */
-  capitalize: function() {
-    return SC.String.capitalize(this, arguments);
-  },
-
-  /**
-    @see SC.String.camelize
-  */
-  camelize: function() {
-    return SC.String.camelize(this, arguments);
-  },
-
-  /**
-    @see SC.String.decamelize
-  */
-  decamelize: function() {
-    return SC.String.decamelize(this, arguments);
-  },
-
-  /**
-    @see SC.String.dasherize
-  */
-  dasherize: function() {
-    return SC.String.dasherize(this, arguments);
-  },
-
-  /**
-    @see SC.String.loc
-  */
-  loc: function() {
-    var args = SC.$A(arguments);
-    args.unshift(this);
-    return SC.String.loc.apply(SC.String, args);
-  },
-
-  /**
-    @see SC.String.locWithDefault
-  */
-  locWithDefault: function(def) {
-    var args = SC.$A(arguments);
-    args.unshift(this);
-    return SC.String.locWithDefault.apply(SC.String, args);
-  }
-
-});
-
-; if ((typeof SC !== 'undefined') && SC && SC.Module && SC.Module.scriptDidLoad) SC.Module.scriptDidLoad('sproutcore/core_foundation');
-/* >>>>>>>>>> BEGIN source/mixins/delegate_support.js */
-// ==========================================================================
-// Project:   SproutCore - JavaScript Application Framework
-// Copyright: ©2006-2011 Strobe Inc. and contributors.
-//            Portions ©2008-2011 Apple Inc. All rights reserved.
-// License:   Licensed under MIT license (see license.js)
-// ==========================================================================
-
-/**
-  @namespace
-
-  Support methods for the Delegate design pattern.
-
-  The Delegate design pattern makes it easy to delegate a portion of your
-  application logic to another object.  This is most often used in views to
-  delegate various application-logic decisions to controllers in order to
-  avoid having to bake application-logic directly into the view itself.
-
-  The methods provided by this mixin make it easier to implement this pattern
-  but they are not required to support delegates.
-
-  ## The Pattern
-
-  The delegate design pattern typically means that you provide a property,
-  usually ending in "delegate", that can be set to another object in the
-  system.
-
-  When events occur or logic decisions need to be made that you would prefer
-  to delegate, you can call methods on the delegate if it is set.  If the
-  delegate is not set, you should provide some default functionality instead.
-
-  Note that typically delegates are not observable, hence it is not necessary
-  to use get() to retrieve the value of the delegate.
-
-  @since SproutCore 1.0
-
-*/
-SC.DelegateSupport = {
-
-  /**
-    Selects the delegate that implements the specified method name.  Pass one
-    or more delegates.  The receiver is automatically included as a default.
-
-    This can be more efficient than using invokeDelegateMethod() which has
-    to marshall arguments into a delegate call.
-
-    @param {String} methodName
-    @param {Object...} delegate one or more delegate arguments
-    @returns {Object} delegate or null
-  */
-  delegateFor: function(methodName) {
-    var idx = 1,
-        len = arguments.length,
-        ret ;
-
-    while(idx<len) {
-      ret = arguments[idx];
-      if (ret && ret[methodName] !== undefined) return ret ;
-      idx++;
-    }
-
-    return (this[methodName] !== undefined) ? this : null;
-  },
-
-  /**
-    Invokes the named method on the delegate that you pass.  If no delegate
-    is defined or if the delegate does not implement the method, then a
-    method of the same name on the receiver will be called instead.
-
-    You can pass any arguments you want to pass onto the delegate after the
-    delegate and methodName.
-
-    @param {Object} delegate a delegate object.  May be null.
-    @param {String} methodName a method name
-    @param {Object...} args (OPTIONAL) any additional arguments
-
-    @returns {Object} value returned by delegate
-  */
-  invokeDelegateMethod: function(delegate, methodName, args) {
-    args = SC.A(arguments); args = args.slice(2, args.length) ;
-    if (!delegate || !delegate[methodName]) delegate = this ;
-
-    var method = delegate[methodName];
-    return method ? method.apply(delegate, args) : null;
-  },
-
-  /**
-    Search the named delegates for the passed property.  If one is found,
-    gets the property value and returns it.  If none of the passed delegates
-    implement the property, search the receiver for the property as well.
-
-    @param {String} key the property to get.
-    @param {Object} delegate one or more delegate
-    @returns {Object} property value or undefined
-  */
-  getDelegateProperty: function(key, delegate) {
-    var idx = 1,
-        len = arguments.length,
-        ret ;
-
-    while(idx<len) {
-      ret = arguments[idx++];
-      if (ret && ret[key] !== undefined) {
-        return ret.get ? ret.get(key) : ret[key] ;
-      }
-    }
-
-    return (this[key] !== undefined) ? this.get(key) : undefined ;
-  }
-
-};
-; if ((typeof SC !== 'undefined') && SC && SC.Module && SC.Module.scriptDidLoad) SC.Module.scriptDidLoad('sproutcore/core_foundation');
-/* >>>>>>>>>> BEGIN source/system/responder.js */
-// ==========================================================================
-// Project:   SproutCore - JavaScript Application Framework
-// Copyright: ©2006-2011 Strobe Inc. and contributors.
-//            Portions ©2008-2011 Apple Inc. All rights reserved.
-// License:   Licensed under MIT license (see license.js)
-// ==========================================================================
-
-/** @class
-
-  Provides common methods for sending events down a responder chain.
-  Responder chains are used most often to deliver events to user interface
-  elements in your application, but you can also use them to deliver generic
-  events to any part of your application, including controllers.
-
-  @extends SC.Object
-  @since SproutCore 1.0
-*/
-SC.Responder = SC.Object.extend( /** SC.Responder.prototype */ {
-
-  isResponder: YES,
-
-  /** @property
-    The pane this responder belongs to.  This is used to determine where you
-    belong to in the responder chain.  Normally you should leave this property
-    set to null.
-  */
-  pane: null,
-
-  /** @property
-    The app this responder belongs to.  For non-user-interface responder
-    chains, this is used to determine the context.  Usually this
-    is the property you will want to work with.
-  */
-  responderContext: null,
-
-  /** @property
-    This is the nextResponder in the responder chain.  If the receiver does
-    not implement a particular event handler, it will bubble to the next
-    responder.
-
-    This can point to an object directly or it can be a string, in which case
-    the path will be resolved from the responderContext root.
-  */
-  nextResponder: null,
-
-  /** @property
-    YES if the view is currently first responder.  This property is always
-    edited by the pane during its makeFirstResponder() method.
-  */
-  isFirstResponder: NO,
-
-  /** @property
-
-    YES the responder is somewhere in the responder chain.  This currently
-    only works when used with a ResponderContext.
-
-    @type {Boolean}
-  */
-  hasFirstResponder: NO,
-
-  /** @property
-    Set to YES if your view is willing to accept first responder status.  This is used when calculcating key responder loop.
-  */
-  acceptsFirstResponder: YES,
-
-  becomingFirstResponder: NO,
-
-  /**
-    Call this method on your view or responder to make it become first
-    responder.
-
-    @returns {SC.Responder} receiver
-  */
-  becomeFirstResponder: function() {
-    var pane = this.get('pane') || this.get('responderContext') ||
-              this.pane();
-    if (pane && this.get('acceptsFirstResponder')) {
-      if (pane.get('firstResponder') !== this) pane.makeFirstResponder(this);
-    }
-    return this ;
-  },
-
-  /**
-    Call this method on your view or responder to resign your first responder
-    status. Normally this is not necessary since you will lose first responder
-    status automatically when another view becomes first responder.
-
-    @param {Event} the original event that caused this method to be called
-    @returns {SC.Responder} receiver
-  */
-  resignFirstResponder: function(evt) {
-    var pane = this.get('pane') || this.get('responderContext');
-    if (pane && (pane.get('firstResponder') === this)) {
-      pane.makeFirstResponder(null, evt);
-    }
-    return YES;
-  },
-
-  /**
-    Called just before the responder or any of its subresponder's are about to
-    lose their first responder status.  The passed responder is the responder
-    that is about to lose its status.
-
-    Override this method to provide any standard teardown when the first
-    responder changes.
-
-    @param {SC.Responder} responder the responder that is about to change
-    @returns {void}
-  */
-  willLoseFirstResponder: function(responder) {},
-
-  /**
-    Called just after the responder or any of its subresponder's becomes a
-    first responder.
-
-    Override this method to provide any standard setup when the first
-    responder changes.
-
-    @param {SC.Responder} responder the responder that changed
-    @returns {void}
-  */
-  didBecomeFirstResponder: function(responder) {}
-
-});
-; if ((typeof SC !== 'undefined') && SC && SC.Module && SC.Module.scriptDidLoad) SC.Module.scriptDidLoad('sproutcore/core_foundation');
-/* >>>>>>>>>> BEGIN source/mixins/responder_context.js */
-// ==========================================================================
-// Project:   SproutCore - JavaScript Application Framework
-// Copyright: ©2006-2011 Strobe Inc. and contributors.
-//            Portions ©2008-2011 Apple Inc. All rights reserved.
-// License:   Licensed under MIT license (see license.js)
-// ==========================================================================
-sc_require('system/responder');
-
-/** @namespace
-
-  The root object for a responder chain.  A responder context can dispatch
-  actions directly to a first responder; walking up the responder chain until
-  it finds a responder that can handle the action.
-
-  If no responder can be found to handle the action, it will attempt to send
-  the action to the defaultResponder.
-
-  You can have as many ResponderContext's as you want within your application.
-  Every SC.Pane and SC.Application automatically implements this mixin.
-
-  Note that to implement this, you should mix SC.ResponderContext into an
-  SC.Responder or SC.Responder subclass.
-
-  @since SproutCore 1.0
-*/
-SC.ResponderContext = {
-
-  // ..........................................................
-  // PROPERTIES
-  //
-
-  isResponderContext: YES,
-
-  /** @property
-
-    When set to YES, logs tracing information about all actions sent and
-    responder changes.
-  */
-  trace: NO,
-
-  /** @property
-    The default responder.  Set this to point to a responder object that can
-    respond to events when no other view in the hierarchy handles them.
-
-    @type SC.Responder
-  */
-  defaultResponder: null,
-
-  /** @property
-    The next responder for an app is always its defaultResponder.
-  */
-  nextResponder: function() {
-    return this.get('defaultResponder');
-  }.property('defaultResponder').cacheable(),
-
-  /** @property
-    The first responder.  This is the first responder that should receive
-    actions.
-  */
-  firstResponder: null,
-
-  // ..........................................................
-  // METHODS
-  //
-
-  /**
-    Finds the next responder for the passed responder based on the responder's
-    nextResponder property.  If the property is a string, then lookup the path
-    in the receiver.
-  */
-  nextResponderFor: function(responder) {
-    var next = responder.get('nextResponder');
-    if (typeof next === SC.T_STRING) {
-      next = SC.objectForPropertyPath(next, this);
-    } else if (!next && (responder !== this)) next = this ;
-    return next ;
-  },
-
-  /**
-    Finds the responder name by searching the responders one time.
-  */
-  responderNameFor: function(responder) {
-    if (!responder) return "(No Responder)";
-    else if (responder._scrc_name) return responder._scrc_name;
-
-    // none found, let's go hunting...look three levels deep
-    var n = this.NAMESPACE;
-    this._findResponderNamesFor(this, 3, n ? [this.NAMESPACE] : []);
-
-    return responder._scrc_name || responder.toString(); // try again
-  },
-
-  _findResponderNamesFor: function(responder, level, path) {
-    var key, value;
-
-    for(key in responder) {
-      if (key === 'nextResponder') continue ;
-      value = responder[key];
-      if (value && value.isResponder) {
-        if (value._scrc_name) continue ;
-        path.push(key);
-        value._scrc_name = path.join('.');
-        if (level>0) this._findResponderNamesFor(value, level-1, path);
-        path.pop();
-      }
-    }
-  },
-
-  /**
-    Makes the passed responder into the new firstResponder for this
-    responder context.  This will cause the current first responder to lose
-    its responder status and possibly keyResponder status as well.
-
-    When you change the first responder, this will send callbacks to
-    responders up the chain until you reach a shared responder, at which point
-    it will stop notifying.
-
-    @param {SC.Responder} responder
-    @param {Event} evt that cause this to become first responder
-    @returns {SC.ResponderContext} receiver
-  */
-  makeFirstResponder: function(responder, evt) {
-    var current = this.get('firstResponder'),
-        last    = this.get('nextResponder'),
-        trace   = this.get('trace'),
-        common ;
-
-    if (this._locked) {
-      if (trace) {
-        SC.Logger.log('%@: AFTER ACTION: makeFirstResponder => %@'.fmt(this, this.responderNameFor(responder)));
-      }
-
-      this._pendingResponder = responder;
-      return ;
-    }
-
-    if (trace) {
-      SC.Logger.log('%@: makeFirstResponder => %@'.fmt(this, this.responderNameFor(responder)));
-    }
-
-    if (responder) responder.set("becomingFirstResponder", YES);
-
-    this._locked = YES;
-    this._pendingResponder = null;
-
-    // Find the nearest common responder in the responder chain for the new
-    // responder.  If there are no common responders, use last responder.
-    // Note: start at the responder itself: it could be the common responder.
-    common = responder ? responder : null;
-    while (common) {
-      if (common.get('hasFirstResponder')) break;
-      common = (common===last) ? null : this.nextResponderFor(common);
-    }
-    if (!common) common = last;
-
-    // Cleanup old first responder
-    this._notifyWillLoseFirstResponder(current, current, common, evt);
-    if (current) current.set('isFirstResponder', NO);
-
-    // Set new first responder.  If new firstResponder does not have its
-    // responderContext property set, then set it.
-
-    // but, don't tell anyone until we have _also_ updated the hasFirstResponder state.
-    this.beginPropertyChanges();
-
-    this.set('firstResponder', responder) ;
-    if (responder) responder.set('isFirstResponder', YES);
-
-    this._notifyDidBecomeFirstResponder(responder, responder, common);
-
-    // now, tell everyone the good news!
-    this.endPropertyChanges();
-
-    this._locked = NO ;
-    if (this._pendingResponder) {
-      this.makeFirstResponder(this._pendingResponder);
-      this._pendingResponder = null;
-    }
-
-    if (responder) responder.set("becomingFirstResponder", NO);
-
-    return this ;
-  },
-
-  _notifyWillLoseFirstResponder: function(responder, cur, root, evt) {
-    if (cur === root) return ; // nothing to do
-
-    cur.willLoseFirstResponder(responder, evt);
-    cur.set('hasFirstResponder', NO);
-
-    var next = this.nextResponderFor(cur);
-    if (next) this._notifyWillLoseFirstResponder(responder, next, root);
-  },
-
-  _notifyDidBecomeFirstResponder: function(responder, cur, root) {
-    if (cur === root) return ; // nothing to do
-
-    var next = this.nextResponderFor(cur);
-    if (next) this._notifyDidBecomeFirstResponder(responder, next, root);
-
-    cur.set('hasFirstResponder', YES);
-    cur.didBecomeFirstResponder(responder);
-  },
-
-  /**
-    Re-enters the current responder (calling willLoseFirstResponder and didBecomeFirstResponder).
-  */
-  resetFirstResponder: function() {
-    var current = this.get('firstResponder');
-    if (!current) return;
-    current.willLoseFirstResponder();
-    current.didBecomeFirstResponder();
-  },
-
-  /**
-    Send the passed action down the responder chain, starting with the
-    current first responder.  This will look for the first responder that
-    actually implements the action method and returns YES or no value when
-    called.
-
-    @param {String} action name of action
-    @param {Object} sender object sending the action
-    @param {Object} context optional additonal context info
-    @returns {SC.Responder} the responder that handled it or null
-  */
-  sendAction: function(action, sender, context) {
-    var working = this.get('firstResponder'),
-        last    = this.get('nextResponder'),
-        trace   = this.get('trace'),
-        handled = NO,
-        responder;
-
-    this._locked = YES;
-    if (trace) {
-      SC.Logger.log("%@: begin action '%@' (%@, %@)".fmt(this, action, sender, context));
-    }
-
-    if (!handled && !working && this.tryToPerform) {
-      handled = this.tryToPerform(action, sender, context);
-    }
-
-    while (!handled && working) {
-      if (working.tryToPerform) {
-        handled = working.tryToPerform(action, sender, context);
-      }
-
-      if (!handled) {
-        working = (working===last) ? null : this.nextResponderFor(working);
-      }
-    }
-
-    if (trace) {
-      if (!handled) SC.Logger.log("%@:  action '%@' NOT HANDLED".fmt(this,action));
-      else SC.Logger.log("%@: action '%@' handled by %@".fmt(this, action, this.responderNameFor(working)));
-    }
-
-    this._locked = NO ;
-
-    if (responder = this._pendingResponder) {
-      this._pendingResponder= null ;
-      this.makeFirstResponder(responder);
-    }
-
-
-    return working ;
-  }
-
-};
-; if ((typeof SC !== 'undefined') && SC && SC.Module && SC.Module.scriptDidLoad) SC.Module.scriptDidLoad('sproutcore/core_foundation');
-/* >>>>>>>>>> BEGIN source/mixins/template_helpers/checkbox_support.js */
-// ==========================================================================
-// Project:   SproutCore - JavaScript Application Framework
-// Copyright: ©2006-2011 Strobe Inc. and contributors.
-//            ©2008-2011 Apple Inc. All rights reserved.
-// License:   Licensed under MIT license (see license.js)
-// ==========================================================================
-/** @class */
-
-SC.CheckboxSupport = /** @scope SC.CheckboxSupport.prototype */{
-  didCreateLayer: function() {
-    this.$('input').change(jQuery.proxy(function() {
-      SC.RunLoop.begin();
-      this.notifyPropertyChange('value');
-      SC.RunLoop.end();
-    }, this));
-  },
-
-  value: function(key, value) {
-    if (value !== undefined) {
-      this.$('input').attr('checked', value);
-    } else {
-      value = this.$('input').attr('checked');
-    }
-
-    return value;
-  }.property().idempotent()
-};
-
-; if ((typeof SC !== 'undefined') && SC && SC.Module && SC.Module.scriptDidLoad) SC.Module.scriptDidLoad('sproutcore/core_foundation');
-/* >>>>>>>>>> BEGIN source/mixins/template_helpers/text_field_support.js */
-// ==========================================================================
-// Project:   SproutCore - JavaScript Application Framework
-// Copyright: ©2006-2011 Strobe Inc. and contributors.
-//            ©2008-2011 Apple Inc. All rights reserved.
-// License:   Licensed under MIT license (see license.js)
-// ==========================================================================
-/** @class
-
-*/
-SC.TextFieldSupport = /** @scope SC.TextFieldSupport.prototype */{
-
-  /** @private
-    Used internally to store value because the layer may not exist
-  */
-  _value: null,
-
-  /**
-    @type String
-    @default null
-  */
-  value: function(key, value) {
-    var input = this.$('input');
-
-    if (value !== undefined) {
-      this._value = value;
-      input.val(value);
-    } else {
-      if (input.length > 0) {
-        value = this._value = input.val();
-      } else {
-        value = this._value;
-      }
-    }
-
-    return value;
-  }.property().idempotent(),
-
-  didCreateLayer: function() {
-    var input = this.$('input');
-
-    input.val(this._value);
-
-    SC.Event.add(input, 'focus', this, this.focusIn);
-    SC.Event.add(input, 'blur', this, this.focusOut);
-  },
-
-  focusIn: function(event) {
-    this.becomeFirstResponder();
-    this.tryToPerform('focus', event);
-  },
-
-  focusOut: function(event) {
-    this.resignFirstResponder();
-    this.tryToPerform('blur', event);
-  },
-
-  /** @private
-    Make sure our input value is synced with any bindings.
-    In some cases, such as auto-filling, a value can get
-    changed without an event firing. We could do this
-    on focusOut, but blur can potentially get called
-    after other events.
-  */
-  willLoseFirstResponder: function() {
-    this.notifyPropertyChange('value');
-  },
-
-  keyUp: function(event) {
-    if (event.keyCode === 13) {
-      return this.tryToPerform('insertNewline', event);
-    } else if (event.keyCode === 27) {
-      return this.tryToPerform('cancel', event);
-    }
-  }
-};
-
-; if ((typeof SC !== 'undefined') && SC && SC.Module && SC.Module.scriptDidLoad) SC.Module.scriptDidLoad('sproutcore/core_foundation');
 /* >>>>>>>>>> BEGIN source/system/browser.js */
 // ==========================================================================
 // Project:   SproutCore - JavaScript Application Framework
@@ -3346,7 +1929,7 @@ SC.mixin(SC.browser,
       if (isNaN(check)) return 0;
       if (check !== 0) return check;
     }
-
+    
     return 0;
   }
 
@@ -3367,91 +1950,91 @@ SC.mixin(SC.browser,
   those provided by CoreQuery or jQuery.  Usually you will not create a new
   builder yourself, but you will often use instances of the Builder object to
   configure parts of the UI such as menus and views.
-
+  
   # Anatomy of a Builder
-
-  You can create a new Builder much like you would any other class in
+  
+  You can create a new Builder much like you would any other class in 
   SproutCore.  For example, you could create a new CoreQuery-type object with
   the following:
-
+  
       SC.$ = SC.Builder.create({
         // methods you can call go here.
       });
-
-  Unlike most classes in SproutCore, Builder objects are actually functions
-  that you can call to create new instances.  In the example above, to use
+  
+  Unlike most classes in SproutCore, Builder objects are actually functions 
+  that you can call to create new instances.  In the example above, to use 
   the builder, you must call it like a function:
-
+  
       buildit = SC.$();
-
+  
   If you define an init() method on a builder, it will be invoked wheneve the
   builder is called as a function, including any passed params.  Your init()
   method MUST return this, unlike regular SC objects.  i.e.
-
+  
       SC.$ = SC.Builder.create({
-        init: function(args) {
+        init: function(args) { 
           this.args = SC.A(args);
           return this;
         }
       });
-
+      
       buildit = SC.$('a', 'b');
       buildit.args => ['a','b']
-
+  
   In addition to defining a function like this, all builder objects also have
   an 'fn' property that contains a hash of all of the helper methods defined
-  on the builder function.  Once a builder has been created, you can add
+  on the builder function.  Once a builder has been created, you can add 
   addition "plugins" for the builder by simply adding new methods to the
   fn property.
-
+  
   # Writing Builder Functions
-
+  
   All builders share a few things in common:
-
+  
    * when a new builder is created, it's init() method will be called.  The default version of this method simply copies the passed parameters into the builder as content, but you can override this with anything you want.
    * the content the builder works on is stored as indexed properties (i.e. 0,1,2,3, like an array).  The builder should also have a length property if you want it treated like an array.
    *- Builders also maintain a stack of previous builder instances which you can pop off at any time.
-
+  
   To get content back out of a builder once you are ready with it, you can
-  call the method done().  This will return an array or a single object, if
+  call the method done().  This will return an array or a single object, if 
   the builder only works on a single item.
-
+  
   You should write your methods using the getEach() iterator to work on your
   member objects.  All builders implement SC.Enumerable in the fn() method.
 
       CoreQuery = SC.Builder.create({
         ...
       }) ;
-
+      
       CoreQuery = new SC.Builder(properties) {
         ...
       } ;
-
+      
       CoreQuery2 = CoreQuery.extend() {
       }
-
+  
   @constructor
 */
 SC.Builder = function (props) { return SC.Builder.create(props); };
 
-/**
-  Create a new builder object, applying the passed properties to the
+/** 
+  Create a new builder object, applying the passed properties to the 
   builder's fn property hash.
-
+  
   @param {Hash} properties
   @returns {SC.Builder}
 */
-SC.Builder.create = function create(props) {
-
+SC.Builder.create = function create(props) { 
+  
   // generate new fn with built-in properties and copy props
   var fn = SC.mixin(SC.beget(this.fn), props||{}) ;
   if (props.hasOwnProperty('toString')) fn.toString = props.toString;
-
+  
   // generate new constructor and hook in the fn
   var construct = function() {
     var ret = SC.beget(fn); // NOTE: using closure here...
-
-    // the defaultClass is usually this for this constructor.
+    
+    // the defaultClass is usually this for this constructor. 
     // e.g. SC.View.build() -> this = SC.View
     ret.defaultClass = this ;
     ret.constructor = construct ;
@@ -3465,7 +2048,7 @@ SC.Builder.create = function create(props) {
   // eg. SC.View.buildCustom = SC.View.build.extend({ ...props... })
   construct.extend = SC.Builder.create ;
   construct.mixin = SC.Builder.mixin ;
-
+  
   return construct; // return new constructor
 } ;
 
@@ -3478,13 +2061,13 @@ SC.Builder.mixin = function() {
 /** This is the default set of helper methods defined for new builders. */
 SC.Builder.fn = {
 
-  /**
+  /** 
     Default init method for builders.  This method accepts either a single
-    content object or an array of content objects and copies them onto the
-    receiver.  You can override this to provide any kind of init behavior
-    that you want.  Any parameters passed to the builder method will be
+    content object or an array of content objects and copies them onto the 
+    receiver.  You can override this to provide any kind of init behavior 
+    that you want.  Any parameters passed to the builder method will be 
     forwarded to your init method.
-
+    
     @returns {SC.Builder} receiver
   */
   init: function(content) {
@@ -3501,14 +2084,14 @@ SC.Builder.fn = {
     }
     return this ;
   },
-
+  
   /** Return the number of elements in the matched set. */
   size: function() { return this.length; },
-
-  /**
+  
+  /** 
     Take an array of elements and push it onto the stack (making it the
     new matched set.)  The receiver will be saved so it can be popped later.
-
+    
     @param {Object|Array} content
     @returns {SC.Builder} new isntance
   */
@@ -3528,19 +2111,19 @@ SC.Builder.fn = {
     transform.  If there is no previous item on the stack, an empty set will
     be returned.
   */
-  end: function() {
-    return this.prevObject || this.constructor();
+  end: function() { 
+    return this.prevObject || this.constructor(); 
   },
-
+  
   // toString describes the builder
-  toString: function() {
-    return "%@$(%@)".fmt(this.defaultClass.toString(),
-      SC.A(this).invoke('toString').join(','));
+  toString: function() { 
+    return "%@$(%@)".fmt(this.defaultClass.toString(), 
+      SC.A(this).invoke('toString').join(',')); 
   },
-
+  
   /** You can enhance the fn using this mixin method. */
   mixin: SC.Builder.mixin
-
+  
 };
 
 // Apply SC.Enumerable.  Whenever possible we want to use the Array version
@@ -3714,23 +2297,23 @@ sc_require('system/core_query') ;
   The event class provides a simple cross-platform library for capturing and
   delivering events on DOM elements and other objects.  While this library
   is based on code from both jQuery and Prototype.js, it includes a number of
-  additional features including support for handler objects and event
+  additional features including support for handler objects and event 
   delegation.
 
   Since native events are implemented very unevenly across browsers,
   SproutCore will convert all native events into a standardized instance of
-  this special event class.
-
-  SproutCore events implement the standard W3C event API as well as some
+  this special event class.  
+  
+  SproutCore events implement the standard W3C event API as well as some 
   additional helper methods.
 
   @constructor
   @param {Event} originalEvent
   @returns {SC.Event} event instance
-
+  
   @since SproutCore 1.0
 */
-SC.Event = function(originalEvent) {
+SC.Event = function(originalEvent) { 
   var idx, len;
   // copy properties from original event, if passed in.
   if (originalEvent) {
@@ -3749,7 +2332,7 @@ SC.Event = function(originalEvent) {
 
   // Fix target property, if necessary
   // Fixes #1925 where srcElement might not be defined either
-  if (!this.target) this.target = this.srcElement || document;
+  if (!this.target) this.target = this.srcElement || document; 
 
   // check if target is a textnode (safari)
   if (this.target.nodeType === 3 ) this.target = this.target.parentNode;
@@ -3786,13 +2369,13 @@ SC.Event = function(originalEvent) {
         version = parseFloat(SC.browser.version);
 
     // normalize wheelDelta, wheelDeltaX, & wheelDeltaY for Safari
-    if (SC.browser.webkit && originalEvent.wheelDelta!==undefined) {
+    if (SC.browser.webkit && originalEvent.wheelDelta !== undefined) {
       this.wheelDelta = 0-(originalEvent.wheelDeltaY || originalEvent.wheelDeltaX);
       this.wheelDeltaY = 0-(originalEvent.wheelDeltaY||0);
       this.wheelDeltaX = 0-(originalEvent.wheelDeltaX||0);
 
     // normalize wheelDelta for Firefox
-    // note that we multiple the delta on FF to make it's acceleration more
+    // note that we multiple the delta on FF to make it's acceleration more 
     // natural.
     } else if (!SC.none(originalEvent.detail) && SC.browser.mozilla) {
       if (originalEvent.axis && (originalEvent.axis === originalEvent.HORIZONTAL_AXIS)) {
@@ -3805,7 +2388,7 @@ SC.Event = function(originalEvent) {
 
     // handle all other legacy browser
     } else {
-      this.wheelDelta = this.wheelDeltaY = SC.browser.msie ? 0-originalEvent.wheelDelta : originalEvent.wheelDelta ;
+      this.wheelDelta = this.wheelDeltaY = SC.browser.msie || SC.browser.opera ? 0-originalEvent.wheelDelta : originalEvent.wheelDelta ;
       this.wheelDeltaX = 0 ;
     }
 
@@ -3823,7 +2406,7 @@ SC.Event = function(originalEvent) {
     this.wheelDeltaY *= deltaMultiplier;
   }
 
-  return this;
+  return this; 
 } ;
 
 SC.mixin(SC.Event, /** @scope SC.Event */ {
@@ -3883,67 +2466,67 @@ SC.mixin(SC.Event, /** @scope SC.Event */ {
   */
   _MOUSE_WHEEL_LIMIT_INVALIDATED: NO,
 
-  /**
+  /** 
     Standard method to create a new event.  Pass the native browser event you
     wish to wrap if needed.
   */
   create: function(e) { return new SC.Event(e); },
 
   // the code below was borrowed from jQuery, Dean Edwards, and Prototype.js
-
+  
   /**
     Bind an event to an element.
 
     This method will cause the passed handler to be executed whenever a
     relevant event occurs on the named element.  This method supports a
     variety of handler types, depending on the kind of support you need.
-
+    
     ## Simple Function Handlers
 
         SC.Event.add(anElement, "click", myClickHandler) ;
-
+    
     The most basic type of handler you can pass is a function.  This function
     will be executed everytime an event of the type you specify occurs on the
     named element.  You can optionally pass an additional context object which
     will be included on the event in the event.data property.
-
+    
     When your handler function is called the, the function's "this" property
     will point to the element the event occurred on.
-
+    
     The click handler for this method must have a method signature like:
-
+    
         function(event) { return YES|NO; }
-
+    
     ## Method Invocations
 
         SC.Event.add(anElement, "click", myObject, myObject.aMethod) ;
 
-    Optionally you can specify a target object and a method on the object to
+    Optionally you can specify a target object and a method on the object to 
     be invoked when the event occurs.  This will invoke the method function
-    with the target object you pass as "this".  The method should have a
+    with the target object you pass as "this".  The method should have a 
     signature like:
-
+    
         function(event, targetElement) { return YES|NO; }
 
     Like function handlers, you can pass an additional context data paramater
     that will be included on the event in the event.data property.
-
+    
     ## Handler Return Values
 
-    Both handler functions should return YES if you want the event to
+    Both handler functions should return YES if you want the event to 
     continue to propagate and NO if you want it to stop.  Returning NO will
-    both stop bubbling of the event and will prevent any default action
+    both stop bubbling of the event and will prevent any default action 
     taken by the browser.  You can also control these two behaviors separately
     by calling the stopPropagation() or preventDefault() methods on the event
     itself, returning YES from your method.
-
+    
     ## Limitations
-
-    Although SproutCore's event implementation is based on jQuery, it is
+    
+    Although SproutCore's event implementation is based on jQuery, it is 
     much simpler in design.  Notably, it does not support namespaced events
     and you can only pass a single type at a time.
-
-    If you need more advanced event handling, consider the SC.ClassicResponder
+    
+    If you need more advanced event handling, consider the SC.ClassicResponder 
     functionality provided by SproutCore or use your favorite DOM library.
 
     @param {Element} elem a DOM element, window, or document object
@@ -3955,11 +2538,11 @@ SC.mixin(SC.Event, /** @scope SC.Event */ {
   */
   add: function(elem, eventType, target, method, context, useCapture) {
 
-    // if a CQ object is passed in, either call add on each item in the
+    // if a CQ object is passed in, either call add on each item in the 
     // matched set, or simply get the first element and use that.
     if (elem && elem.isCoreQuery) {
       if (elem.length > 0) {
-        elem.forEach(function(e) {
+        elem.forEach(function(e) { 
           this.add(e, eventType, target, method, context);
         }, this);
         return this;
@@ -3970,7 +2553,7 @@ SC.mixin(SC.Event, /** @scope SC.Event */ {
 		if (!useCapture) {
 			useCapture = NO;
 		}
-
+    
     // cannot register events on text nodes, etc.
     if ( elem.nodeType === 3 || elem.nodeType === 8 ) return SC.Event;
 
@@ -3981,7 +2564,7 @@ SC.mixin(SC.Event, /** @scope SC.Event */ {
     // if target is a function, treat it as the method, with optional context
     if (SC.typeOf(target) === SC.T_FUNCTION) {
       context = method; method = target; target = null;
-
+      
     // handle case where passed method is a key on the target.
     } else if (target && SC.typeOf(method) === SC.T_STRING) {
       method = target[method] ;
@@ -3991,12 +2574,12 @@ SC.mixin(SC.Event, /** @scope SC.Event */ {
     // not exist yet, create it and also setup the shared listener for this
     // eventType.
     var events = SC.data(elem, "events") || SC.data(elem, "events", {}) ,
-        handlers = events[eventType];
+        handlers = events[eventType]; 
     if (!handlers) {
       handlers = events[eventType] = {} ;
       this._addEventListener(elem, eventType, useCapture) ;
     }
-
+    
     // Build the handler array and add to queue
     handlers[SC.hashFor(target, method)] = [target, method, context];
     SC.Event._global[eventType] = YES ; // optimization for global triggers
@@ -4012,21 +2595,21 @@ SC.mixin(SC.Event, /** @scope SC.Event */ {
     To remove a specific handler, you must pass in the same function or the
     same target and method as you passed into SC.Event.add().  See that method
     for full documentation on the parameters you can pass in.
-
+    
     If you omit a specific handler but provide both an element and eventType,
     then all handlers for that element will be removed.  If you provide only
     and element, then all handlers for all events on that element will be
     removed.
-
+    
     ## Limitations
-
-    Although SproutCore's event implementation is based on jQuery, it is
+    
+    Although SproutCore's event implementation is based on jQuery, it is 
     much simpler in design.  Notably, it does not support namespaced events
     and you can only pass a single type at a time.
-
-    If you need more advanced event handling, consider the SC.ClassicResponder
+    
+    If you need more advanced event handling, consider the SC.ClassicResponder 
     functionality provided by SproutCore or use your favorite DOM library.
-
+    
     @param {Element} elem a DOM element, window, or document object
     @param {String} eventType the event type to remove
     @param {Object} target The target object for a method call.  Or a function.
@@ -4035,18 +2618,18 @@ SC.mixin(SC.Event, /** @scope SC.Event */ {
   */
   remove: function(elem, eventType, target, method) {
 
-    // if a CQ object is passed in, either call add on each item in the
+    // if a CQ object is passed in, either call add on each item in the 
     // matched set, or simply get the first element and use that.
     if (elem && elem.isCoreQuery) {
       if (elem.length > 0) {
-        elem.forEach(function(e) {
+        elem.forEach(function(e) { 
           this.remove(e, eventType, target, method);
         }, this);
         return this;
       } else elem = elem[0];
     }
     if (!elem) return this; // nothing to do
-
+    
     // don't do events on text and comment nodes
     if ( elem.nodeType === 3 || elem.nodeType === 8 ) return SC.Event;
 
@@ -4065,19 +2648,19 @@ SC.mixin(SC.Event, /** @scope SC.Event */ {
     } else if (handlers = events[eventType]) {
 
       var cleanupHandlers = NO ;
-
+      
       // if a target/method is provided, remove only that one
       if (target || method) {
-
+        
         // normalize the target/method
         if (SC.typeOf(target) === SC.T_FUNCTION) {
           method = target; target = null ;
         } else if (SC.typeOf(method) === SC.T_STRING) {
           method = target[method] ;
         }
-
+        
         delete handlers[SC.hashFor(target, method)];
-
+        
         // check to see if there are handlers left on this event/eventType.
         // if not, then cleanup the handlers.
         key = null ;
@@ -4086,15 +2669,15 @@ SC.mixin(SC.Event, /** @scope SC.Event */ {
 
       // otherwise, just cleanup all handlers
       } else cleanupHandlers = YES ;
-
-      // If there are no more handlers left on this event type, remove
+      
+      // If there are no more handlers left on this event type, remove 
       // eventType hash from queue.
       if (cleanupHandlers) {
         delete events[eventType] ;
         this._removeEventListener(elem, eventType) ;
       }
-
-      // verify that there are still events registered on this element.  If
+      
+      // verify that there are still events registered on this element.  If 
       // there aren't, cleanup the element completely to avoid memory leaks.
       key = null ;
       for(key in events) break;
@@ -4102,20 +2685,20 @@ SC.mixin(SC.Event, /** @scope SC.Event */ {
         SC.removeData(elem, "events") ;
         delete this._elements[SC.guidFor(elem)]; // important to avoid leaks
       }
-
+      
     }
-
+    
     elem = events = handlers = null ; // avoid memory leaks
     return this ;
   },
 
   NO_BUBBLE: ['blur', 'focus', 'change'],
-
+  
   /**
-    Generates a simulated event object.  This is mostly useful for unit
-    testing.  You can pass the return value of this property into the
+    Generates a simulated event object.  This is mostly useful for unit 
+    testing.  You can pass the return value of this property into the 
     trigger() method to actually send the event.
-
+    
     @param {Element} elem the element the event targets
     @param {String} eventType event type.  mousedown, mouseup, etc
     @param {Hash} attrs optional additonal attributes to apply to event.
@@ -4136,24 +2719,24 @@ SC.mixin(SC.Event, /** @scope SC.Event */ {
     if (attrs) SC.mixin(ret, attrs) ;
     return ret ;
   },
-
+  
   /**
-    Trigger an event execution immediately.  You can use this method to
+    Trigger an event execution immediately.  You can use this method to 
     simulate arbitrary events on arbitary elements.
 
     ## Limitations
-
-    Note that although this is based on the jQuery implementation, it is
+    
+    Note that although this is based on the jQuery implementation, it is 
     much simpler.  Notably namespaced events are not supported and you cannot
     trigger events globally.
-
-    If you need more advanced event handling, consider the SC.Responder
+    
+    If you need more advanced event handling, consider the SC.Responder 
     functionality provided by SproutCore or use your favorite DOM library.
 
     ## Example
-
+    
         SC.Event.trigger(view.get('layer'), 'mousedown');
-
+    
     @param elem {Element} the target element
     @param eventType {String} the event type
     @param args {Array} optional argument or arguments to pass to handler.
@@ -4162,11 +2745,11 @@ SC.mixin(SC.Event, /** @scope SC.Event */ {
   */
   trigger: function(elem, eventType, args, donative) {
 
-    // if a CQ object is passed in, either call add on each item in the
+    // if a CQ object is passed in, either call add on each item in the 
     // matched set, or simply get the first element and use that.
     if (elem && elem.isCoreQuery) {
       if (elem.length > 0) {
-        elem.forEach(function(e) {
+        elem.forEach(function(e) { 
           this.trigger(e, eventType, args, donative);
         }, this);
         return this;
@@ -4176,11 +2759,11 @@ SC.mixin(SC.Event, /** @scope SC.Event */ {
 
     // don't do events on text and comment nodes
     if ( elem.nodeType === 3 || elem.nodeType === 8 ) return undefined;
-
+    
     // Normalize to an array
     args = SC.A(args) ;
 
-    var ret, fn = SC.typeOf(elem[eventType] || null) === SC.T_FUNCTION ,
+    var ret, fn = SC.typeOf(elem[eventType] || null) === SC.T_FUNCTION , 
         event, current, onfoo, isClick;
 
     // Get the event to pass, creating a fake one if necessary
@@ -4189,15 +2772,15 @@ SC.mixin(SC.Event, /** @scope SC.Event */ {
       event = this.simulateEvent(elem, eventType) ;
       args.unshift(event) ;
     }
-
+    
     event.type = eventType ;
-
+    
     // Trigger the event - bubble if enabled
     current = elem;
     do {
       ret = SC.Event.handle.apply(current, args);
       current = (current===document) ? null : (current.parentNode || document);
-    } while(!ret && event.bubbles && current);
+    } while(!ret && event.bubbles && current);    
     current = null ;
 
     // Handle triggering native .onfoo handlers
@@ -4213,7 +2796,7 @@ SC.mixin(SC.Event, /** @scope SC.Event */ {
       // prevent IE from throwing an error for some hidden elements
       } catch (e) {}
     }
-
+    
     this.triggered = NO;
 
     return ret;
@@ -4221,16 +2804,16 @@ SC.mixin(SC.Event, /** @scope SC.Event */ {
 
   /**
     This method will handle the passed event, finding any registered listeners
-    and executing them.  If you have an event you want handled, you can
+    and executing them.  If you have an event you want handled, you can 
     manually invoke this method.  This function expects it's "this" value to
-    be the element the event occurred on, so you should always call this
+    be the element the event occurred on, so you should always call this 
     method like:
-
+    
         SC.Event.handle.call(element, event) ;
 
     Note that like other parts of this library, the handle function does not
     support namespaces.
-
+    
     @param event {Event} the event to handle
     @returns {Boolean}
   */
@@ -4239,7 +2822,7 @@ SC.mixin(SC.Event, /** @scope SC.Event */ {
     // ignore events triggered after window is unloaded or if double-called
     // from within a trigger.
     if ((typeof SC === "undefined") || SC.Event.triggered) return YES ;
-
+    
     // returned undefined or NO
     var val, ret, namespace, all, handlers, args, key, handler, method, target;
 
@@ -4251,7 +2834,7 @@ SC.mixin(SC.Event, /** @scope SC.Event */ {
     // get the handlers for this event type
     handlers = (SC.data(this, "events") || {})[event.type];
     if (!handlers) return NO ; // nothing to do
-
+    
     // invoke all handlers
     for (key in handlers ) {
       handler = handlers[key];
@@ -4265,11 +2848,11 @@ SC.mixin(SC.Event, /** @scope SC.Event */ {
 
       target = handler[0] || this;
       ret = method.apply( target, args );
-
+      
       if (val !== NO) val = ret;
 
       // if method returned NO, do not continue.  Stop propogation and
-      // return default.  Note that we test explicitly for NO since
+      // return default.  Note that we test explicitly for NO since 
       // if the handler returns no specific value, we do not want to stop.
       if ( ret === NO ) {
         event.preventDefault();
@@ -4281,29 +2864,29 @@ SC.mixin(SC.Event, /** @scope SC.Event */ {
   },
 
   /**
-    This method is called just before the window unloads to unhook all
+    This method is called just before the window unloads to unhook all 
     registered events.
   */
   unload: function() {
     var key, elements = this._elements ;
     for(key in elements) this.remove(elements[key]) ;
-
+    
     // just in case some book-keeping was screwed up.  avoid memory leaks
     for(key in elements) delete elements[key] ;
-    delete this._elements ;
+    delete this._elements ; 
   },
-
+  
   /**
     This hash contains handlers for special or custom events.  You can add
     your own handlers for custom events here by simply naming the event and
     including a hash with the following properties:
-
+    
      - setup: this function should setup the handler or return NO
      - teardown: this function should remove the event listener
-
+     
   */
   special: {
-
+    
     ready: {
       setup: function() {
         // Make sure the ready event is setup
@@ -4378,11 +2961,11 @@ SC.mixin(SC.Event, /** @scope SC.Event */ {
   KEY_PAGEUP:   33,
   KEY_PAGEDOWN: 34,
   KEY_INSERT:   45,
-
+    
   _withinElement: function(event, elem) {
     // Check if mouse(over|out) are still within the same parent element
     var parent = event.relatedTarget;
-
+    
     // Traverse up the tree
     while ( parent && parent != elem ) {
       try { parent = parent.parentNode; } catch(error) { parent = elem; }
@@ -4391,14 +2974,14 @@ SC.mixin(SC.Event, /** @scope SC.Event */ {
     // Return YES if we actually just moused on to a sub-element
     return parent === elem;
   },
-
+  
   /** @private
     Adds the primary event listener for the named type on the element.
-
-    If the event type has a special handler defined in SC.Event.special,
+    
+    If the event type has a special handler defined in SC.Event.special, 
     then that handler will be used.  Otherwise the normal browser method will
     be used.
-
+    
     @param elem {Element} the target element
     @param eventType {String} the event type
   */
@@ -4413,17 +2996,17 @@ SC.mixin(SC.Event, /** @scope SC.Event */ {
     // Only use addEventListener/attachEvent if the special
     // events handler returns NO
     if ( !special || special.setup.call(elem)===NO) {
-
-      // Save element in cache.  This must be removed later to avoid
+      
+      // Save element in cache.  This must be removed later to avoid 
       // memory leaks.
       var guid = SC.guidFor(elem) ;
       this._elements[guid] = elem;
-
-      listener = SC.data(elem, "listener") || SC.data(elem, "listener",
+      
+      listener = SC.data(elem, "listener") || SC.data(elem, "listener", 
        function() {
-         return SC.Event.handle.apply(SC.Event._elements[guid], arguments);
+         return SC.Event.handle.apply(SC.Event._elements[guid], arguments); 
       }) ;
-
+      
       // Bind the global event handler to the element
       if (elem.addEventListener) {
         elem.addEventListener(eventType, listener, useCapture);
@@ -4432,25 +3015,25 @@ SC.mixin(SC.Event, /** @scope SC.Event */ {
         // there is currently a hack in request , but it needs to fixed here.
         elem.attachEvent("on" + eventType, listener);
       }
-      //
+      //  
       // else {
       //         elem.onreadystatechange = listener;
       //       }
     }
-
+    
     elem = special = listener = null ; // avoid memory leak
   },
 
   /** @private
     Removes the primary event listener for the named type on the element.
-
-    If the event type has a special handler defined in SC.Event.special,
+    
+    If the event type has a special handler defined in SC.Event.special, 
     then that handler will be used.  Otherwise the normal browser method will
     be used.
-
+    
     Note that this will not clear the _elements hash from the element.  You
     must call SC.Event.unload() on unload to make sure that is cleared.
-
+    
     @param elem {Element} the target element
     @param eventType {String} the event type
   */
@@ -4466,66 +3049,66 @@ SC.mixin(SC.Event, /** @scope SC.Event */ {
         }
       }
     }
-
+    
     elem = special = listener = null ;
   },
 
   _elements: {},
-
+  
   // implement preventDefault() in a cross platform way
-
+  
   /** @private Take an incoming event and convert it to a normalized event. */
   normalizeEvent: function(event) {
     if (event === window.event) {
       // IE can't do event.normalized on an Event object
-      return SC.Event.create(event) ;
+      return SC.Event.create(event) ; 
     } else {
       return event.normalized ? event : SC.Event.create(event) ;
     }
   },
-
+  
   _global: {},
 
   /** @private properties to copy from native event onto the event */
   _props: "altKey attrChange attrName bubbles button cancelable charCode clientX clientY ctrlKey currentTarget data detail eventPhase fromElement handler keyCode metaKey newValue originalTarget pageX pageY prevValue relatedNode relatedTarget screenX screenY shiftKey srcElement target timeStamp toElement type view which touches targetTouches changedTouches animationName elapsedTime dataTransfer".split(" ")
-
+  
 }) ;
 
 SC.Event.prototype = {
 
   /**
-    Set to YES if you have called either preventDefault() or stopPropagation().
-    This allows a generic event handler to notice if you want to provide
+    Set to YES if you have called either preventDefault() or stopPropagation().  
+    This allows a generic event handler to notice if you want to provide 
     detailed control over how the browser handles the real event.
-
+    
     @property {Boolean}
   */
   hasCustomEventHandling: NO,
-
+  
   /**
     Returns the touches owned by the supplied view.
-
+    
     @param {SC.View}
     @returns {Array} touches an array of SC.Touch objects
   */
   touchesForView: function(view) {
     if (this.touchContext) return this.touchContext.touchesForView(view);
   },
-
+  
   /**
     Same as touchesForView, but sounds better for responders.
-
+    
     @param {SC.RootResponder}
     @returns {Array} touches an array of SC.Touch objects
   */
   touchesForResponder: function(responder) {
     if (this.touchContext) return this.touchContext.touchesForView(responder);
   },
-
+  
   /**
-    Returns average data--x, y, and d (distance)--for the touches owned by the
+    Returns average data--x, y, and d (distance)--for the touches owned by the 
     supplied view.
-
+    
     @param {SC.View}
     @returns {Array} touches an array of SC.Touch objects
   */
@@ -4533,22 +3116,22 @@ SC.Event.prototype = {
     if (this.touchContext) return this.touchContext.averagedTouchesForView(view);
     return null;
   },
-
+  
   /**
     Indicates that you want to allow the normal default behavior.  Sets
     the hasCustomEventHandling property to YES but does not cancel the event.
-
+    
     @returns {SC.Event} receiver
   */
   allowDefault: function() {
     this.hasCustomEventHandling = YES ;
-    return this ;
+    return this ;  
   },
-
-  /**
+  
+  /** 
     Implements W3C standard.  Will prevent the browser from performing its
     default action on this event.
-
+    
     @returns {SC.Event} receiver
   */
   preventDefault: function() {
@@ -4563,7 +3146,7 @@ SC.Event.prototype = {
 
   /**
     Implements W3C standard.  Prevents further bubbling of the event.
-
+    
     @returns {SC.Event} receiver
   */
   stopPropagation: function() {
@@ -4572,30 +3155,30 @@ SC.Event.prototype = {
       if (evt.stopPropagation) evt.stopPropagation() ;
       evt.cancelBubble = YES ; // IE
     }
-    this.hasCustomEventHandling = YES ;
+    this.hasCustomEventHandling = YES ; 
     return this ;
   },
 
-  /**
-    Stops both the default action and further propogation.  This is more
+  /** 
+    Stops both the default action and further propogation.  This is more 
     convenient than calling both.
-
+    
     @returns {SC.Event} receiver
   */
   stop: function() {
     return this.preventDefault().stopPropagation();
   },
-
-  /**
-    Always YES to indicate the event was normalized.
-
+  
+  /** 
+    Always YES to indicate the event was normalized. 
+    
     @property {Boolean}
   */
   normalized: YES,
 
-  /**
-    Returns the pressed character (found in this.which) as a string.
-
+  /** 
+    Returns the pressed character (found in this.which) as a string. 
+  
     @returns {String}
   */
   getCharString: function() {
@@ -4604,31 +3187,31 @@ SC.Event.prototype = {
         return String.fromCharCode(0);
       }
       else {
-        return (this.keyCode>0) ? String.fromCharCode(this.keyCode) : null;
+        return (this.keyCode>0) ? String.fromCharCode(this.keyCode) : null;  
       }
     }
     else {
       return (this.charCode>0) ? String.fromCharCode(this.charCode) : null;
     }
   },
-
-  /**
-    Returns character codes for the event.  The first value is the normalized
-    code string, with any shift or ctrl characters added to the begining.
+  
+  /** 
+    Returns character codes for the event.  The first value is the normalized 
+    code string, with any shift or ctrl characters added to the begining.  
     The second value is the char string by itself.
-
+  
     @returns {Array}
   */
   commandCodes: function() {
     var code=this.keyCode, ret=null, key=null, modifiers='', lowercase ;
-
+    
     // handle function keys.
     if (code) {
       ret = SC.FUNCTION_KEYS[code] ;
       if (!ret && (this.altKey || this.ctrlKey || this.metaKey)) {
         ret = SC.PRINTABLE_KEYS[code];
       }
-
+      
       if (ret) {
         if (this.altKey) modifiers += 'alt_' ;
         if (this.ctrlKey || this.metaKey) modifiers += 'ctrl_' ;
@@ -4644,14 +3227,14 @@ SC.Event.prototype = {
       if (this.metaKey) {
         modifiers = 'meta_' ;
         ret = lowercase;
-
+        
       } else ret = null ;
     }
 
     if (ret) ret = modifiers + ret ;
     return [ret, key] ;
   }
-
+    
 } ;
 
 // Also provide a Prototype-like API so that people can use either one.
@@ -4666,7 +3249,7 @@ SC.Event.stopObserving = SC.Event.remove ;
 SC.Event.fire = SC.Event.trigger;
 
 // Register unload handler to eliminate any registered handlers
-// This avoids leaks in IE and issues with mouseout or other handlers on
+// This avoids leaks in IE and issues with mouseout or other handlers on 
 // other browsers.
 
 if(SC.browser.msie) SC.Event.add(window, 'unload', SC.Event.prototype, SC.Event.unload) ;
@@ -4676,11 +3259,11 @@ SC.MODIFIER_KEYS = {
 };
 
 SC.FUNCTION_KEYS = {
-  8: 'backspace',  9: 'tab',  13: 'return',  19: 'pause',  27: 'escape',
-  33: 'pageup', 34: 'pagedown', 35: 'end', 36: 'home',
-  37: 'left', 38: 'up', 39: 'right', 40: 'down', 44: 'printscreen',
-  45: 'insert', 46: 'delete', 112: 'f1', 113: 'f2', 114: 'f3', 115: 'f4',
-  116: 'f5', 117: 'f7', 119: 'f8', 120: 'f9', 121: 'f10', 122: 'f11',
+  8: 'backspace',  9: 'tab',  13: 'return',  19: 'pause',  27: 'escape',  
+  33: 'pageup', 34: 'pagedown', 35: 'end', 36: 'home', 
+  37: 'left', 38: 'up', 39: 'right', 40: 'down', 44: 'printscreen', 
+  45: 'insert', 46: 'delete', 112: 'f1', 113: 'f2', 114: 'f3', 115: 'f4', 
+  116: 'f5', 117: 'f7', 119: 'f8', 120: 'f9', 121: 'f10', 122: 'f11', 
   123: 'f12', 144: 'numlock', 145: 'scrolllock'
 } ;
 
@@ -4722,33 +3305,33 @@ SC.HELP_CURSOR = 'help' ;
 /**
   @class SC.Cursor
 
-  A Cursor object is used to sychronize the cursor used by multiple views at
+  A Cursor object is used to sychronize the cursor used by multiple views at 
   the same time. For example, thumb views within a split view acquire a cursor
-  instance from the split view and set it as their cursor. The split view is
+  instance from the split view and set it as their cursor. The split view is 
   able to update its cursor object to reflect the state of the split view.
-  Because cursor objects are implemented internally with CSS, this is a very
+  Because cursor objects are implemented internally with CSS, this is a very 
   efficient way to update the same cursor for a group of view objects.
-
-  Note: This object creates an anonymous CSS class to represent the cursor.
+  
+  Note: This object creates an anonymous CSS class to represent the cursor. 
   The anonymous CSS class is automatically added by SproutCore to views that
-  have the cursor object set as "their" cursor. Thus, all objects attached to
+  have the cursor object set as "their" cursor. Thus, all objects attached to 
   the same cursor object will have their cursors updated simultaneously with a
   single DOM call.
-
+  
   @extends SC.Object
 */
 SC.Cursor = SC.Object.extend(
 /** @scope SC.Cursor.prototype */ {
-
+  
   /** @private */
   init: function() {
     arguments.callee.base.apply(this,arguments) ;
-
+    
     // create a unique style rule and add it to the shared cursor style sheet
     var cursorStyle = this.get('cursorStyle') || SC.DEFAULT_CURSOR ,
         ss = this.constructor.sharedStyleSheet(),
         guid = SC.guidFor(this);
-
+    
     if (ss.insertRule) { // WC3
       ss.insertRule(
         '.'+guid+' {cursor: '+cursorStyle+';}',
@@ -4757,27 +3340,27 @@ SC.Cursor = SC.Object.extend(
     } else if (ss.addRule) { // IE
       ss.addRule('.'+guid, 'cursor: '+cursorStyle) ;
     }
-
+    
     this.cursorStyle = cursorStyle ;
     this.className = guid ; // used by cursor clients...
     return this ;
   },
-
+  
   /**
     This property is the connection between cursors and views. The default
     SC.View behavior is to add this className to a view's layer if it has
     its cursor property defined.
-
+    
     @readOnly
     @property {String} the css class name updated by this cursor
   */
   className: null,
-
+  
   /**
     @property {String} the cursor value, can be 'url("path/to/cursor")'
   */
   cursorStyle: SC.DEFAULT_CURSOR,
-
+  
   /** @private */
   cursorStyleDidChange: function() {
     var cursorStyle, rule, selector, ss, rules, idx, len;
@@ -4787,12 +3370,12 @@ SC.Cursor = SC.Object.extend(
       rule.style.cursor = cursorStyle ; // fast path
       return ;
     }
-
+    
     // slow path, taken only once
     selector = '.'+this.get('className') ;
     ss = this.constructor.sharedStyleSheet() ;
     rules = (ss.cssRules ? ss.cssRules : ss.rules) || [] ;
-
+    
     // find our rule, cache it, and update the cursor style property
     for (idx=0, len = rules.length; idx<len; ++idx) {
       rule = rules[idx] ;
@@ -4803,9 +3386,9 @@ SC.Cursor = SC.Object.extend(
       }
     }
   }.observes('cursorStyle')
-
+  
   // TODO implement destroy
-
+  
 });
 
 /** @private */
@@ -4818,13 +3401,139 @@ SC.Cursor.sharedStyleSheet = function() {
     head = document.getElementsByTagName('head')[0] ;
     if (!head) head = document.documentElement ; // fix for Opera
     head.appendChild(ss) ;
-
+    
     // get the actual stylesheet object, not the DOM element
     ss = document.styleSheets[document.styleSheets.length-1] ;
     this._styleSheet = ss ;
   }
   return ss ;
 };
+; if ((typeof SC !== 'undefined') && SC && SC.Module && SC.Module.scriptDidLoad) SC.Module.scriptDidLoad('sproutcore/core_foundation');
+/* >>>>>>>>>> BEGIN source/system/responder.js */
+// ==========================================================================
+// Project:   SproutCore - JavaScript Application Framework
+// Copyright: ©2006-2011 Strobe Inc. and contributors.
+//            Portions ©2008-2011 Apple Inc. All rights reserved.
+// License:   Licensed under MIT license (see license.js)
+// ==========================================================================
+
+/** @class
+
+  Provides common methods for sending events down a responder chain.
+  Responder chains are used most often to deliver events to user interface
+  elements in your application, but you can also use them to deliver generic
+  events to any part of your application, including controllers.
+
+  @extends SC.Object
+  @since SproutCore 1.0
+*/
+SC.Responder = SC.Object.extend( /** @scope SC.Responder.prototype */ {
+
+  isResponder: YES,
+  
+  /** @property
+    The pane this responder belongs to.  This is used to determine where you 
+    belong to in the responder chain.  Normally you should leave this property
+    set to null.
+  */
+  pane: null,
+  
+  /** @property
+    The app this responder belongs to.  For non-user-interface responder 
+    chains, this is used to determine the context.  Usually this
+    is the property you will want to work with.
+  */
+  responderContext: null,
+  
+  /** @property
+    This is the nextResponder in the responder chain.  If the receiver does 
+    not implement a particular event handler, it will bubble to the next 
+    responder.
+    
+    This can point to an object directly or it can be a string, in which case
+    the path will be resolved from the responderContext root.
+  */
+  nextResponder: null,
+  
+  /** @property 
+    YES if the view is currently first responder.  This property is always 
+    edited by the pane during its makeFirstResponder() method.
+  */
+  isFirstResponder: NO,
+  
+  /** @property
+  
+    YES the responder is somewhere in the responder chain.  This currently
+    only works when used with a ResponderContext.
+    
+    @type {Boolean}
+  */
+  hasFirstResponder: NO,    
+  
+  /** @property
+    Set to YES if your view is willing to accept first responder status.  This is used when calculcating key responder loop.
+  */
+  acceptsFirstResponder: YES,
+  
+  becomingFirstResponder: NO,
+  
+  /** 
+    Call this method on your view or responder to make it become first 
+    responder.
+    
+    @returns {SC.Responder} receiver
+  */
+  becomeFirstResponder: function() {  
+    var pane = this.get('pane') || this.get('responderContext') ||
+              this.pane();
+    if (pane && this.get('acceptsFirstResponder')) {
+      if (pane.get('firstResponder') !== this) pane.makeFirstResponder(this);
+    } 
+    return this ;
+  },
+  
+  /**
+    Call this method on your view or responder to resign your first responder 
+    status. Normally this is not necessary since you will lose first responder 
+    status automatically when another view becomes first responder.
+    
+    @param {Event} the original event that caused this method to be called
+    @returns {SC.Responder} receiver
+  */
+  resignFirstResponder: function(evt) {
+    var pane = this.get('pane') || this.get('responderContext');
+    if (pane && (pane.get('firstResponder') === this)) {
+      pane.makeFirstResponder(null, evt);
+    }
+    return YES;  
+  },
+
+  /**
+    Called just before the responder or any of its subresponder's are about to
+    lose their first responder status.  The passed responder is the responder
+    that is about to lose its status. 
+    
+    Override this method to provide any standard teardown when the first 
+    responder changes.
+    
+    @param {SC.Responder} responder the responder that is about to change
+    @returns {void}
+  */
+  willLoseFirstResponder: function(responder) {},
+  
+  /**
+    Called just after the responder or any of its subresponder's becomes a 
+    first responder.  
+    
+    Override this method to provide any standard setup when the first 
+    responder changes.
+    
+    @param {SC.Responder} responder the responder that changed
+    @returns {void}
+  */
+  didBecomeFirstResponder: function(responder) {}
+
+});
 ; if ((typeof SC !== 'undefined') && SC && SC.Module && SC.Module.scriptDidLoad) SC.Module.scriptDidLoad('sproutcore/core_foundation');
 /* >>>>>>>>>> BEGIN source/system/theme.js */
 // ==========================================================================
@@ -4967,7 +3676,7 @@ SC.Theme = {
     } else {
       result.themes = SC.beget(this.themes);
     }
-
+    
     // we also have private ("invisible") child themes; look at invisibleSubtheme
     // method.
     result._privateThemes = {};
@@ -5008,21 +3717,21 @@ SC.Theme = {
     // and return the theme class
     return t;
   },
-
+  
   /**
     Semi-private, only used by SC.View to create "invisible" subthemes. You
     should never need to call this directly, nor even worry about.
-
+    
     Invisible subthemes are only available when find is called _on this theme_;
     if find() is called on a child theme, it will _not_ locate this theme.
-
+    
     The reason for "invisible" subthemes is that SC.View will create a subtheme
-    when it finds a theme name that doesn't exist. For example, imagine that you
+    when it finds a theme name that doesn't exist. For example, imagine that you 
     have a parent view with theme "base", and a child view with theme "popup".
     If no "popup" theme can be found inside "base", SC.View will call
     base.subtheme. This will create a new theme with the name "popup",
     derived from "base". Everyone is happy.
-
+    
     But what happens if you then change the parent theme to "ace"? The view
     will try again to find "popup", and it will find it-- but it will still be
     a child theme of "base"; SC.View _needs_ to re-subtheme it, but it won't
@@ -5034,11 +3743,11 @@ SC.Theme = {
 
     // add to our set of themes
     this._privateThemes[name] = t;
-
+    
     // and return the theme class
     return t;
   },
-
+  
   //
   // THEME MANAGEMENT
   //
@@ -5144,7 +3853,636 @@ SC.BaseTheme = SC.Theme.create({
 SC.Theme.themes['sc-base'] = SC.BaseTheme;
 SC.defaultTheme = 'sc-base';
 ; if ((typeof SC !== 'undefined') && SC && SC.Module && SC.Module.scriptDidLoad) SC.Module.scriptDidLoad('sproutcore/core_foundation');
+/* >>>>>>>>>> BEGIN source/system/locale.js */
+// ==========================================================================
+// Project:   SproutCore - JavaScript Application Framework
+// Copyright: ©2006-2011 Strobe Inc. and contributors.
+//            Portions ©2008-2011 Apple Inc. All rights reserved.
+// License:   Licensed under MIT license (see license.js)
+// ==========================================================================
+
+/**
+  The Locale defined information about a specific locale, including date and
+  number formatting conventions, and localization strings.  You can define
+  various locales by adding them to the SC.locales hash, keyed by language
+  and/or country code.
+  
+  On page load, the default locale will be chosen based on the current 
+  languages and saved at SC.Locale.current.  This locale is used for 
+  localization, etc.
+  
+  ## Creating a new locale
+  
+  You can create a locale by simply extending the SC.Locale class and adding
+  it to the locales hash:
+  
+      SC.Locale.locales['en'] = SC.Locale.extend({ .. config .. }) ;
+  
+  Alternatively, you could choose to base your locale on another locale by
+  extending that locale:
+  
+      SC.Locale.locales['en-US'] = SC.Locale.locales['en'].extend({ ... }) ;
+  
+  Note that if you do not define your own strings property, then your locale
+  will inherit any strings added to the parent locale.  Otherwise you must
+  implement your own strings instead.
+  
+  @extends SC.Object
+  @since SproutCore 1.0
+*/
+SC.Locale = SC.Object.extend({
+  
+  init: function() {
+    // make sure we know the name of our own locale.
+    if (!this.language) SC.Locale._assignLocales();
+    
+    // Make sure we have strings that were set using the new API.  To do this
+    // we check to a bool that is set by one of the string helpers.  This 
+    // indicates that the new API was used. If the new API was not used, we
+    // check to see if the old API was used (which places strings on the 
+    // String class). 
+    if (!this.hasStrings) {
+      var langs = this._deprecatedLanguageCodes || [] ;
+      langs.push(this.language);
+      var idx = langs.length ;
+      var strings = null ;
+      while(!strings && --idx >= 0) {
+        strings = String[langs[idx]];
+      }
+      if (strings) {
+        this.hasStrings = YES; 
+        this.strings = strings ;
+      }
+    }
+  },
+  
+  /** Set to YES when strings have been added to this locale. */
+  hasStrings: NO,
+  
+  /** The strings hash for this locale. */
+  strings: {},
+  
+  toString: function() {
+    if (!this.language) SC.Locale._assignLocales() ;
+    return "SC.Locale["+this.language+"]"+SC.guidFor(this) ;
+  },
+  
+  /** 
+    Returns the localized version of the string or the string if no match
+    was found.
+    
+    @param {String} string
+    @param {String} optional default string to return instead
+    @returns {String}
+  */
+  locWithDefault: function(string, def) {
+    var ret = this.strings[string];
+    
+    // strings may be blank, so test with typeOf.
+    if (SC.typeOf(ret) === SC.T_STRING) return ret;
+    else if (SC.typeOf(def) === SC.T_STRING) return def;
+    return string;
+  }
+  
+  
+}) ;
+
+SC.Locale.mixin(/** @scope SC.Locale */ {
+
+  /**
+    If YES, localization will favor the detected language instead of the
+    preferred one.
+  */
+  useAutodetectedLanguage: NO,
+  
+  /**
+    This property is set by the build tools to the current build language.
+  */
+  preferredLanguage: null,
+  
+  /** 
+    Invoked at the start of SproutCore's document onready handler to setup 
+    the currentLocale.  This will use the language properties you have set on
+    the locale to make a decision.
+  */
+  createCurrentLocale: function() {
+
+    // get values from String if defined for compatibility with < 1.0 build 
+    // tools.
+    var autodetect = (String.useAutodetectedLanguage !== undefined) ? String.useAutodetectedLanguage : this.useAutodetectedLanguage; 
+    var preferred = (String.preferredLanguage !== undefined) ? String.preferredLanguage : this.preferredLanguage ;
+
+    // determine the language
+    var lang = ((autodetect) ? SC.browser.language : null) || preferred || SC.browser.language || 'en';
+    lang = SC.Locale.normalizeLanguage(lang) ;
+
+    // get the locale class.  If a class cannot be found, fall back to generic
+    // language then to english.
+    var klass = this.localeClassFor(lang) ;
+
+    // if the detected language does not match the current language (or there
+    // is none) then set it up.
+    if (lang != this.currentLanguage) {
+      this.currentLanguage = lang ; // save language
+      this.currentLocale = klass.create(); // setup locale
+    }
+    return this.currentLocale ;
+  },
+
+  /**
+    Finds the locale class for the names language code or creates on based on
+    its most likely parent.
+  */
+  localeClassFor: function(lang) {
+    lang = SC.Locale.normalizeLanguage(lang) ;
+    var parent, klass = this.locales[lang];
+    
+    // if locale class was not found and there is a broader-based locale
+    // present, create a new locale based on that.
+    if (!klass && ((parent = lang.split('-')[0]) !== lang) && (klass = this.locales[parent])) {
+      klass = this.locales[lang] = klass.extend() ;      
+    }
+    
+    // otherwise, try to create a new locale based on english.
+    if (!klass) klass = this.locales[lang] = this.locales.en.extend();
+    
+    return klass;
+  },
+
+  /** 
+    Shorthand method to define the settings for a particular locale.
+    The settings you pass here will be applied directly to the locale you
+    designate.  
+
+    If you are already holding a reference to a locale definition, you can
+    also use this method to operate on the receiver.
+    
+    If the locale you name does not exist yet, this method will create the 
+    locale for you, based on the most closely related locale or english.  For 
+    example, if you name the locale 'fr-CA', you will be creating a locale for
+    French as it is used in Canada.  This will be based on the general French
+    locale (fr), since that is more generic.  On the other hand, if you create
+    a locale for manadarin (cn), it will be based on generic english (en) 
+    since there is no broader language code to match against.
+
+    @param {String} localeName
+    @param {Hash} options
+    @returns {SC.Locale} the defined locale
+  */
+  define: function(localeName, options) {
+    var locale ;
+    if (options===undefined && (SC.typeOf(localeName) !== SC.T_STRING)) {
+      locale = this; options = localeName ;
+    } else locale = SC.Locale.localeClassFor(localeName) ;
+    SC.mixin(locale.prototype, options) ;
+    return locale ;
+  },
+  
+  /**
+    Gets the current options for the receiver locale.  This is useful for 
+    inspecting registered locales that have not been instantiated.
+    
+    @returns {Hash} options + instance methods
+  */
+  options: function() { return this.prototype; },
+  
+  /**
+    Adds the passed hash of strings to the locale's strings table.  Note that
+    if the receiver locale inherits its strings from its parent, then the 
+    strings table will be cloned first.
+    
+    @returns {Object} receiver
+  */
+  addStrings: function(stringsHash) {
+    // make sure the target strings hash exists and belongs to the locale
+    var strings = this.prototype.strings ;
+    if (strings) {
+      if (!this.prototype.hasOwnProperty('strings')) {
+        this.prototype.strings = SC.clone(strings) ;
+      }
+    } else strings = this.prototype.strings = {} ;
+    
+    // add strings hash
+    if (stringsHash)  this.prototype.strings = SC.mixin(strings, stringsHash) ;
+    this.prototype.hasStrings = YES ;
+    return this;
+  },
+  
+  _map: { english: 'en', french: 'fr', german: 'de', japanese: 'ja', jp: 'ja', spanish: 'es' },
+  
+  /**
+    Normalizes the passed language into a two-character language code.
+    This method allows you to specify common languages in their full english
+    name (i.e. English, French, etc). and it will be treated like their two
+    letter code equivalent.
+    
+    @param {String} languageCode
+    @returns {String} normalized code
+  */
+  normalizeLanguage: function(languageCode) {
+    if (!languageCode) return 'en' ;
+    return SC.Locale._map[languageCode.toLowerCase()] || languageCode ;
+  },
+  
+  // this method is called once during init to walk the installed locales 
+  // and make sure they know their own names.
+  _assignLocales: function() {
+    for(var key in this.locales) this.locales[key].prototype.language = key;
+  },
+  
+  toString: function() {
+    if (!this.prototype.language) SC.Locale._assignLocales() ;
+    return "SC.Locale["+this.prototype.language+"]" ;
+  },
+  
+  // make sure important properties are copied to new class. 
+  extend: function() {
+    var ret= SC.Object.extend.apply(this, arguments) ;
+    ret.addStrings= SC.Locale.addStrings;
+    ret.define = SC.Locale.define ;
+    ret.options = SC.Locale.options ;
+    ret.toString = SC.Locale.toString ;
+    return ret ;
+  }
+    
+}) ;
+
+/** 
+  This locales hash contains all of the locales defined by SproutCore and
+  by your own application.  See the SC.Locale class definition for the
+  various properties you can set on your own locales.
+  
+  @property {Hash}
+*/
+SC.Locale.locales = {
+  en: SC.Locale.extend({ _deprecatedLanguageCodes: ['English'] }),
+  fr: SC.Locale.extend({ _deprecatedLanguageCodes: ['French'] }),
+  de: SC.Locale.extend({ _deprecatedLanguageCodes: ['German'] }),
+  ja: SC.Locale.extend({ _deprecatedLanguageCodes: ['Japanese', 'jp'] }),
+  es: SC.Locale.extend({ _deprecatedLanguageCodes: ['Spanish'] })
+} ;
+
+
+
+
+/**
+  This special helper will store the strings you pass in the locale matching
+  the language code.  If a locale is not defined from the language code you
+  specify, then one will be created for you with the english locale as the 
+  parent.
+  
+  @param {String} languageCode
+  @param {Hash} strings
+  @returns {Object} receiver 
+*/
+SC.stringsFor = function(languageCode, strings) {
+  // get the locale, creating one if needed.
+  var locale = SC.Locale.localeClassFor(languageCode);
+  locale.addStrings(strings) ;
+  return this ;
+} ;
+
+
+; if ((typeof SC !== 'undefined') && SC && SC.Module && SC.Module.scriptDidLoad) SC.Module.scriptDidLoad('sproutcore/core_foundation');
+/* >>>>>>>>>> BEGIN source/system/string.js */
+// ==========================================================================
+// Project:   SproutCore - JavaScript Application Framework
+// Copyright: ©2006-2011 Strobe Inc. and contributors.
+//            Portions ©2008-2011 Apple Inc. All rights reserved.
+// License:   Licensed under MIT license (see license.js)
+// ==========================================================================
+
+sc_require('system/locale');
+
+// These are basic enhancements to the string class used throughout
+// SproutCore.
+/** @private */
+SC.STRING_TITLEIZE_REGEXP = (/([\s|\-|\_|\n])([^\s|\-|\_|\n]?)/g);
+SC.STRING_DECAMELIZE_REGEXP = (/([a-z])([A-Z])/g);
+SC.STRING_DASHERIZE_REGEXP = (/[ _]/g);
+SC.STRING_DASHERIZE_CACHE = {};
+SC.STRING_TRIM_LEFT_REGEXP = (/^\s+/g);
+SC.STRING_TRIM_RIGHT_REGEXP = (/\s+$/g);
+
+/**
+  @namespace
+
+  SproutCore implements a variety of enhancements to the built-in String
+  object that make it easy to perform common substitutions and conversions.
+
+  Most of the utility methods defined here mirror those found in Prototype
+  1.6.
+
+  @since SproutCore 1.0
+  @lends String.prototype
+*/
+SC.mixin(SC.String, {
+
+  /**
+    Capitalizes a string.
+
+    ## Examples
+
+        capitalize('my favorite items') // 'My favorite items'
+        capitalize('css-class-name')    // 'Css-class-name'
+        capitalize('action_name')       // 'Action_name'
+        capitalize('innerHTML')         // 'InnerHTML'
+
+    @return {String} capitalized string
+  */
+  capitalize: function(str) {
+    return str.charAt(0).toUpperCase() + str.slice(1);
+  },
+
+  /**
+    Camelizes a string.  This will take any words separated by spaces, dashes
+    or underscores and convert them into camelCase.
+
+    ## Examples
+
+        camelize('my favorite items') // 'myFavoriteItems'
+        camelize('css-class-name')    // 'cssClassName'
+        camelize('action_name')       // 'actionName'
+        camelize('innerHTML')         // 'innerHTML'
+
+    @returns {String} camelized string
+  */
+  camelize: function(str) {
+    var ret = str.replace(SC.STRING_TITLEIZE_REGEXP, function(str, separater, character) {
+      return character ? character.toUpperCase() : '';
+    });
+
+    var first = ret.charAt(0),
+        lower = first.toLowerCase();
+
+    return first !== lower ? lower + ret.slice(1) : ret;
+  },
+
+  /**
+    Converts a camelized string into all lower case separated by underscores.
+
+    ## Examples
+
+    decamelize('my favorite items') // 'my favorite items'
+    decamelize('css-class-name')    // 'css-class-name'
+    decamelize('action_name')       // 'action_name'
+    decamelize('innerHTML')         // 'inner_html'
+
+    @returns {String} the decamelized string.
+  */
+  decamelize: function(str) {
+    return str.replace(SC.STRING_DECAMELIZE_REGEXP, '$1_$2').toLowerCase();
+  },
+
+  /**
+    Converts a camelized string or a string with spaces or underscores into
+    a string with components separated by dashes.
+
+    ## Examples
+
+    | *Input String* | *Output String* |
+    dasherize('my favorite items') // 'my-favorite-items'
+    dasherize('css-class-name')    // 'css-class-name'
+    dasherize('action_name')       // 'action-name'
+    dasherize('innerHTML')         // 'inner-html'
+
+    @returns {String} the dasherized string.
+  */
+  dasherize: function(str) {
+    var cache = SC.STRING_DASHERIZE_CACHE,
+        ret   = cache[str];
+
+    if (ret) {
+      return ret;
+    } else {
+      ret = SC.String.decamelize(str).replace(SC.STRING_DASHERIZE_REGEXP,'-');
+      cache[str] = ret;
+    }
+
+    return ret;
+  },
+
+  /**
+    Localizes the string.  This will look up the reciever string as a key
+    in the current Strings hash.  If the key matches, the loc'd value will be
+    used.  The resulting string will also be passed through fmt() to insert
+    any variables.
+
+    @param str {String} String to localize
+    @param args {Object...} optional arguments to interpolate also
+    @returns {String} the localized and formatted string.
+  */
+  loc: function(str) {
+    // NB: This could be implemented as a wrapper to locWithDefault() but
+    // it would add some overhead to deal with the arguments and adds stack
+    // frames, so we are keeping the implementation separate.
+    if(!SC.Locale.currentLocale) { SC.Locale.createCurrentLocale(); }
+
+    var localized = SC.Locale.currentLocale.locWithDefault(str);
+    if (SC.typeOf(localized) !== SC.T_STRING) { localized = str; }
+
+    var args = SC.$A(arguments);
+    args.shift(); // remove str param
+    //to extend String.prototype 
+    if(args.length>0 && args[0].isSCArray) args=args[0];
+
+    return SC.String.fmt(localized, args);
+  },
+
+  /**
+    Works just like loc() except that it will return the passed default
+    string if a matching key is not found.
+
+    @param {String} str the string to localize
+    @param {String} def the default to return
+    @param {Object...} args optional formatting arguments
+    @returns {String} localized and formatted string
+  */
+  locWithDefault: function(str, def) {
+    if (!SC.Locale.currentLocale) { SC.Locale.createCurrentLocale(); }
+
+    var localized = SC.Locale.currentLocale.locWithDefault(str, def);
+    if (SC.typeOf(localized) !== SC.T_STRING) { localized = str; }
+
+    var args = SC.$A(arguments);
+    args.shift(); // remove str param
+    args.shift(); // remove def param
+
+    return SC.String.fmt(localized, args);
+  },
+  
+  /**
+   Removes any extra whitespace from the edges of the string. This method is
+   also aliased as strip().
+
+   @returns {String} the trimmed string
+  */
+  trim: jQuery.trim,
+
+  /**
+   Removes any extra whitespace from the left edge of the string.
+
+   @returns {String} the trimmed string
+  */
+  trimLeft: function (str) {
+    return str.replace(SC.STRING_TRIM_LEFT_REGEXP,"");
+  },
+
+  /**
+   Removes any extra whitespace from the right edge of the string.
+
+   @returns {String} the trimmed string
+  */
+  trimRight: function (str) {
+    return str.replace(SC.STRING_TRIM_RIGHT_REGEXP,"");
+  }
+});
+
+
+// IE doesn't support string trimming
+if(String.prototype.trim) {
+  SC.supplement(String.prototype,
+  /** @scope String.prototype */ {
+
+    trim: function() {
+      return SC.String.trim(this, arguments);
+    },
+
+    trimLeft: function() {
+      return SC.String.trimLeft(this, arguments);
+    },
+
+    trimRight: function() {
+      return SC.String.trimRight(this, arguments);
+    }
+  });
+}
+
+// We want the version defined here, not in Runtime
+SC.mixin(String.prototype,
+/** @scope String.prototype */ {
+  
+  loc: function() {
+    return SC.String.loc(this.toString(), SC.$A(arguments));
+  }
+
+});
+
+; if ((typeof SC !== 'undefined') && SC && SC.Module && SC.Module.scriptDidLoad) SC.Module.scriptDidLoad('sproutcore/core_foundation');
+/* >>>>>>>>>> BEGIN source/mixins/delegate_support.js */
+// ==========================================================================
+// Project:   SproutCore - JavaScript Application Framework
+// Copyright: ©2006-2011 Strobe Inc. and contributors.
+//            Portions ©2008-2011 Apple Inc. All rights reserved.
+// License:   Licensed under MIT license (see license.js)
+// ==========================================================================
+
+/**
+  @namespace
+
+  Support methods for the Delegate design pattern.
+
+  The Delegate design pattern makes it easy to delegate a portion of your
+  application logic to another object.  This is most often used in views to
+  delegate various application-logic decisions to controllers in order to
+  avoid having to bake application-logic directly into the view itself.
+
+  The methods provided by this mixin make it easier to implement this pattern
+  but they are not required to support delegates.
+
+  ## The Pattern
+
+  The delegate design pattern typically means that you provide a property,
+  usually ending in "delegate", that can be set to another object in the
+  system.
+
+  When events occur or logic decisions need to be made that you would prefer
+  to delegate, you can call methods on the delegate if it is set.  If the
+  delegate is not set, you should provide some default functionality instead.
+
+  Note that typically delegates are not observable, hence it is not necessary
+  to use get() to retrieve the value of the delegate.
+
+  @since SproutCore 1.0
+
+*/
+SC.DelegateSupport = {
+
+  /**
+    Selects the delegate that implements the specified method name.  Pass one
+    or more delegates.  The receiver is automatically included as a default.
+
+    This can be more efficient than using invokeDelegateMethod() which has
+    to marshall arguments into a delegate call.
+
+    @param {String} methodName
+    @param {Object...} delegate one or more delegate arguments
+    @returns {Object} delegate or null
+  */
+  delegateFor: function(methodName) {
+    var idx = 1,
+        len = arguments.length,
+        ret ;
+
+    while(idx<len) {
+      ret = arguments[idx];
+      if (ret && ret[methodName] !== undefined) return ret ;
+      idx++;
+    }
+
+    return (this[methodName] !== undefined) ? this : null;
+  },
+
+  /**
+    Invokes the named method on the delegate that you pass.  If no delegate
+    is defined or if the delegate does not implement the method, then a
+    method of the same name on the receiver will be called instead.
+
+    You can pass any arguments you want to pass onto the delegate after the
+    delegate and methodName.
+
+    @param {Object} delegate a delegate object.  May be null.
+    @param {String} methodName a method name
+    @param {Object...} args (OPTIONAL) any additional arguments
+
+    @returns {Object} value returned by delegate
+  */
+  invokeDelegateMethod: function(delegate, methodName, args) {
+    args = SC.A(arguments); args = args.slice(2, args.length) ;
+    if (!delegate || !delegate[methodName]) delegate = this ;
+
+    var method = delegate[methodName];
+    return method ? method.apply(delegate, args) : null;
+  },
+
+  /**
+    Search the named delegates for the passed property.  If one is found,
+    gets the property value and returns it.  If none of the passed delegates
+    implement the property, search the receiver for the property as well.
+
+    @param {String} key the property to get.
+    @param {Object} delegate one or more delegate
+    @returns {Object} property value or undefined
+  */
+  getDelegateProperty: function(key, delegate) {
+    var idx = 1,
+        len = arguments.length,
+        ret ;
+
+    while(idx<len) {
+      ret = arguments[idx++];
+      if (ret && ret[key] !== undefined) {
+        return ret.get ? ret.get(key) : ret[key] ;
+      }
+    }
+
+    return (this[key] !== undefined) ? this.get(key) : undefined ;
+  }
+
+};
+; if ((typeof SC !== 'undefined') && SC && SC.Module && SC.Module.scriptDidLoad) SC.Module.scriptDidLoad('sproutcore/core_foundation');
 /* >>>>>>>>>> BEGIN source/views/view/base.js */
+sc_require('mixins/delegate_support');
 
 /** @class */
 SC.CoreView = SC.Responder.extend(SC.DelegateSupport);
@@ -6624,7 +5962,8 @@ SC.CoreView.unload = function() {
    2. They act as first responders for incoming keyboard, mouse, and
      touch events.
 
-  ## View Initialization
+  View Initialization
+  ====
 
   When a view is setup, there are several methods you can override that
   will be called at different times depending on how your view is created.
@@ -6663,13 +6002,1055 @@ SC.CoreView.unload = function() {
 */
 SC.View = SC.CoreView.extend(/** @scope SC.View.prototype */{
   classNames: ['sc-view'],
-
+  
   displayProperties: ['isFirstResponder']
 });
 
 //unload views for IE, trying to collect memory.
 if(SC.browser.msie) SC.Event.add(window, 'unload', SC.View, SC.View.unload) ;
 
+
+; if ((typeof SC !== 'undefined') && SC && SC.Module && SC.Module.scriptDidLoad) SC.Module.scriptDidLoad('sproutcore/core_foundation');
+/* >>>>>>>>>> BEGIN source/views/template.js */
+sc_require("ext/handlebars");
+sc_require("ext/handlebars/bind");
+sc_require("ext/handlebars/collection");
+sc_require("ext/handlebars/localization");
+sc_require("ext/handlebars/view");
+sc_require("views/view");
+
+// Global hash of shared templates. This will automatically be populated
+// by the build tools so that you can store your Handlebars templates in
+// separate files that get loaded into JavaScript at buildtime.
+SC.TEMPLATES = SC.Object.create();
+
+/** @class
+
+  SC.TemplateView allows you to create a view that uses the Handlebars templating
+  engine to generate its HTML representation.
+
+  To use it, create a file in your project called +mytemplate.handlebars+. Then,
+  set the +templateName+ property of your SC.TemplateView to +mytemplate+.
+
+  Alternatively, you can set the +template+ property to any function that
+  returns a string. It is recommended that you use +SC.Handlebars.compile()+ to
+  generate a function from a string containing Handlebars markup.
+
+  @extends SC.CoreView
+  @since SproutCore 1.5
+*/
+SC.TemplateView = SC.CoreView.extend(
+/** @scope SC.TemplateView.prototype */ {
+
+  // This makes it easier to build custom views on top of TemplateView without
+  // gotchas, but may have tab navigation repercussions. The tab navigation
+  // system should be revisited.
+  acceptsFirstResponder: YES,
+
+  /**
+    The name of the template to lookup if no template is provided.
+
+    SC.TemplateView will look for a template with this name in the global
+    +SC.TEMPLATES+ hash. Usually this hash will be populated for you
+    automatically when you include +.handlebars+ files in your project.
+
+    @property {String}
+  */
+  templateName: null,
+
+  /**
+    The hash in which to look for +templateName+. Defaults to SC.TEMPLATES.
+
+    @property {Object}
+  */
+  templates: SC.TEMPLATES,
+
+  /**
+    The template used to render the view. This should be a function that
+    accepts an optional context parameter and returns a string of HTML that
+    will be inserted into the DOM relative to its parent view.
+
+    In general, you should set the +templateName+ property instead of setting
+    the template yourself.
+
+    @property {Function}
+  */
+  template: function(key, value) {
+    if (value !== undefined) {
+      return value;
+    }
+
+    var templateName = this.get('templateName'),
+        template = this.get('templates').get(templateName);
+
+    if (!template) {
+      
+
+
+      return function() { return ''; };
+    }
+
+    return template;
+  }.property('templateName').cacheable(),
+
+  /**
+    The object from which templates should access properties.
+
+    This object will be passed to the template function each time the render
+    method is called, but it is up to the individual function to decide what
+    to do with it.
+
+    By default, this will be the view itself.
+
+    @property {Object}
+  */
+  context: function(key, value) {
+    if (value !== undefined) {
+      return value;
+    }
+
+    return this;
+  }.property().cacheable(),
+
+  /**
+    When the view is asked to render, we look for the appropriate template
+    function and invoke it, then push its result onto the passed
+    SC.RenderContext instance.
+
+    @param {SC.RenderContext} context the render context
+  */
+  render: function(context) {
+    var template = this.get('template');
+
+    this._didRenderChildViews = YES;
+
+    context.push(template(this.get('context'), null, null, { view: this, isRenderData: true }));
+  },
+
+  // in TemplateView, updating is handled by observers created by helpers in the
+  // template. As a result, we create an empty update method so that the old
+  // (pre-1.5) behavior which would force a full re-render does not get activated.
+  update: function() { },
+
+  /**
+    Since mouseUp events will not fire unless we return YES to mouseDown, the
+    default mouseDown implementation returns YES if a mouseDown method exists.
+  */
+  mouseDown: function() {
+    if (this.mouseUp) { return YES; }
+    return NO;
+  }
+});
+; if ((typeof SC !== 'undefined') && SC && SC.Module && SC.Module.scriptDidLoad) SC.Module.scriptDidLoad('sproutcore/core_foundation');
+/* >>>>>>>>>> BEGIN source/controls/button.js */
+sc_require('views/template');
+
+SC.Button = SC.TemplateView.extend({
+  classNames: ['sc-button'],
+
+  // Setting isActive to true will trigger the classBinding and add
+  // 'is-active' to our layer's class names.
+  mouseDown: function() {
+    this.set('isActive', true);
+    this._isMouseDown = YES;
+  },
+
+  mouseExited: function() {
+    this.set('isActive', false);
+  },
+
+  mouseEntered: function() {
+    if (this._isMouseDown) {
+      this.set('isActive', true);
+    }
+  },
+
+  // Setting isActive to false will remove 'is-active' from our
+  // layer's class names.
+  mouseUp: function(event) {
+    if (this.get('isActive')) {
+      var action = this.get('action'),
+          target = this.get('target') || null,
+          rootResponder = this.getPath('pane.rootResponder');
+
+      if (action && rootResponder) {
+        rootResponder.sendAction(action, target, this, this.get('pane'), null, this);
+      }
+
+      this.set('isActive', false);
+    }
+
+    this._isMouseDown = NO;
+  },
+
+  touchStart: function(touch) {
+    this.mouseDown(touch);
+  },
+
+  touchEnd: function(touch) {
+    this.mouseUp(touch);
+  }
+});
+
+; if ((typeof SC !== 'undefined') && SC && SC.Module && SC.Module.scriptDidLoad) SC.Module.scriptDidLoad('sproutcore/core_foundation');
+/* >>>>>>>>>> BEGIN source/ext/function.js */
+// ==========================================================================
+// Project:   SproutCore - JavaScript Application Framework
+// Copyright: ©2006-2011 Strobe Inc. and contributors.
+//            Portions ©2008-2011 Apple Inc. All rights reserved.
+// License:   Licensed under MIT license (see license.js)
+// ==========================================================================
+
+SC.mixin(Function.prototype, /** @scope Function.prototype */ {
+
+  /**
+    Creates a timer that will execute the function after a specified 
+    period of time.
+    
+    If you pass an optional set of arguments, the arguments will be passed
+    to the function as well.  Otherwise the function should have the 
+    signature:
+    
+        function functionName(timer)
+
+    @param target {Object} optional target object to use as this
+    @param interval {Number} the time to wait, in msec
+    @returns {SC.Timer} scheduled timer
+  */
+  invokeLater: function(target, interval) {
+    if (interval === undefined) interval = 1 ;
+    var f = this;
+    if (arguments.length > 2) {
+      var args = SC.$A(arguments).slice(2,arguments.length);
+      args.unshift(target);
+      // f = f.bind.apply(f, args) ;
+      var func = f ;
+      // Use "this" in inner func because it get its scope by 
+      // outer func f (=target). Could replace "this" with target for clarity.
+      f = function() { return func.apply(this, args.slice(1)); } ;
+    }
+    return SC.Timer.schedule({ target: target, action: f, interval: interval });
+  }
+
+});
+; if ((typeof SC !== 'undefined') && SC && SC.Module && SC.Module.scriptDidLoad) SC.Module.scriptDidLoad('sproutcore/core_foundation');
+/* >>>>>>>>>> BEGIN source/ext/object.js */
+// ==========================================================================
+// Project:   SproutCore - JavaScript Application Framework
+// Copyright: ©2006-2011 Strobe Inc. and contributors.
+//            Portions ©2008-2011 Apple Inc. All rights reserved.
+// License:   Licensed under MIT license (see license.js)
+// ==========================================================================
+
+// Extensions to the core SC.Object class
+SC.mixin(SC.Object.prototype, /** @scope SC.Object.prototype */ {
+
+  /**
+    Invokes the named method after the specified period of time.
+
+    This is a convenience method that will create a single run timer to
+    invoke a method after a period of time.  The method should have the
+    signature:
+
+        methodName: function(timer)
+
+    If you would prefer to pass your own parameters instead, you can instead
+    call invokeLater() directly on the function object itself.
+
+    @param methodName {String} method name to perform.
+    @param interval {Number} period from current time to schedule.
+    @returns {SC.Timer} scheduled timer.
+  */
+  invokeLater: function(methodName, interval) {
+    if (interval === undefined) { interval = 1 ; }
+    var f = methodName, args, func;
+
+    // if extra arguments were passed - build a function binding.
+    if (arguments.length > 2) {
+      args = SC.$A(arguments).slice(2);
+      if (SC.typeOf(f) === SC.T_STRING) { f = this[methodName] ; }
+      func = f ;
+      f = function() { return func.apply(this, args); } ;
+    }
+
+    // schedule the timer
+    return SC.Timer.schedule({ target: this, action: f, interval: interval });
+  },
+
+  /**
+    Lookup the named property path and then invoke the passed function,
+    passing the resulting value to the function.
+
+    This method is a useful way to handle deferred loading of properties.
+    If you want to defer loading a property, you can override this method.
+    When the method is called, passing a deferred property, you can load the
+    property before invoking the callback method.
+
+    You can even swap out the receiver object.
+
+    The callback method should have the signature:
+
+    function callback(objectAtPath, sourceObject) { ... }
+
+    You may pass either a function itself or a target/method pair.
+
+    @param {String} pathName
+    @param {Object} target target or method
+    @param {Function|String} method
+    @returns {SC.Object} receiver
+  */
+  invokeWith: function(pathName, target, method) {
+    // normalize target/method
+    if (method === undefined) {
+      method = target; target = this;
+    }
+    if (!target) { target = this ; }
+    if (SC.typeOf(method) === SC.T_STRING) { method = target[method]; }
+
+    // get value
+    var v = this.getPath(pathName);
+
+    // invoke method
+    method.call(target, v, this);
+    return this ;
+  }
+
+});
+; if ((typeof SC !== 'undefined') && SC && SC.Module && SC.Module.scriptDidLoad) SC.Module.scriptDidLoad('sproutcore/core_foundation');
+/* >>>>>>>>>> BEGIN source/ext/run_loop.js */
+// ==========================================================================
+// Project:   SproutCore - JavaScript Application Framework
+// Copyright: ©2006-2011 Strobe Inc. and contributors.
+//            Portions ©2008-2011 Apple Inc. All rights reserved.
+// License:   Licensed under MIT license (see license.js)
+// ==========================================================================
+
+// Create anonymous subclass of SC.RunLoop to add support for processing
+// view queues and Timers.
+SC.RunLoop = SC.RunLoop.extend(
+/** @scope SC.RunLoop.prototype */ {
+
+  /**
+    The time the current run loop began executing.
+
+    All timers scheduled during this run loop will begin executing as if
+    they were scheduled at this time.
+
+    @property {Number}
+  */
+  startTime: function() {
+    if (!this._start) { this._start = Date.now(); }
+    return this._start ;
+  }.property(),
+
+  /*
+
+    Override to fire and reschedule timers once per run loop.
+
+    Note that timers should fire only once per run loop to avoid the
+    situation where a timer might cause an infinite loop by constantly
+    rescheduling itself everytime it is fired.
+  */
+  endRunLoop: function() {
+    this.fireExpiredTimers(); // fire them timers!
+    var ret = arguments.callee.base.apply(this,arguments); // do everything else
+    this.scheduleNextTimeout(); // schedule a timout if timers remain
+    return ret;
+  },
+
+  // ..........................................................
+  // TIMER SUPPORT
+  //
+
+  /**
+    Schedules a timer to execute at the specified runTime.  You will not
+    usually call this method directly.  Instead you should work with SC.Timer,
+    which will manage both creating the timer and scheduling it.
+
+    Calling this method on a timer that is already scheduled will remove it
+    from the existing schedule and reschedule it.
+
+    @param {SC.Timer} timer the timer to schedule
+    @param {Time} runTime the time offset when you want this to run
+    @returns {SC.RunLoop} receiver
+  */
+  scheduleTimer: function(timer, runTime) {
+    // if the timer is already in the schedule, remove it.
+    this._timerQueue = timer.removeFromTimerQueue(this._timerQueue);
+
+    // now, add the timer ot the timeout queue.  This will walk down the
+    // chain of timers to find the right place to insert it.
+    this._timerQueue = timer.scheduleInTimerQueue(this._timerQueue, runTime);
+    return this ;
+  },
+
+  /**
+    Removes the named timer from the timeout queue.  If the timer is not
+    currently scheduled, this method will have no effect.
+
+    @param {SC.Timer} timer the timer to schedule
+    @returns {SC.RunLoop} receiver
+  */
+  cancelTimer: function(timer) {
+    this._timerQueue = timer.removeFromTimerQueue(this._timerQueue) ;
+    return this ;
+  },
+
+  /** @private - shared array used by fireExpiredTimers to avoid memory */
+  TIMER_ARRAY: [],
+
+  /**
+    Invokes any timers that have expired since this method was last called.
+    Usually you will not call this method directly, but it will be invoked
+    automatically at the end of the run loop.
+
+    @returns {Boolean} YES if timers were fired, NO otherwise
+  */
+  fireExpiredTimers: function() {
+    if (!this._timerQueue || this._firing) { return NO; } // nothing to do
+
+    // max time we are allowed to run timers
+    var now = this.get('startTime'),
+        timers = this.TIMER_ARRAY,
+        idx, len, didFire;
+
+    // avoid recursive calls
+    this._firing = YES;
+
+    // collect timers to fire.  we do this one time up front to avoid infinite
+    // loops where firing a timer causes it to schedule itself again, causing
+    // it to fire again, etc.
+    this._timerQueue = this._timerQueue.collectExpiredTimers(timers, now);
+
+    // now step through timers and fire them.
+    len = timers.length;
+    for(idx=0;idx<len;idx++) { timers[idx].fire(); }
+
+    // cleanup
+    didFire = timers.length > 0 ;
+    timers.length = 0 ; // reset for later use...
+    this._firing = NO ;
+    return didFire;
+  },
+
+  /** @private
+    Invoked at the end of a runloop, if there are pending timers, a timeout
+    will be scheduled to fire when the next timer expires.  You will not
+    usually call this method yourself.  It is invoked automatically at the
+    end of a run loop.
+
+    @returns {Boolean} YES if a timeout was scheduled
+  */
+  scheduleNextTimeout: function() {
+    var timer = this._timerQueue ;
+
+    var ret = NO ;
+    // if no timer, and there is an existing timeout, cancel it
+    if (!timer) {
+      if (this._timeout) { clearTimeout(this._timeout); }
+
+    // otherwise, determine if the timeout needs to be rescheduled.
+    } else {
+      var nextTimeoutAt = timer._timerQueueRunTime ;
+      if (this._timeoutAt !== nextTimeoutAt) { // need to reschedule
+        if (this._timeout) { clearTimeout(this._timeout); } // clear existing...
+        // reschedule
+        var delay = Math.max(0, nextTimeoutAt - Date.now());
+        this._timeout = setTimeout(this._timeoutDidFire, delay);
+        this._timeoutAt = nextTimeoutAt ;
+      }
+      ret = YES ;
+    }
+
+    return ret ;
+  },
+
+  /** @private
+    Invoked when a timeout actually fires.  Simply cleanup, then begin and end
+    a runloop. This will fire any expired timers and reschedule.  Note that
+    this function will be called with 'this' set to the global context,
+    hence the need to lookup the current run loop.
+  */
+  _timeoutDidFire: function() {
+    var rl = SC.RunLoop.currentRunLoop;
+    rl._timeout = rl._timeoutAt = null ; // cleanup
+    SC.run();  // begin/end runloop to trigger timers.
+  }
+
+});
+
+// Recreate the currentRunLoop with the new methods
+SC.RunLoop.currentRunLoop = SC.RunLoop.create();
+; if ((typeof SC !== 'undefined') && SC && SC.Module && SC.Module.scriptDidLoad) SC.Module.scriptDidLoad('sproutcore/core_foundation');
+/* >>>>>>>>>> BEGIN source/ext/string.js */
+// ==========================================================================
+// Project:   SproutCore - JavaScript Application Framework
+// Copyright: ©2006-2011 Strobe Inc. and contributors.
+//            Portions ©2008-2011 Apple Inc. All rights reserved.
+// License:   Licensed under MIT license (see license.js)
+// ==========================================================================
+
+sc_require('system/string');
+
+SC.supplement(String.prototype,
+/** @scope String.prototype */ {
+
+  /**
+    @see SC.String.capitalize
+  */
+  capitalize: function() {
+    return SC.String.capitalize(this, arguments);
+  },
+
+  /**
+    @see SC.String.camelize
+  */
+  camelize: function() {
+    return SC.String.camelize(this, arguments);
+  },
+
+  /**
+    @see SC.String.decamelize
+  */
+  decamelize: function() {
+    return SC.String.decamelize(this, arguments);
+  },
+
+  /**
+    @see SC.String.dasherize
+  */
+  dasherize: function() {
+    return SC.String.dasherize(this, arguments);
+  },
+
+  /**
+    @see SC.String.loc
+  */
+  loc: function() {
+    var args = SC.$A(arguments);
+    args.unshift(this);
+    return SC.String.loc.apply(SC.String, args);
+  },
+
+  /**
+    @see SC.String.locWithDefault
+  */
+  locWithDefault: function(def) {
+    var args = SC.$A(arguments);
+    args.unshift(this);
+    return SC.String.locWithDefault.apply(SC.String, args);
+  }
+
+});
+
+; if ((typeof SC !== 'undefined') && SC && SC.Module && SC.Module.scriptDidLoad) SC.Module.scriptDidLoad('sproutcore/core_foundation');
+/* >>>>>>>>>> BEGIN source/mixins/responder_context.js */
+// ==========================================================================
+// Project:   SproutCore - JavaScript Application Framework
+// Copyright: ©2006-2011 Strobe Inc. and contributors.
+//            Portions ©2008-2011 Apple Inc. All rights reserved.
+// License:   Licensed under MIT license (see license.js)
+// ==========================================================================
+sc_require('system/responder');
+
+/** @namespace
+
+  The root object for a responder chain.  A responder context can dispatch
+  actions directly to a first responder; walking up the responder chain until
+  it finds a responder that can handle the action.
+
+  If no responder can be found to handle the action, it will attempt to send
+  the action to the defaultResponder.
+
+  You can have as many ResponderContext's as you want within your application.
+  Every SC.Pane and SC.Application automatically implements this mixin.
+
+  Note that to implement this, you should mix SC.ResponderContext into an
+  SC.Responder or SC.Responder subclass.
+
+  @since SproutCore 1.0
+*/
+SC.ResponderContext = {
+
+  // ..........................................................
+  // PROPERTIES
+  //
+
+  isResponderContext: YES,
+
+  /** @property
+
+    When set to YES, logs tracing information about all actions sent and
+    responder changes.
+  */
+  trace: NO,
+
+  /** @property
+    The default responder.  Set this to point to a responder object that can
+    respond to events when no other view in the hierarchy handles them.
+
+    @type SC.Responder
+  */
+  defaultResponder: null,
+
+  /** @property
+    The next responder for an app is always its defaultResponder.
+  */
+  nextResponder: function() {
+    return this.get('defaultResponder');
+  }.property('defaultResponder').cacheable(),
+
+  /** @property
+    The first responder.  This is the first responder that should receive
+    actions.
+  */
+  firstResponder: null,
+
+  // ..........................................................
+  // METHODS
+  //
+
+  /**
+    Finds the next responder for the passed responder based on the responder's
+    nextResponder property.  If the property is a string, then lookup the path
+    in the receiver.
+  */
+  nextResponderFor: function(responder) {
+    var next = responder.get('nextResponder');
+    if (typeof next === SC.T_STRING) {
+      next = SC.objectForPropertyPath(next, this);
+    } else if (!next && (responder !== this)) next = this ;
+    return next ;
+  },
+
+  /**
+    Finds the responder name by searching the responders one time.
+  */
+  responderNameFor: function(responder) {
+    if (!responder) return "(No Responder)";
+    else if (responder._scrc_name) return responder._scrc_name;
+
+    // none found, let's go hunting...look three levels deep
+    var n = this.NAMESPACE;
+    this._findResponderNamesFor(this, 3, n ? [this.NAMESPACE] : []);
+
+    return responder._scrc_name || responder.toString(); // try again
+  },
+
+  _findResponderNamesFor: function(responder, level, path) {
+    var key, value;
+
+    for(key in responder) {
+      if (key === 'nextResponder') continue ;
+      value = responder[key];
+      if (value && value.isResponder) {
+        if (value._scrc_name) continue ;
+        path.push(key);
+        value._scrc_name = path.join('.');
+        if (level>0) this._findResponderNamesFor(value, level-1, path);
+        path.pop();
+      }
+    }
+  },
+
+  /**
+    Makes the passed responder into the new firstResponder for this
+    responder context.  This will cause the current first responder to lose
+    its responder status and possibly keyResponder status as well.
+
+    When you change the first responder, this will send callbacks to
+    responders up the chain until you reach a shared responder, at which point
+    it will stop notifying.
+
+    @param {SC.Responder} responder
+    @param {Event} evt that cause this to become first responder
+    @returns {SC.ResponderContext} receiver
+  */
+  makeFirstResponder: function(responder, evt) {
+    var current = this.get('firstResponder'),
+        last    = this.get('nextResponder'),
+        trace   = this.get('trace'),
+        common ;
+
+    if (this._locked) {
+      if (trace) {
+        SC.Logger.log('%@: AFTER ACTION: makeFirstResponder => %@'.fmt(this, this.responderNameFor(responder)));
+      }
+
+      this._pendingResponder = responder;
+      return ;
+    }
+
+    if (trace) {
+      SC.Logger.log('%@: makeFirstResponder => %@'.fmt(this, this.responderNameFor(responder)));
+    }
+
+    if (responder) responder.set("becomingFirstResponder", YES);
+
+    this._locked = YES;
+    this._pendingResponder = null;
+
+    // Find the nearest common responder in the responder chain for the new
+    // responder.  If there are no common responders, use last responder.
+    // Note: start at the responder itself: it could be the common responder.
+    common = responder ? responder : null;
+    while (common) {
+      if (common.get('hasFirstResponder')) break;
+      common = (common===last) ? null : this.nextResponderFor(common);
+    }
+    if (!common) common = last;
+
+    // Cleanup old first responder
+    this._notifyWillLoseFirstResponder(current, current, common, evt);
+    if (current) current.set('isFirstResponder', NO);
+
+    // Set new first responder.  If new firstResponder does not have its
+    // responderContext property set, then set it.
+
+    // but, don't tell anyone until we have _also_ updated the hasFirstResponder state.
+    this.beginPropertyChanges();
+
+    this.set('firstResponder', responder) ;
+    if (responder) responder.set('isFirstResponder', YES);
+
+    this._notifyDidBecomeFirstResponder(responder, responder, common);
+
+    // now, tell everyone the good news!
+    this.endPropertyChanges();
+
+    this._locked = NO ;
+    if (this._pendingResponder) {
+      this.makeFirstResponder(this._pendingResponder);
+      this._pendingResponder = null;
+    }
+
+    if (responder) responder.set("becomingFirstResponder", NO);
+
+    return this ;
+  },
+
+  _notifyWillLoseFirstResponder: function(responder, cur, root, evt) {
+    if (cur === root) return ; // nothing to do
+
+    cur.willLoseFirstResponder(responder, evt);
+    cur.set('hasFirstResponder', NO);
+
+    var next = this.nextResponderFor(cur);
+    if (next) this._notifyWillLoseFirstResponder(responder, next, root);
+  },
+
+  _notifyDidBecomeFirstResponder: function(responder, cur, root) {
+    if (cur === root) return ; // nothing to do
+
+    var next = this.nextResponderFor(cur);
+    if (next) this._notifyDidBecomeFirstResponder(responder, next, root);
+
+    cur.set('hasFirstResponder', YES);
+    cur.didBecomeFirstResponder(responder);
+  },
+
+  /**
+    Re-enters the current responder (calling willLoseFirstResponder and didBecomeFirstResponder).
+  */
+  resetFirstResponder: function() {
+    var current = this.get('firstResponder');
+    if (!current) return;
+    current.willLoseFirstResponder();
+    current.didBecomeFirstResponder();
+  },
+
+  /**
+    Send the passed action down the responder chain, starting with the
+    current first responder.  This will look for the first responder that
+    actually implements the action method and returns YES or no value when
+    called.
+
+    @param {String} action name of action
+    @param {Object} sender object sending the action
+    @param {Object} context optional additonal context info
+    @returns {SC.Responder} the responder that handled it or null
+  */
+  sendAction: function(action, sender, context) {
+    var working = this.get('firstResponder'),
+        last    = this.get('nextResponder'),
+        trace   = this.get('trace'),
+        handled = NO,
+        responder;
+
+    this._locked = YES;
+    if (trace) {
+      SC.Logger.log("%@: begin action '%@' (%@, %@)".fmt(this, action, sender, context));
+    }
+
+    if (!handled && !working && this.tryToPerform) {
+      handled = this.tryToPerform(action, sender, context);
+    }
+
+    while (!handled && working) {
+      if (working.tryToPerform) {
+        handled = working.tryToPerform(action, sender, context);
+      }
+
+      if (!handled) {
+        working = (working===last) ? null : this.nextResponderFor(working);
+      }
+    }
+
+    if (trace) {
+      if (!handled) SC.Logger.log("%@:  action '%@' NOT HANDLED".fmt(this,action));
+      else SC.Logger.log("%@: action '%@' handled by %@".fmt(this, action, this.responderNameFor(working)));
+    }
+
+    this._locked = NO ;
+
+    if (responder = this._pendingResponder) {
+      this._pendingResponder= null ;
+      this.makeFirstResponder(responder);
+    }
+
+
+    return working ;
+  }
+
+};
+; if ((typeof SC !== 'undefined') && SC && SC.Module && SC.Module.scriptDidLoad) SC.Module.scriptDidLoad('sproutcore/core_foundation');
+/* >>>>>>>>>> BEGIN source/mixins/template_helpers/checkbox_support.js */
+// ==========================================================================
+// Project:   SproutCore - JavaScript Application Framework
+// Copyright: ©2006-2011 Strobe Inc. and contributors.
+//            ©2008-2011 Apple Inc. All rights reserved.
+// License:   Licensed under MIT license (see license.js)
+// ==========================================================================
+
+sc_require('views/template');
+
+/** @class */
+
+SC.Checkbox = SC.TemplateView.extend(
+  /** @scope SC.Checkbox.prototype */ {
+
+  title: null,
+  value: null,
+
+  classNames: ['sc-checkbox'],
+  template: SC.Handlebars.compile('<label><input type="checkbox">{{title}}</label>'),
+
+  didCreateLayer: function() {
+    var self = this;
+
+    this.$('input').bind('change', function() {
+      self.domValueDidChange(this);
+    });
+  },
+
+  domValueDidChange: function(node) {
+    this.set('value', !!$(node).attr('checked'));
+  },
+
+  value: function(key, value) {
+    if (value !== undefined) {
+      this.$('input').attr('checked', value);
+    } else {
+      value = this.$('input').attr('checked');
+    }
+
+    return value;
+  }.property()
+});
+
+SC.CheckboxSupport = /** @scope SC.CheckboxSupport */{
+  didCreateLayer: function() {
+    this.$('input').change(jQuery.proxy(function() {
+      SC.RunLoop.begin();
+      this.notifyPropertyChange('value');
+      SC.RunLoop.end();
+    }, this));
+  },
+
+  value: function(key, value) {
+    if (value !== undefined) {
+      this.$('input').attr('checked', value);
+    } else {
+      value = this.$('input').attr('checked');
+    }
+
+    return value;
+  }.property().idempotent()
+};
+
+; if ((typeof SC !== 'undefined') && SC && SC.Module && SC.Module.scriptDidLoad) SC.Module.scriptDidLoad('sproutcore/core_foundation');
+/* >>>>>>>>>> BEGIN source/mixins/template_helpers/text_field_support.js */
+// ==========================================================================
+// Project:   SproutCore - JavaScript Application Framework
+// Copyright: ©2006-2011 Strobe Inc. and contributors.
+//            ©2008-2011 Apple Inc. All rights reserved.
+// License:   Licensed under MIT license (see license.js)
+// ==========================================================================
+
+sc_require('views/template');
+
+/** @class */
+
+SC.TextField = SC.TemplateView.extend(
+  /** @scope SC.TextField.prototype */ {
+
+  classNames: ['sc-text-field'],
+
+  // we can't use bindAttr because of a race condition:
+  //
+  // when `value` is set, the bindAttr observer immediately calls
+  // `get` in order to persist it to the DOM, but because we made
+  // the `value` property idempotent, when it gets called by
+  // bindAttr, it fetches the not-yet-updated value from the DOM
+  // and returns it.
+  //
+  // In short, because we need to be able to catch changes to the
+  // DOM made directly, we cannot also rely on bindAttr to update
+  // the property: a chicken-and-egg problem.
+  template: SC.Handlebars.compile('<input type="text">'),
+
+  didCreateLayer: function() {
+    var self = this;
+
+    var input = this.$('input');
+    input.val(this._value);
+
+    SC.Event.add(input, 'focus', this, this.focusIn);
+    SC.Event.add(input, 'blur', this, this.focusOut);
+
+    this.$('input').bind('change', function() {
+      self.domValueDidChange(SC.$(this));
+    });
+  },
+
+  /**
+    The problem this property is trying to solve is twofold:
+
+    1. Make it possible to set the value of a text field that has
+       not yet been inserted into the DOM
+    2. Make sure that `value` properly reflects changes made directly
+       to the element's `value` property.
+
+    In order to achieve (2), we need to make the property volatile,
+    so that SproutCore will call the getter no matter what if get()
+    is called.
+
+    In order to achieve (1), we need to store a local cache of the
+    value, so that SproutCore can set the proper value as soon as
+    the underlying DOM element is created.
+  */
+  value: function(key, value) {
+    var input = this.$('input');
+
+    if (value !== undefined) {
+      this._value = value;
+      input.val(value);
+    } else if (input.length) {
+      this._value = value = input.val();
+    } else {
+      value = this._value;
+    }
+
+    return value;
+  }.property().idempotent(),
+
+  domValueDidChange: function(jquery) {
+    this.set('value', jquery.val());
+  },
+
+  focusIn: function(event) {
+    this.becomeFirstResponder();
+    this.tryToPerform('focus', event);
+  },
+
+  focusOut: function(event) {
+    this.resignFirstResponder();
+    this.tryToPerform('blur', event);
+  },
+
+  willLoseFirstResponder: function() {
+    this.notifyPropertyChange('value');
+  },
+
+  keyUp: function(evt) {
+    this.domValueDidChange(this.$('input'));
+
+    if (evt.keyCode === 13) {
+      return this.insertNewline(evt);
+    } else if (evt.keyCode === 27) {
+      return this.cancel(evt);
+    }
+
+    return true;
+  }
+});
+
+SC.TextFieldSupport = /** @scope SC.TextFieldSupport */{
+
+  /** @private
+    Used internally to store value because the layer may not exist
+  */
+  _value: null,
+  
+  /**
+    @type String
+    @default null
+  */
+  value: function(key, value) {
+    var input = this.$('input');
+
+    if (value !== undefined) {
+      this._value = value;
+      input.val(value);
+    } else {
+      if (input.length > 0) {
+        value = this._value = input.val();
+      } else {
+        value = this._value;
+      }
+    }
+
+    return value;
+  }.property().idempotent(),
+
+  didCreateLayer: function() {
+    var input = this.$('input');
+
+    input.val(this._value);
+
+    SC.Event.add(input, 'focus', this, this.focusIn);
+    SC.Event.add(input, 'blur', this, this.focusOut);
+  },
+
+  focusIn: function(event) {
+    this.becomeFirstResponder();
+    this.tryToPerform('focus', event);
+  },
+
+  focusOut: function(event) {
+    this.resignFirstResponder();
+    this.tryToPerform('blur', event);
+  },
+
+  /** @private
+    Make sure our input value is synced with any bindings.
+    In some cases, such as auto-filling, a value can get
+    changed without an event firing. We could do this
+    on focusOut, but blur can potentially get called
+    after other events.
+  */
+  willLoseFirstResponder: function() {
+    this.notifyPropertyChange('value');
+  },
+
+  keyUp: function(event) {
+    if (event.keyCode === 13) {
+      return this.tryToPerform('insertNewline', event);
+    } else if (event.keyCode === 27) {
+      return this.tryToPerform('cancel', event);
+    }
+  }
+};
 
 ; if ((typeof SC !== 'undefined') && SC && SC.Module && SC.Module.scriptDidLoad) SC.Module.scriptDidLoad('sproutcore/core_foundation');
 /* >>>>>>>>>> BEGIN source/panes/pane.js */
@@ -6924,13 +7305,13 @@ SC.Pane = SC.View.extend(SC.ResponderContext,
     @param {Event} evt that cause this to become first responder
     @returns {SC.Pane} receiver
   */
-  makeFirstResponder: function(view, evt) {
+  makeFirstResponder: function(original, view, evt) {
+    // firstResponder should never be null
+    if(!view) view = this;
+
     var current=this.get('firstResponder'), isKeyPane=this.get('isKeyPane');
     if (current === view) return this ; // nothing to do
     if (SC.platform.touch && view && view.kindOf(SC.TextFieldView) && !view.get('focused')) return this;
-
-    // notify current of firstResponder change
-    if (current) current.willLoseFirstResponder(current, evt);
 
     // if we are currently key pane, then notify key views of change also
     if (isKeyPane) {
@@ -6938,20 +7319,20 @@ SC.Pane = SC.View.extend(SC.ResponderContext,
       if (view) { view.tryToPerform('willBecomeKeyResponderFrom', current); }
     }
 
-    // change setting
     if (current) {
-      current.beginPropertyChanges()
-        .set('isFirstResponder', NO).set('isKeyResponder', NO)
-      .endPropertyChanges();
+      current.beginPropertyChanges();
+      current.set('isKeyResponder', NO);
     }
-
-    this.set('firstResponder', view) ;
 
     if (view) {
-      view.beginPropertyChanges()
-        .set('isFirstResponder', YES).set('isKeyResponder', isKeyPane)
-      .endPropertyChanges();
+      view.beginPropertyChanges();
+      view.set('isKeyResponder', isKeyPane);
     }
+
+    original(view, evt);
+
+    if(current) current.endPropertyChanges();
+    if(view) view.endPropertyChanges();
 
     // and notify again if needed.
     if (isKeyPane) {
@@ -6959,9 +7340,8 @@ SC.Pane = SC.View.extend(SC.ResponderContext,
       if (current) { current.tryToPerform('didLoseKeyResponderTo', view); }
     }
 
-    if (view) view.didBecomeFirstResponder(view);
     return this ;
-  },
+  }.enhance(),
 
   /**
     Called just before the pane loses it's keyPane status.  This will notify
@@ -7578,7 +7958,19 @@ SC.mixin(SC.TemplatePane, {
     var pane = SC.MainPane.extend({
       childViews: ['contentView'],
 
-      contentView: SC.TemplateView.design(attrs)
+      contentView: SC.TemplateView.design(attrs),
+
+      touchStart: function(touch) {
+        touch.allowDefault();
+      },
+
+      touchesDragged: function(evt, touches) {
+        evt.allowDefault();
+      },
+
+      touchEnd: function(touch) {
+        touch.allowDefault();
+      }
     });
 
     return pane.create().append();
@@ -7639,302 +8031,6 @@ SC.Application = SC.Responder.extend(SC.ResponderContext,
 
 });
 ; if ((typeof SC !== 'undefined') && SC && SC.Module && SC.Module.scriptDidLoad) SC.Module.scriptDidLoad('sproutcore/core_foundation');
-/* >>>>>>>>>> BEGIN source/views/template.js */
-sc_require("ext/handlebars");
-sc_require("ext/handlebars/bind");
-sc_require("ext/handlebars/collection");
-sc_require("ext/handlebars/localization");
-sc_require("ext/handlebars/view");
-
-// Global hash of shared templates. This will automatically be populated
-// by the build tools so that you can store your Handlebars templates in
-// separate files that get loaded into JavaScript at buildtime.
-SC.TEMPLATES = SC.Object.create();
-
-/** @class
-
-  SC.TemplateView allows you to create a view that uses the Handlebars templating
-  engine to generate its HTML representation.
-
-  To use it, create a file in your project called +mytemplate.handlebars+. Then,
-  set the +templateName+ property of your SC.TemplateView to +mytemplate+.
-
-  Alternatively, you can set the +template+ property to any function that
-  returns a string. It is recommended that you use +SC.Handlebars.compile()+ to
-  generate a function from a string containing Handlebars markup.
-
-  @extends SC.CoreView
-  @since SproutCore 1.5
-*/
-SC.TemplateView = SC.CoreView.extend(
-/** @scope SC.TemplateView.prototype */ {
-
-  // This makes it easier to build custom views on top of TemplateView without
-  // gotchas, but may have tab navigation repercussions. The tab navigation
-  // system should be revisited.
-  acceptsFirstResponder: YES,
-
-  /**
-    The name of the template to lookup if no template is provided.
-
-    SC.TemplateView will look for a template with this name in the global
-    +SC.TEMPLATES+ hash. Usually this hash will be populated for you
-    automatically when you include +.handlebars+ files in your project.
-
-    @property {String}
-  */
-  templateName: null,
-
-  /**
-    The hash in which to look for +templateName+. Defaults to SC.TEMPLATES.
-
-    @property {Object}
-  */
-  templates: SC.TEMPLATES,
-
-  /**
-    The template used to render the view. This should be a function that
-    accepts an optional context parameter and returns a string of HTML that
-    will be inserted into the DOM relative to its parent view.
-
-    In general, you should set the +templateName+ property instead of setting
-    the template yourself.
-
-    @property {Function}
-  */
-  template: function(key, value) {
-    if (value !== undefined) {
-      return value;
-    }
-
-    var templateName = this.get('templateName'),
-        template = this.get('templates').get(templateName);
-
-    if (!template) {
-
-
-
-      return function() { return ''; };
-    }
-
-    return template;
-  }.property('templateName').cacheable(),
-
-  /**
-    The object from which templates should access properties.
-
-    This object will be passed to the template function each time the render
-    method is called, but it is up to the individual function to decide what
-    to do with it.
-
-    By default, this will be the view itself.
-
-    @property {Object}
-  */
-  context: function(key, value) {
-    if (value !== undefined) {
-      return value;
-    }
-
-    return this;
-  }.property().cacheable(),
-
-  /**
-    When the view is asked to render, we look for the appropriate template
-    function and invoke it, then push its result onto the passed
-    SC.RenderContext instance.
-
-    @param {SC.RenderContext} context the render context
-  */
-  render: function(context) {
-    var template = this.get('template');
-
-    this._didRenderChildViews = YES;
-
-    context.push(template(this.get('context'), null, null, { view: this, isRenderData: true }));
-  },
-
-  // in TemplateView, updating is handled by observers created by helpers in the
-  // template. As a result, we create an empty update method so that the old
-  // (pre-1.5) behavior which would force a full re-render does not get activated.
-  update: function() { },
-
-  /**
-    Since mouseUp events will not fire unless we return YES to mouseDown, the
-    default mouseDown implementation returns YES if a mouseDown method exists.
-  */
-  mouseDown: function() {
-    if (this.mouseUp) { return YES; }
-    return NO;
-  }
-});
-; if ((typeof SC !== 'undefined') && SC && SC.Module && SC.Module.scriptDidLoad) SC.Module.scriptDidLoad('sproutcore/core_foundation');
-/* >>>>>>>>>> BEGIN source/system/bindable_span.js */
-sc_require('views/template');
-
-/** @private
-  @class
-
-  SC._BindableSpan is a private view created by the Handlebars {{bind}} helpers
-  that is used to keep track of bound properties.
-
-  Every time a property is bound using a {{mustache}}, an anonymous subclass of
-  SC._BindableSpan is created with the appropriate sub-template and context
-  set up. When the associated property changes, just the template for this view
-  will re-render.
-*/
-SC._BindableSpan = SC.TemplateView.extend({
-  /**
-   The type of HTML tag to use. To ensure compatibility with
-   Internet Explorer 7, a <span> tag is used to ensure that inline elements are
-   not rendered with display: block.
-
-   @property {String}
-  */
-  tagName: 'span',
-
-  /**
-    The function used to determine if the +displayTemplate+ or
-    +inverseTemplate+ should be rendered. This should be a function that takes
-    a value and returns a Boolean.
-
-    @property {Function}
-  */
-  shouldDisplayFunc: null,
-
-  /**
-    Whether the template rendered by this view gets passed the context object
-    of its parent template, or gets passed the value of retrieving +property+
-    from the previous context.
-
-    For example, this is YES when using the {{#if}} helper, because the template
-    inside the helper should look up properties relative to the same object as
-    outside the block. This would be NO when used with +{{#with foo}}+ because
-    the template should receive the object found by evaluating +foo+.
-
-    @property {Boolean}
-  */
-  preserveContext: NO,
-
-  /**
-    The template to render when +shouldDisplayFunc+ evaluates to YES.
-
-    @property {Function}
-  */
-  displayTemplate: null,
-
-  /**
-    The template to render when +shouldDisplayFunc+ evaluates to NO.
-
-    @property {Function}
-  */
-  inverseTemplate: null,
-
-  /**
-    The key to look up on +previousContext+ that is passed to
-    +shouldDisplayFunc+ to determine which template to render.
-
-    In addition, if +preserveContext+ is NO, this object will be passed to the
-    template when rendering.
-
-    @property {String}
-  */
-  property: null,
-
-  /**
-    Determines which template to invoke, sets up the correct state based on
-    that logic, then invokes the default SC.TemplateView +render+
-    implementation.
-
-    This method will first look up the +property+ key on +previousContext+,
-    then pass that value to the +shouldDisplayFunc+ function. If that returns
-    YES, the +displayTemplate+ function will be rendered to DOM. Otherwise,
-    +inverseTemplate+, if specified, will be rendered.
-
-    For example, if this SC._BindableSpan represented the {{#with foo}} helper,
-    it would look up the +foo+ property of its context, and +shouldDisplayFunc+
-    would always return true. The object found by looking up +foo+ would be
-    passed to +displayTemplate+.
-
-    @param {SC.RenderContext} renderContext}
-  */
-  render: function(renderContext) {
-    var shouldDisplay = this.get('shouldDisplayFunc'),
-        property = this.get('property'),
-        preserveContext = this.get('preserveContext'),
-        context = this.get('previousContext');
-
-    var inverseTemplate = this.get('inverseTemplate'),
-        displayTemplate = this.get('displayTemplate');
-
-    var result = context.getPath(property);
-
-    // First, test the conditional to see if we should
-    // render the template or not.
-    if (shouldDisplay(result)) {
-      this.set('template', displayTemplate);
-
-      // If we are preserving the context (for example, if this
-      // is an #if block, call the template with the same object.
-      if (preserveContext) {
-        this.set('context', context);
-      } else {
-      // Otherwise, determine if this is a block bind or not.
-      // If so, pass the specified object to the template
-        if (displayTemplate) {
-          this.set('context', result);
-        } else {
-        // This is not a bind block, just push the result of the
-        // expression to the render context and return.
-          renderContext.push(Handlebars.Utils.escapeExpression(result));
-          return;
-        }
-      }
-    } else if (inverseTemplate) {
-      this.set('template', inverseTemplate);
-
-      if (preserveContext) {
-        this.set('context', context);
-      } else {
-        this.set('context', result);
-      }
-    } else {
-      this.set('template', function() { return ''; });
-    }
-
-    return arguments.callee.base.apply(this,arguments);
-  },
-
-  /**
-    Called when the property associated with this <span> changes.
-
-    We destroy all registered children, then render the view again and insert
-    it into DOM.
-  */
-  rerender: function() {
-    var idx, len, childViews, childView;
-
-    childViews = this.get('childViews');
-    len = childViews.get('length');
-    for (idx = len-1; idx >= 0; idx--){
-      childView = childViews[idx];
-      childView.$().remove();
-      childView.removeFromParent();
-      childView.destroy();
-    }
-
-    var context = this.renderContext(this.get('tagName'));
-    var elem;
-    this.renderToContext(context);
-
-    elem = context.element();
-    this.$().replaceWith(elem);
-    this.set('layer', elem);
-    this._notifyDidCreateLayer();
-  }
-});
-
-; if ((typeof SC !== 'undefined') && SC && SC.Module && SC.Module.scriptDidLoad) SC.Module.scriptDidLoad('sproutcore/core_foundation');
 /* >>>>>>>>>> BEGIN source/system/datetime.js */
 ; if ((typeof SC !== 'undefined') && SC && SC.Module && SC.Module.scriptDidLoad) SC.Module.scriptDidLoad('sproutcore/core_foundation');
 /* >>>>>>>>>> BEGIN source/system/ready.js */
@@ -7953,22 +8049,22 @@ sc_require('system/event') ;
 
 SC.mixin({
   isReady: NO,
-
+  
   /**
     Allows apps to avoid automatically attach the ready handlers if they
     want to by setting this flag to YES
-
+    
     @property {Boolean}
   */
   suppressOnReady: SC.suppressOnReady ? YES : NO,
-
+  
   /**
     Allows apps to avoid automatically invoking main() when onReady is called
-
+    
     @property {Boolean}
   */
   suppressMain: SC.suppressMain ? YES : NO,
-
+  
   /**
     Add the passed target and method to the queue of methods to invoke when
     the document is ready.  These methods will be called after the document
@@ -7985,7 +8081,7 @@ SC.mixin({
   */
   ready: function(target, method) {
     var queue = SC._readyQueue;
-
+    
     // normalize
     if (method === undefined) {
       method = target; target = null ;
@@ -8000,7 +8096,7 @@ SC.mixin({
       if(!queue) SC._readyQueue = [];
       SC._readyQueue.push(function() { method.call(target); });
     }
-
+    
     return this ;
   },
 
@@ -8008,23 +8104,23 @@ SC.mixin({
     done: function() {
       if(SC.isReady) return;
       SC.isReady = true;
-
+      
       SC.RunLoop.begin();
-
+      
       SC.Locale.createCurrentLocale();
       jQuery("body").addClass(SC.Locale.currentLanguage.toLowerCase());
-
+      
       jQuery("#loading").remove();
-
+      
       var queue = SC._readyQueue, idx, len;
-
+      
       if(queue) {
         for(idx=0,len=queue.length;idx<len;idx++) {
           queue[idx].call();
         }
         SC._readyQueue = null;
       }
-
+      
       if(window.main && !SC.suppressMain && (SC.mode === SC.APP_MODE)) { window.main(); }
       SC.RunLoop.end();
     }
@@ -8094,7 +8190,7 @@ SC.platform = SC.Object.create({
     @property {Boolean}
   */
   touch: (('createTouch' in document) && SC.browser.chrome < 9) || SC.browser.android,
-
+  
   bounceOnScroll: SC.browser.iOS,
   pinchToZoom: SC.browser.iOS,
 
@@ -8159,7 +8255,7 @@ SC.platform = SC.Object.create({
       //@ endif
       return;
     }
-
+    
     SC.Logger.log("Simulating touch events");
 
     // Tell the app that we now "speak" touch
@@ -8366,26 +8462,26 @@ SC.platform = SC.Object.create({
     // documentMode logic from YUI to filter out IE8 Compat Mode which false positives
     return ('onhashchange' in window) && (document.documentMode === undefined || document.documentMode > 7);
   }(),
-
+  
   /**
     Wether the browser supports HTML5 history.
   */
   supportsHistory: function() {
     return !!(window.history && window.history.pushState);
   }(),
-
+  
   supportsCanvas: function() {
     return !!document.createElement('canvas').getContext;
   }(),
-
+  
   supportsOrientationChange: ('onorientationchange' in window),
-
+  
   /**
     Because iOS is slow to dispatch the window.onorientationchange event,
     we use the window size to determine the orientation on iOS devices
     and desktop environments when SC.platform.touch is YES (ie. when
     SC.platform.simulateTouchEvents has been called)
-
+    
     @property {Boolean}
     @default NO
   */
@@ -8484,7 +8580,8 @@ SC.CAPTURE_BACKSPACE_KEY = NO ;
   RootResponder directly.  Instead you will work with Pane objects, which
   register themselves with the RootResponder as needed to receive events.
 
-  ## RootResponder and Platforms
+  RootResponder and Platforms
+  ---
 
   RootResponder contains core functionality common among the different web
   platforms. You will likely be working with a subclass of RootResponder that
@@ -8493,7 +8590,8 @@ SC.CAPTURE_BACKSPACE_KEY = NO ;
   The correct instance of RootResponder is detected at runtime and loaded
   transparently.
 
-  ## Event Types
+  Event Types
+  ---
 
   RootResponders can route four types of events:
 
@@ -8512,7 +8610,8 @@ SC.CAPTURE_BACKSPACE_KEY = NO ;
      explicit target, or allow the action to traverse the hierarchy until a
      view is found that handles it.
 */
-SC.RootResponder = SC.Object.extend({
+SC.RootResponder = SC.Object.extend(
+  /** @scope SC.RootResponder.prototype */{
 
   /**
     Contains a list of all panes currently visible on screen.  Everytime a
@@ -8534,7 +8633,7 @@ SC.RootResponder = SC.Object.extend({
   // MAIN PANE
   //
 
-  /** @property
+  /**
     The main pane.  This pane receives shortcuts and actions if the
     focusedPane does not respond to them.  There can be only one main pane.
     You can swap main panes by calling makeMainPane() here.
@@ -8542,6 +8641,8 @@ SC.RootResponder = SC.Object.extend({
     Usually you will not need to edit the main pane directly.  Instead, you
     should use a MainPane subclass, which will automatically make itself main
     when you append it to the document.
+    
+    @type SC.MainPane
   */
   mainPane: null,
 
@@ -8555,7 +8656,7 @@ SC.RootResponder = SC.Object.extend({
     document body.  That will be handled by the Pane itself.
 
     @param {SC.Pane} pane
-    @returns {SC.RootResponder} receiver
+    @returns {SC.RootResponder}
   */
   makeMainPane: function(pane) {
     var currentMain = this.get('mainPane') ;
@@ -9148,18 +9249,19 @@ SC.RootResponder = SC.Object.extend({
     }
     SC.Event.add(document, mousewheel, this, this.mousewheel);
 
-    // If the browser is identifying itself as a touch-enabled browser, but
-    // touch events are not present, assume this is a desktop browser doing
-    // user agent spoofing and simulate touch events automatically.
-    if (SC.browser && SC.platform && SC.browser.mobileSafari && !SC.platform.touch) {
-      SC.platform.simulateTouchEvents();
-    }
-
     // do some initial set
     this.set('currentWindowSize', this.computeWindowSize()) ;
     this.focus(); // assume the window is focused when you load.
 
     if (SC.browser.mobileSafari) {
+
+      // If the browser is identifying itself as a touch-enabled browser, but
+      // touch events are not present, assume this is a desktop browser doing
+      // user agent spoofing and simulate touch events automatically.
+      if (SC.platform && !SC.platform.touch) {
+        SC.platform.simulateTouchEvents();
+      }
+
       // Monkey patch RunLoop if we're in MobileSafari
       var f = SC.RunLoop.prototype.endRunLoop, patch;
 
@@ -10663,48 +10765,48 @@ SC.LANDSCAPE_ORIENTATION = 'landscape';
 SC.NO_ORIENTATION = 'desktop'; // value 'desktop' for backwards compatibility
 
 /**
-  The device object allows you to check device specific properties such as
-  orientation and if the device is offline, as well as observe when they change
+  The device object allows you to check device specific properties such as 
+  orientation and if the device is offline, as well as observe when they change 
   state.
-
+  
   ## Orientation
   When a touch device changes orientation, the orientation property will be
   set accordingly which you can observe
-
+  
   ## Offline support
-  In order to build a good offline-capable web application, you need to know
-  when your app has gone offline so you can for instance queue your server
+  In order to build a good offline-capable web application, you need to know 
+  when your app has gone offline so you can for instance queue your server 
   requests for a later time or provide a specific UI/message.
-
-  Similarly, you also need to know when your application has returned to an
-  'online' state again, so that you can re-synchronize with the server or do
+  
+  Similarly, you also need to know when your application has returned to an 
+  'online' state again, so that you can re-synchronize with the server or do 
   anything else that might be needed.
-
+  
   By observing the 'isOffline' property you can be notified when this state
   changes. Note that this property is only connected to the navigator.onLine
   property, which is available on most modern browsers.
-
+  
 */
 SC.device = SC.Object.create({
-
+  
   /**
     Sets the orientation for touch devices, either SC.LANDSCAPE_ORIENTATION
     or SC.PORTRAIT_ORIENTATION. Will be SC.NO_ORIENTATION in the case of
     non-touch devices that are also not simulating touch events.
-
+  
     @property {String}
     @default SC.NO_ORIENTATION
   */
   orientation: SC.NO_ORIENTATION,
-
+  
   /**
     Indicates whether the device is currently online or offline. For browsers
     that do not support this feature, the default value is NO.
-
+    
     Is currently inverse of the navigator.onLine property. Most modern browsers
-    will update this property when switching to or from the browser's Offline
+    will update this property when switching to or from the browser's Offline 
     mode, and when losing/regaining network connectivity.
-
+    
     @property {Boolean}
     @default NO
   */
@@ -10733,12 +10835,12 @@ SC.device = SC.Object.create({
   */
   init: function() {
     arguments.callee.base.apply(this,arguments);
-
+    
     if (navigator && navigator.onLine === false) {
       this.set('isOffline', YES);
     }
   },
-
+  
   /**
     As soon as the DOM is up and running, make sure we attach necessary
     event handlers
@@ -10746,14 +10848,14 @@ SC.device = SC.Object.create({
   setup: function() {
     var responder = SC.RootResponder.responder;
     responder.listenFor(['online', 'offline'], window, this);
-
+    
     this.orientationHandlingShouldChange();
   },
-
+  
   // ..........................................................
   // ORIENTATION HANDLING
   //
-
+  
   /**
     Determines which method to use for orientation changes.
     Either detects orientation changes via the current size
@@ -10768,7 +10870,7 @@ SC.device = SC.Object.create({
       this.orientationchange();
     }
   },
-
+  
   /**
     @param {Hash} newSize The new size of the window
     @returns YES if the method altered the orientation, NO otherwise
@@ -10803,7 +10905,7 @@ SC.device = SC.Object.create({
     }
     return NO;
   },
-
+  
   /**
     Called when the window.onorientationchange event is fired.
   */
@@ -10816,33 +10918,33 @@ SC.device = SC.Object.create({
       }
     });
   },
-
+  
   orientationObserver: function(){
     var body = SC.$(document.body),
         orientation = this.get('orientation');
-
+    
     if (orientation === SC.PORTRAIT_ORIENTATION) {
       body.addClass('portrait');
     } else {
       body.removeClass('portrait');
     }
-
+    
     if (orientation === SC.LANDSCAPE_ORIENTATION) {
       body.addClass('landscape');
     } else {
       body.removeClass('landscape');
     }
   }.observes('orientation'),
-
-
+  
+  
   // ..........................................................
   // CONNECTION HANDLING
-  //
-
+  // 
+  
   online: function(evt) {
     this.set('isOffline', NO);
   },
-
+  
   offline: function(evt) {
     this.set('isOffline', YES);
   }
@@ -10871,28 +10973,28 @@ SC.ready(function() {
   A Page object is used to store a set of views that can be lazily configured
   as needed.  The page object works by overloading the get() method.  The
   first time you try to get the page
-
+  
   @extends SC.Object
 */
 SC.Page = SC.Object.extend(
 /** @scope SC.Page.prototype */ {
-
+  
   /**
     When you create a page, you can set it's "owner" property to an
     object outside the page definition. This allows views in the page
     to use the owner object as a target, (as well as other objects
     accessible through the owner object). E.g.
-
+    
         myButton: SC.ButtonView.design({
           title: 'Click me',
           target: SC.outlet('page.owner'),
           action: 'buttonClicked'
         })
-
+    
     Usually, you'll set 'owner' to the object defined in core.js.
   */
   owner: null,
-
+  
   get: function(key) {
     var value = this[key] ;
     if (value && value.isClass) {
@@ -10901,13 +11003,13 @@ SC.Page = SC.Object.extend(
       return value ;
     } else return arguments.callee.base.apply(this,arguments);
   },
-
+  
   /**
-    Finds all views defined on this page instances and builds them.  This is
+    Finds all views defined on this page instances and builds them.  This is 
     a quick, brute force way to wake up all of the views in a page object.  It
-    is not generally recommended. Instead, you should use get() or getPath()
+    is not generally recommended. Instead, you should use get() or getPath() 
     to retrieve views and rely on the lazy creation process to set them up.
-
+    
     @return {SC.Page} receiver
   */
   awake: function() {
@@ -10948,14 +11050,14 @@ SC.Page = SC.Object.extend(
   }
 
   //needsDesigner: YES,
-
+  
   //inDesignMode: YES
-
+    
 }) ;
 
 // ..........................................................
 // SUPPORT FOR LOADING PAGE DESIGNS
-//
+// 
 
 /** Calling design() on a page is the same as calling create() */
 SC.Page.design = SC.Page.create ;
@@ -12797,7 +12899,7 @@ SC.SparseArray = SC.Object.extend(SC.Observable, SC.Enumerable, SC.Array,
     added as range requests are completed.
   */
   requestedRangeIndex: null,
-
+  
   /**
     Make sure to create the index array during init so that it is not shared
     between all instances.
@@ -12805,13 +12907,13 @@ SC.SparseArray = SC.Object.extend(SC.Observable, SC.Enumerable, SC.Array,
   init: function() {
     arguments.callee.base.apply(this,arguments);
     this.requestedRangeIndex = [];
-
+    
     this._TMP_PROVIDE_ARRAY = [];
     this._TMP_PROVIDE_RANGE = { length: 1 };
     this._TMP_RANGE = {};
   },
-
-  /**
+  
+  /** 
     Returns the object at the specified index.  If the value for the index
     is currently undefined, invokes the didRequestIndex() method to notify
     the delegate.
@@ -12819,9 +12921,9 @@ SC.SparseArray = SC.Object.extend(SC.Observable, SC.Enumerable, SC.Array,
     The omitMaterializing flag ensures that the object will not be materialized,
     but it simply checks for the presence of an object at the specified index
     and will return YES (or undefined if not found). This is useful in the case
-    of SparseArrays, where you might NOT want to request the index to be loaded,
+    of SparseArrays, where you might NOT want to request the index to be loaded, 
     but simply need a shallow check to see if the position has been filled.
-
+    
     @param {Number} idx the index to get
     @param {Boolean} omitMaterializing
     @return {Object} the object
@@ -12995,7 +13097,7 @@ SC.SparseArray = SC.Object.extend(SC.Observable, SC.Enumerable, SC.Array,
         var start = range.start, loc = Math.min(start + range.length, content.length);
         while (--loc>=start) content[loc] = undefined;
       }
-    }
+    }    
     this.arrayContentDidChange(range.start, range.length, range.length) ; // notify
     return this ;
   },
@@ -13765,21 +13867,35 @@ SC.mixin( /** @scope SC */ {
         mobileBuildNumber = userAgent.substring(index + 7, index + 9);
 
         if (parseInt(SC.browser.mobileSafari, 0) <= 532 || (mobileBuildNumber <= "8A")) {
-          result.left = result.left - window.pageXOffset;
-          result.top = result.top - window.pageYOffset;
+          result.left -= window.pageXOffset;
+          result.top -= window.pageYOffset;
         }
       }
 
       // Subtract the scroll offset for viewport coordinates
       if (relativeToFlag === 'viewport') {
-        result.left = result.left - window.pageXOffset;
-        result.top = result.top - window.pageYOffset;
+        
+        if(SC.browser.isIE8OrLower){
+          result.left -= $(window).scrollLeft();
+          result.top -= $(window).scrollTop();
+        }else{
+          result.left -= window.pageXOffset;
+          result.top -= window.pageYOffset;
+        }
       }
     }
 
     // Translate 'left', 'top' to 'x', 'y'
-    result.x = result.left;
-    result.y = result.top;
+    
+    try{
+      result.x = result.left;
+      result.y = result.top;
+    } catch (e) {
+      // We need this for IE, when the element is detached, for some strange 
+      // reason the object returned by element.getBoundingClientRect() 
+      // is read-only
+      result = {x:result.left, y:result.top};
+    }
     delete result.left;
     delete result.top;
 
@@ -13908,10 +14024,186 @@ SC.mixin( /** @scope SC */ {
 
 });
 ; if ((typeof SC !== 'undefined') && SC && SC.Module && SC.Module.scriptDidLoad) SC.Module.scriptDidLoad('sproutcore/core_foundation');
+/* >>>>>>>>>> BEGIN source/views/bindable_span.js */
+sc_require('views/template');
+
+/** @private
+  @class
+
+  SC._BindableSpan is a private view created by the Handlebars {{bind}} helpers
+  that is used to keep track of bound properties.
+
+  Every time a property is bound using a {{mustache}}, an anonymous subclass of
+  SC._BindableSpan is created with the appropriate sub-template and context
+  set up. When the associated property changes, just the template for this view
+  will re-render.
+*/
+SC._BindableSpan = SC.TemplateView.extend(
+  /** @scope SC._BindableSpan.prototype */{
+  /**
+   The type of HTML tag to use. To ensure compatibility with
+   Internet Explorer 7, a <span> tag is used to ensure that inline elements are
+   not rendered with display: block.
+
+   @property {String}
+  */
+  tagName: 'span',
+
+  /**
+    The function used to determine if the +displayTemplate+ or
+    +inverseTemplate+ should be rendered. This should be a function that takes
+    a value and returns a Boolean.
+
+    @property {Function}
+  */
+  shouldDisplayFunc: null,
+
+  /**
+    Whether the template rendered by this view gets passed the context object
+    of its parent template, or gets passed the value of retrieving +property+
+    from the previous context.
+
+    For example, this is YES when using the {{#if}} helper, because the template
+    inside the helper should look up properties relative to the same object as
+    outside the block. This would be NO when used with +{{#with foo}}+ because
+    the template should receive the object found by evaluating +foo+.
+
+    @property {Boolean}
+  */
+  preserveContext: NO,
+
+  /**
+    The template to render when +shouldDisplayFunc+ evaluates to YES.
+
+    @property {Function}
+  */
+  displayTemplate: null,
+
+  /**
+    The template to render when +shouldDisplayFunc+ evaluates to NO.
+
+    @property {Function}
+  */
+  inverseTemplate: null,
+
+  /**
+    The key to look up on +previousContext+ that is passed to
+    +shouldDisplayFunc+ to determine which template to render.
+
+    In addition, if +preserveContext+ is NO, this object will be passed to the
+    template when rendering.
+
+    @property {String}
+  */
+  property: null,
+
+  /**
+    Determines which template to invoke, sets up the correct state based on
+    that logic, then invokes the default SC.TemplateView +render+
+    implementation.
+
+    This method will first look up the +property+ key on +previousContext+,
+    then pass that value to the +shouldDisplayFunc+ function. If that returns
+    YES, the +displayTemplate+ function will be rendered to DOM. Otherwise,
+    +inverseTemplate+, if specified, will be rendered.
+
+    For example, if this SC._BindableSpan represented the {{#with foo}} helper,
+    it would look up the +foo+ property of its context, and +shouldDisplayFunc+
+    would always return true. The object found by looking up +foo+ would be
+    passed to +displayTemplate+.
+
+    @param {SC.RenderContext} renderContext}
+  */
+  render: function(renderContext) {
+    var shouldDisplay = this.get('shouldDisplayFunc'),
+        property = this.get('property'),
+        preserveContext = this.get('preserveContext'),
+        context = this.get('previousContext');
+
+    var inverseTemplate = this.get('inverseTemplate'),
+        displayTemplate = this.get('displayTemplate');
+
+    var result = context.getPath(property);
+
+    // First, test the conditional to see if we should
+    // render the template or not.
+    if (shouldDisplay(result)) {
+      this.set('template', displayTemplate);
+
+      // If we are preserving the context (for example, if this
+      // is an #if block, call the template with the same object.
+      if (preserveContext) {
+        this.set('context', context);
+      } else {
+      // Otherwise, determine if this is a block bind or not.
+      // If so, pass the specified object to the template
+        if (displayTemplate) {
+          this.set('context', result);
+        } else {
+        // This is not a bind block, just push the result of the
+        // expression to the render context and return.
+          renderContext.push(Handlebars.Utils.escapeExpression(result));
+          return;
+        }
+      }
+    } else if (inverseTemplate) {
+      this.set('template', inverseTemplate);
+
+      if (preserveContext) {
+        this.set('context', context);
+      } else {
+        this.set('context', result);
+      }
+    } else {
+      this.set('template', function() { return ''; });
+    }
+
+    return arguments.callee.base.apply(this,arguments);
+  },
+
+  /**
+    Called when the property associated with this <span> changes.
+
+    We destroy all registered children, then render the view again and insert
+    it into DOM.
+  */
+  rerender: function() {
+    var idx, len, childViews, childView;
+
+    childViews = this.get('childViews');
+    len = childViews.get('length');
+    for (idx = len-1; idx >= 0; idx--){
+      childView = childViews[idx];
+      childView.$().remove();
+      childView.removeFromParent();
+      childView.destroy();
+    }
+
+    var context = this.renderContext(this.get('tagName'));
+    var elem;
+    this.renderToContext(context);
+
+    elem = context.element();
+    this.$().replaceWith(elem);
+    this.set('layer', elem);
+    this._notifyDidCreateLayer();
+  }
+});
+
+; if ((typeof SC !== 'undefined') && SC && SC.Module && SC.Module.scriptDidLoad) SC.Module.scriptDidLoad('sproutcore/core_foundation');
 /* >>>>>>>>>> BEGIN source/views/template_collection.js */
 sc_require('views/template');
 
-SC.TemplateCollectionView = SC.TemplateView.extend({
+/** @class
+
+  @author Tom Dale
+  @author Yehuda Katz
+  @extends SC.TemplateView
+  @since SproutCore 1.5
+*/
+SC.TemplateCollectionView = SC.TemplateView.extend(
+  /** @scope SC.TemplateCollectionView.prototype */{
+
   tagName: 'ul',
   content: null,
   template: SC.Handlebars.compile(''),
@@ -13984,7 +14276,7 @@ SC.TemplateCollectionView = SC.TemplateView.extend({
         template = this.get('templates').get(templateName);
 
     if (!template) {
-
+      
 
 
       return function() { return ''; };
@@ -14074,7 +14366,7 @@ SC.TemplateCollectionView = SC.TemplateView.extend({
   arrayContentWillChange: function(start, removedCount, addedCount) {
     // If the contents were empty before and this template collection has an empty view
     // remove it now.
-    emptyView = this.get('emptyView');
+    var emptyView = this.get('emptyView');
     if (emptyView) { emptyView.$().remove(); emptyView.removeFromParent(); }
 
     // Loop through child views that correspond with the removed items.
@@ -14664,21 +14956,21 @@ SC.View.LayoutStyleCalculator = SC.Object.extend({
 
       if (pendingAnimations) {
         if (!activeAnimations) activeAnimations = {};
-
+        
         for (key in pendingAnimations) {
           if (!pendingAnimations.hasOwnProperty(key)) continue;
-
+          
           pendingAnimation = pendingAnimations[key];
           activeAnimation = activeAnimations[key];
           shouldCancel = NO;
-
+          
           if (newStyle[key] !== (currentStyle ? currentStyle[key] : null)) shouldCancel = YES;
-
+          
           // if we have a new animation (an animation property has changed), cancel current
           if (activeAnimation && (activeAnimation.duration !== pendingAnimation.duration || activeAnimation.timing !== pendingAnimation.timing)) {
             shouldCancel = YES;
           }
-
+          
           if (shouldCancel && activeAnimation) {
             if (callback = activeAnimation.callback) {
               if (transformsLength > 0) {
@@ -14690,14 +14982,14 @@ SC.View.LayoutStyleCalculator = SC.Object.extend({
                 this.runAnimationCallback(callback, null, key, YES);
               }
             }
-
+            
             this.removeAnimationFromLayout(key, YES);
           }
-
+          
           activeAnimations[key] = pendingAnimation;
         }
       }
-
+      
       this._activeAnimations = activeAnimations;
       this._pendingAnimations = null;
     }
@@ -15051,7 +15343,8 @@ SC.View.reopen(
 /* >>>>>>>>>> BEGIN source/views/view/enabled.js */
 sc_require("views/view");
 
-SC.View.reopen({
+SC.View.reopen(
+  /** @scope SC.View.prototype */ {
   // ..........................................................
   // IS ENABLED SUPPORT
   //
@@ -15110,7 +15403,8 @@ SC.View.reopen({
 /* >>>>>>>>>> BEGIN source/views/view/keyboard.js */
 sc_require("views/view");
 
-SC.View.reopen({
+SC.View.reopen(
+  /** @scope SC.View.prototype */ {
   // ..........................................................
   // KEY RESPONDER
   //
@@ -15235,102 +15529,267 @@ SC.View.reopen({
   },
 
   /**
-    Optionally points to the next key view that should gain focus when tabbing
-    through an interface.  If this is not set, then the next key view will
-    be set automatically to the next child.
+    The first child of this view for the purposes of tab ordering. If not
+    provided, the first element of childViews is used. Override this if
+    your view displays its child views in an order different from that
+    given in childViews.
+
+    @type SC.View
+    @default null
   */
-  nextKeyView: null,
+  firstKeyView: null,
 
   /**
-    Computes the next valid key view, possibly returning the receiver or null.
-    This is the next key view that acceptsFirstResponder.
+    @private
+
+    Actually calculates the firstKeyView as described in firstKeyView.
+
+    @returns {SC.View}
+  */
+  _getFirstKeyView: function() {
+    // if first was given, just return it
+    var firstKeyView = this.get('firstKeyView');
+    if(firstKeyView) return firstKeyView;
+
+    // otherwise return the first childView
+    var childViews = this.get('childViews');
+    if(childViews) return childViews[0];
+  },
+
+  /**
+    The last child of this view for the purposes of tab ordering. If not set, can be generated two different ways:
+    1. If firstKeyView is provided, it will be generated by starting from firstKeyView and traversing the childViews nextKeyView properties.
+    2. If firstKeyView is not provided, it will simply return the last element of childViews.
+
+    The first way is not very efficient, so if you provide firstKeyView you should also provide lastKeyView.
+
+    @type SC.View
+    @default null
+  */
+  lastKeyView: null,
+
+  /**
+    @private
+
+    Actually calculates the lastKeyView as described in lastKeyView.
+
+    @returns {SC.View}
+  */
+  _getLastKeyView: function() {
+    // if last was given, just return it
+    var lastKeyView = this.get('lastKeyView');
+    if(lastKeyView) return lastKeyView;
+
+    var view,
+    prev = this.get('firstKeyView');
+
+    // if first was given but not last, build by starting from first and
+    // traversing until we hit the end. this is obviously the least efficient
+    // way
+    if(prev) {
+      while(view = prev._getNextKeyView()) {
+        prev = view;
+      }
+
+      return prev;
+    }
+
+    // if neither was given, it's more efficient to just return the last
+    // childView
+    else {
+      var childViews = this.get('childViews');
+
+      if(childViews) return childViews[childViews.length - 1];
+    }
+  },
+
+  /**
+    Optionally points to the next key view that should gain focus when tabbing
+    through an interface.  If this is not set, then the next key view will
+    be set automatically to the next sibling as defined by its parent's
+    childViews property.
+
+    If any views define this, all of their siblings should define it as well,
+    otherwise undefined behavior may occur. Their parent view should also define
+    a firstKeyView.
+
+    This may also be set to a view that is not a sibling, but once again all
+    views in the chain must define it or undefined behavior will occur.
+
+    Likewise, any view that sets nextKeyView should also set previousKeyView.
+
+    @type SC.View
+    @default null
+  */
+
+  nextKeyView: undefined,
+
+  /**
+    @private
+
+    Gets the next key view by checking if the user set it and otherwise just
+    getting the next by index in childViews.
+
+    @return {SC.View}
+  */
+  _getNextKeyView: function() {
+    var pv = this.get('parentView'),
+    nextKeyView = this.get('nextKeyView');
+
+    // if the parent defines lastKeyView, it takes priority over this views
+    // nextKeyView
+    if(pv && pv.get('lastKeyView') === this) return null;
+
+    // if this view defines a nextKeyView, use it
+    if(nextKeyView !== undefined) return nextKeyView;
+
+    // otherwise generate one based on parent view's childViews
+    if(pv) {
+      var childViews = pv.get('childViews');
+      return childViews[childViews.indexOf(this) + 1];
+    }
+  },
+
+  /**
+    Computes the next valid key view. This is the next key view that
+    acceptsFirstResponder. Computed using depth first search. If the current view
+    is not valid, it will first traverse its children before trying siblings. If
+    the current view is the only valid view, the current view will be returned. Will
+    return null if no valid view can be found.
 
     @property
     @type SC.View
   */
   nextValidKeyView: function() {
-    var seen = [],
-        rootView = this.get('pane'), ret = this.get('nextKeyView');
+    var cur = this, next;
 
-    if(!ret) { ret = rootView._computeNextValidKeyView(this, seen); }
+    while(next !== this) {
+      next = null;
 
-    if(SC.TABBING_ONLY_INSIDE_DOCUMENT && !ret) {
-      ret = rootView._computeNextValidKeyView(rootView, seen);
+      // only bother to check children if we are visible
+      if(cur.get('isVisibleInWindow')) next = cur._getFirstKeyView();
+
+      // if we have no children, check our sibling
+      if(!next) next = cur._getNextKeyView();
+
+      // if we have no children or siblings, unroll up closest parent that has a
+      // next sibling
+      if(!next) while(cur = cur.get('parentView')) {
+        if(next = cur._getNextKeyView()) break;
+      }
+
+      // if no parents have a next sibling, start over from the beginning
+      if(!next) next = this.get('pane');
+
+      // if it's a valid firstResponder, we're done!
+      if(next.get('isVisibleInWindow') && next.get('acceptsFirstResponder')) return next;
+
+      // otherwise keep looking
+      cur = next;
     }
 
-    return ret ;
+    // this will only happen if no views are visible and accept first responder
+    return null;
+
   }.property('nextKeyView'),
 
-  _computeNextValidKeyView: function(currentView, seen) {
-    var ret = this.get('nextKeyView'),
-        children, i, childLen, child;
-    if(this !== currentView && seen.indexOf(currentView)!=-1 &&
-      this.get('acceptsFirstResponder') && this.get('isVisibleInWindow')){
-      return this;
-    }
-    seen.push(this); // avoid cycles
+  /**
+    Optionally points to the previous key view that should gain focus when tabbing
+    through an interface.  If this is not set, then the previous key view will
+    be set automatically to the previous sibling as defined by its parent's
+    childViews property.
 
-    // find next sibling
-    if (!ret) {
-      children = this.get('childViews');
-      for(i=0, childLen = children.length; i<childLen; i++){
-        child = children[i];
-        if(child._computeNextValidKeyView && child.get('isVisibleInWindow') && child.get('isVisible')){
-          ret = child._computeNextValidKeyView(currentView, seen);
-        }
-        if (ret) { return ret; }
-      }
-      ret = null;
+    If any views define this, all of their siblings should define it as well,
+    otherwise undefined behavior may occur. Their parent view should also define
+    a lastKeyView.
+
+    This may also be set to a view that is not a sibling, but once again all
+    views in the chain must define it or undefined behavior will occur.
+
+    Likewise, any view that sets previousKeyView should also set nextKeyView.
+
+    @type SC.View
+    @default null
+  */
+  previousKeyView: undefined,
+
+  /**
+    @private
+
+    Gets the previous key view by checking if the user set it and otherwise just
+    getting the previous by index in childViews.
+
+    @return {SC.View}
+  */
+  _getPreviousKeyView: function() {
+    var pv = this.get('parentView'),
+    previousKeyView = this.get('previousKeyView');
+
+    // if the parent defines firstKeyView, it takes priority over this views
+    // previousKeyView
+    if(pv && pv.get('firstKeyView') === this) return null;
+
+    // if this view defines a previousKeyView, use it
+    if(previousKeyView !== undefined) return previousKeyView;
+
+    // otherwise generate one based on parent view's childViews
+    if(pv) {
+      var childViews = pv.get('childViews');
+      return childViews[childViews.indexOf(this) - 1];
     }
-    return ret ;
   },
 
   /**
-    Optionally points to the previous key view that should gain focus when
-    tabbing through the interface. If this is not set then the previous
-    key view will be set automatically to the previous child.
-  */
-  previousKeyView: null,
-
-  /**
-    Computes the previous valid key view, possibly returning the receiver or
-    null.  This is the previous key view that acceptsFirstResponder.
+    Computes the previous valid key view. This is the previous key view that
+    acceptsFirstResponder. Traverse views in the opposite order from
+    nextValidKeyView. If the current view is the pane, tries deepest child. If the
+    current view has a previous view, tries its last child. If this view is the
+    first child, tries the parent. Will return null if no valid view can be
+    found.
 
     @property
     @type SC.View
   */
+  // TODO: clean this up
   previousValidKeyView: function() {
-    var seen = [],
-        rootView = this.pane(), ret = this.get('previousKeyView');
-    if(!ret) { ret = rootView._computePreviousValidKeyView(this, seen); }
-    return ret ;
-  }.property('previousKeyView'),
+    var cur = this, prev;
 
-  _computePreviousValidKeyView: function(currentView, seen) {
-    var ret = this.get('previousKeyView'),
-        children, i, child;
+    while(prev !== this) {
+      // normally, just try to get previous view's last child
+      if(cur.get('parentView')) prev = cur._getPreviousKeyView();
 
-    if(this !== currentView && seen.indexOf(currentView)!=-1 &&
-      this.get('acceptsFirstResponder') && this.get('isVisibleInWindow')){
-      return this;
-    }
-    seen.push(this); // avoid cycles
+      // if we are the pane, get our own last child
+      else prev = cur;
 
-    // find next sibling
-    if (!ret) {
-      children = this.get('childViews');
-      for(i=children.length-1; 0<=i; i--){
-        child = children[i];
-        if(child._computePreviousValidKeyView && child.get('isVisibleInWindow') && child.get('isVisible')){
-          ret = child._computePreviousValidKeyView(currentView, seen);
-        }
-        if (ret) { return ret; }
+      // loop down to the last valid child
+      if(prev) {
+        do {
+          cur = prev;
+          prev = prev._getLastKeyView();
+        } while(prev && prev.get('isVisibleInWindow'));
+
+        // if we ended on a null, unroll to the last one
+        // we don't unroll if we ended on a hidden view because we need
+        // to traverse to its previous view next iteration
+        if(!prev) prev = cur;
       }
-      ret = null;
+
+      // if there is no previous view, traverse to the parent
+      else prev = cur.get('parentView');
+
+      // if the view is valid, return it
+      if(prev.get('isVisibleInWindow') && prev.get('acceptsFirstResponder')) return prev;
+
+      // otherwise, try to find its previous valid keyview
+      cur = prev;
     }
-    return ret ;
-  }
+
+    // if none of the views accept first responder and we make it back to where
+    // we started, just return null
+    return null;
+  }.property('previousKeyView')
 });
+
 ; if ((typeof SC !== 'undefined') && SC && SC.Module && SC.Module.scriptDidLoad) SC.Module.scriptDidLoad('sproutcore/core_foundation');
 /* >>>>>>>>>> BEGIN source/views/view/layout.js */
 sc_require("views/view");
@@ -16453,7 +16912,9 @@ SC.View.mixin(
 /* >>>>>>>>>> BEGIN source/views/view/manipulation.js */
 sc_require("views/view");
 
-SC.View.reopen({
+SC.View.reopen(
+  /** @scope SC.View.prototype */{
+
   /**
     This code exists to make it possible to pool SC.Views. We are not going to pool SC.Views in Amber
     */
@@ -17223,9 +17684,9 @@ SC.View._RenderDelegateProxy = {
   Generates a computed property that will look up the specified property from
   the view's render delegate, if present. You may specify a default value to
   return if there is no such property or is no render delegate.
-
+  
   The generated property is read+write, so it may be overriden.
-
+  
   @param {String} propertyName The name of the property to get from the render delegate..
   @param {Value} def The default value to use if the property is not present.
 */
@@ -17248,7 +17709,7 @@ SC.propertyFromRenderDelegate = function(propertyName, def) {
     }
 
     if (ret !== undefined) return ret;
-
+    
     return def;
   }.property('renderDelegate').cacheable();
 };
@@ -17456,18 +17917,18 @@ sc_require('panes/pane');
 
 /** @class
 
-  Most SproutCore applications have a main pane, which dominates the
-  application page.  You can extend from this view to implement your own main
-  pane.  This class will automatically make itself main whenever you append it
-  to a document, removing any other main pane that might be currently in
-  place.  If you do have another already focused as the keyPane, this view
-  will also make itself key automatically.  The default way to use the main
+  Most SproutCore applications have a main pane, which dominates the 
+  application page.  You can extend from this view to implement your own main 
+  pane.  This class will automatically make itself main whenever you append it 
+  to a document, removing any other main pane that might be currently in 
+  place.  If you do have another already focused as the keyPane, this view 
+  will also make itself key automatically.  The default way to use the main 
   pane is to simply add it to your page like this:
-
+  
       SC.MainPane.create().append();
-
-  This will cause your root view to display.  The default layout for a
-  MainPane is to cover the entire document window and to resize with the
+  
+  This will cause your root view to display.  The default layout for a 
+  MainPane is to cover the entire document window and to resize with the 
   window.
 
   @extends SC.Pane
@@ -17476,7 +17937,7 @@ sc_require('panes/pane');
 SC.MainPane = SC.Pane.extend({
   /** @private */
   layout: { top: 0, left: 0, bottom: 0, right: 0, minHeight:200, minWidth:200 },
-
+  
   /** @private - extends SC.Pane's method */
   paneDidAttach: function() {
     var ret = arguments.callee.base.apply(this,arguments);
@@ -17485,14 +17946,14 @@ SC.MainPane = SC.Pane.extend({
     if (!responder.get('keyRootView')) responder.makeKeyPane(this);
     return ret ;
   },
-
+  
   /** @private */
   acceptsKeyPane: YES,
 
   /** @private */
   classNames: ['sc-main'],
-
+  
   ariaRole: 'application'
-
+  
 });
 ; if ((typeof SC !== 'undefined') && SC && SC.Module && SC.Module.scriptDidLoad) SC.Module.scriptDidLoad('sproutcore/core_foundation');

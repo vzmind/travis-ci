@@ -16,6 +16,12 @@
 // License:   Licensed under MIT license (see license.js)
 // ==========================================================================
 
+/**
+  Indicates a value has a mixed state of both on and off.
+
+  @property {String}
+*/
+SC.MIXED_STATE = '__MIXED__';
 
 /** @class
 
@@ -338,20 +344,22 @@ SC.DataSource = SC.Object.extend( /** @scope SC.DataSource.prototype */ {
     @returns {Boolean} YES if data source can handle keys
   */
   commitRecords: function(store, createStoreKeys, updateStoreKeys, destroyStoreKeys, params) {
-    var cret, uret, dret;
+    var uret, dret, ret;
     if (createStoreKeys.length>0) {
-      cret = this.createRecords.call(this, store, createStoreKeys, params);
+      ret = this.createRecords.call(this, store, createStoreKeys, params);
     }
 
     if (updateStoreKeys.length>0) {
       uret = this.updateRecords.call(this, store, updateStoreKeys, params);
+      ret = SC.none(ret) ? uret : (ret === uret) ? ret : SC.MIXED_STATE;
     }
 
     if (destroyStoreKeys.length>0) {
       dret = this.destroyRecords.call(this, store, destroyStoreKeys, params);
+      ret = SC.none(ret) ? dret : (ret === dret) ? ret : SC.MIXED_STATE;
     }
 
-    return ((cret === uret) && (cret === dret)) ? cret : SC.MIXED_STATE;
+    return ret || NO;
   },
 
   /**
@@ -452,13 +460,12 @@ SC.DataSource = SC.Object.extend( /** @scope SC.DataSource.prototype */ {
     invokes the named action for each store key.  returns proper value
   */
   _handleEach: function(store, storeKeys, action, ids, params) {
-    var len = storeKeys.length, idx, ret, cur, lastArg;
-    if(!ids) ids = [];
+    var len = storeKeys.length, idx, ret, cur, idOrParams;
 
     for(idx=0;idx<len;idx++) {
-      lastArg = ids[idx] ? ids[idx] : params;
+      idOrParams = ids ? ids[idx] : params;
 
-      cur = action.call(this, store, storeKeys[idx], lastArg, params);
+      cur = action.call(this, store, storeKeys[idx], idOrParams);
       if (ret === undefined) {
         ret = cur ;
       } else if (ret === YES) {
@@ -467,7 +474,7 @@ SC.DataSource = SC.Object.extend( /** @scope SC.DataSource.prototype */ {
         ret = (cur === NO) ? NO : SC.MIXED_STATE ;
       }
     }
-    return ret ? ret : null ;
+    return !SC.none(ret) ? ret : null ;
   },
 
 
@@ -4659,6 +4666,7 @@ if (SC.DateTime && !SC.RecordAttribute.transforms[SC.guidFor(SC.DateTime)]) {
     */
     to: function(str, attr) {
       if (SC.none(str) || SC.instanceOf(str, SC.DateTime)) return str;
+      if (SC.none(str) || SC.instanceOf(str, Date)) return SC.DateTime.create(str.getTime());
       var format = attr.get('format');
       return SC.DateTime.parse(str, format ? format : SC.DateTime.recordFormat);
     },
@@ -9539,33 +9547,33 @@ sc_require('models/record');
   object. When you access the items of a `RecordArray`, it will automatically
   convert the `storeKeys` into actual `SC.Record` objects that the rest of
   your application can work with.
-  
+
   Normally you do not create `RecordArray`s yourself.  Instead, a
   `RecordArray` is returned when you call `SC.Store.findAll()`, already
   properly configured. You can usually just work with the `RecordArray`
   instance just like any other array.
-  
+
   The information below about `RecordArray` internals is only intended for
   those who need to override this class for some reason to do something
   special.
-  
+
   Internal Notes
   ---
-  
+
   Normally the `RecordArray` behavior is very simple.  Any array-like
   operations will be translated into similar calls onto the underlying array
-  of `storeKeys`.  The underlying array can be a real array or it may be a 
+  of `storeKeys`.  The underlying array can be a real array or it may be a
   `SparseArray`, which is how you implement incremental loading.
-  
-  If the `RecordArray` is created with an `SC.Query` object as well (and it 
-  almost always will have a `Query` object), then the `RecordArray` will also 
-  consult the query for various delegate operations such as determining if 
+
+  If the `RecordArray` is created with an `SC.Query` object as well (and it
+  almost always will have a `Query` object), then the `RecordArray` will also
+  consult the query for various delegate operations such as determining if
   the record array should update automatically whenever records in the store
   changes. It will also ask the `Query` to refresh the `storeKeys` whenever
   records change in the store.
-  
-  If the `SC.Query` object has complex matching rules, it might be 
-  computationally heavy to match a large dataset to a query. To avoid the 
+
+  If the `SC.Query` object has complex matching rules, it might be
+  computationally heavy to match a large dataset to a query. To avoid the
   browser from ever showing a slow script timer in this scenario, the query
   matching is by default paced at 100ms. If query matching takes longer than
   100ms, it will chunk the work with setTimeout to avoid too much computation
@@ -9582,12 +9590,12 @@ SC.RecordArray = SC.Object.extend(SC.Enumerable, SC.Array,
   /** @scope SC.RecordArray.prototype */ {
 
   /**
-    The store that owns this record array.  All record arrays must have a 
-    store to function properly. 
-    
+    The store that owns this record array.  All record arrays must have a
+    store to function properly.
+
     NOTE: You **MUST** set this property on the `RecordArray` when creating
     it or else it will fail.
-  
+
     @type SC.Store
   */
   store: null,
@@ -9599,14 +9607,14 @@ SC.RecordArray = SC.Object.extend(SC.Enumerable, SC.Array,
 
     NOTE: You **MUST** set this property on the `RecordArray` when creating
     it or else it will fail.
-    
+
     @type SC.Query
   */
   query: null,
 
   /**
     The array of `storeKeys` as retrieved from the owner store.
-    
+
     @type SC.Array
   */
   storeKeys: null,
@@ -9620,14 +9628,15 @@ SC.RecordArray = SC.Object.extend(SC.Enumerable, SC.Array,
   status: SC.Record.EMPTY,
 
   /**
-    The current editabile state based on the query.
+    The current editable state based on the query. If this record array is not
+    backed by an SC.Query, it is assumed to be editable.
 
     @property
     @type Boolean
   */
   isEditable: function() {
     var query = this.get('query');
-    return query ? query.get('isEditable') : NO;
+    return query ? query.get('isEditable') : YES;
   }.property('query').cacheable(),
 
   // ..........................................................
@@ -9644,6 +9653,14 @@ SC.RecordArray = SC.Object.extend(SC.Enumerable, SC.Array,
     return storeKeys ? storeKeys.get('length') : 0;
   }.property('storeKeys').cacheable(),
 
+  /** @private
+    A cache of materialized records. The first time an instance of SC.Record is
+    created for a store key at a given index, it will be saved to this array.
+
+    Whenever the `storeKeys` property is reset, this cache is also reset.
+
+    @type Array
+  */
   _scra_records: null,
 
   /** @private
@@ -9706,13 +9723,19 @@ SC.RecordArray = SC.Object.extend(SC.Enumerable, SC.Array,
   },
 
   /** @private
-    Pass through to the underlying array.  The passed in objects must be
-    records, which can be converted to `storeKeys`.
-    
+    Replaces a range of records starting at a given index with the replacement
+    records provided. The objects to be inserted must be instances of SC.Record
+    and must have a store key assigned to them.
+
+    Note that most SC.RecordArrays are *not* editable via `replace()`, since they
+    are generated by a rule-based SC.Query. You can check the `isEditable` property
+    before attempting to modify a record array.
+
     @param {Number} idx start index
-    @param {Number} amt end index
-    @param {SC.RecordArray} recs to replace with records
-    @return {SC.RecordArray} 'this' after replace
+    @param {Number} amt count of records to remove
+    @param {SC.RecordArray} recs the records that should replace the removed records
+
+    @returns {SC.RecordArray} receiver, after mutation has occurred
   */
   replace: function(idx, amt, recs) {
 
@@ -9722,13 +9745,9 @@ SC.RecordArray = SC.Object.extend(SC.Enumerable, SC.Array,
         len       = recs ? (recs.get ? recs.get('length') : recs.length) : 0,
         i, keys;
 
-    if (!storeKeys) throw "storeKeys required";
+    if (!storeKeys) throw "Unable to edit an SC.RecordArray that does not have its storeKeys property set.";
 
-    var query = this.get('query');
-    if (query && !query.get('isEditable')) throw SC.RecordArray.NOT_EDITABLE;
-
-    // you can't modify an array whose store keys are autogenerated from a
-    // query.
+    if (!this.get('isEditable')) throw SC.RecordArray.NOT_EDITABLE;
 
     // map to store keys
     keys = [] ;
@@ -9791,10 +9810,10 @@ SC.RecordArray = SC.Object.extend(SC.Enumerable, SC.Array,
     return storeKeys ? storeKeys.lastIndexOf(storeKey, startAt) : -1;
   },
 
-  /** 
-    Adds the specified record to the record array if it is not already part 
+  /**
+    Adds the specified record to the record array if it is not already part
     of the array.  Provided for compatibilty with `SC.Set`.
-    
+
     @param {SC.Record} record
     @returns {SC.RecordArray} receiver
   */
@@ -9807,7 +9826,7 @@ SC.RecordArray = SC.Object.extend(SC.Enumerable, SC.Array,
   /**
     Removes the specified record from the array if it is not already a part
     of the array.  Provided for compatibility with `SC.Set`.
-    
+
     @param {SC.Record} record
     @returns {SC.RecordArray} receiver
   */
@@ -9849,11 +9868,11 @@ SC.RecordArray = SC.Object.extend(SC.Enumerable, SC.Array,
 
   /**
     Will recompute the results based on the `SC.Query` attached to the record
-    array. Useful if your query is based on computed properties that might 
+    array. Useful if your query is based on computed properties that might
     have changed. Use `refresh()` instead of you want to trigger a fetch on
     your data source since this will purely look at records already loaded
     into the store.
-    
+
     @returns {SC.RecordArray} receiver
   */
   reload: function() {
@@ -9877,14 +9896,14 @@ SC.RecordArray = SC.Object.extend(SC.Enumerable, SC.Array,
 
   // ..........................................................
   // STORE CALLBACKS
-  // 
-  
+  //
+
   // **NOTE**: `storeWillFetchQuery()`, `storeDidFetchQuery()`,
   // `storeDidCancelQuery()`, and `storeDidErrorQuery()` are tested implicitly
   // through the related methods in `SC.Store`.  We're doing it this way
   // because eventually this particular implementation is likely to change;
   // moving some or all of this code directly into the store. -CAJ
-  
+
   /** @private
     Called whenever the store initiates a refresh of the query.  Sets the
     status of the record array to the appropriate status.
@@ -9941,10 +9960,13 @@ SC.RecordArray = SC.Object.extend(SC.Enumerable, SC.Array,
   },
 
   /** @private
-    Called by the store whenever it changes the state of certain store keys.
-    If the receiver cares about these changes, it will mark itself as dirty.
-    The next time you try to access the record array it will update any
-    pending changes.
+    Called by the store whenever it changes the state of certain store keys. If
+    the receiver cares about these changes, it will mark itself as dirty and add
+    the changed store keys to the _scq_changedStoreKeys index set.
+
+    The next time you try to access the record array, it will call `flush()` and
+    add the changed keys to the underlying `storeKeys` array if the new records
+    match the conditions of the record array's query.
 
     @param {SC.Array} storeKeys the effected store keys
     @param {SC.Set} recordTypes the record types for the storeKeys.
@@ -9962,11 +9984,8 @@ SC.RecordArray = SC.Object.extend(SC.Enumerable, SC.Array,
     changed.addEach(storeKeys);
 
     this.set('needsFlush', YES);
-
     if (this.get('storeKeys')) {
       this.flush();
-    } else {
-      this.arrayContentDidChange();
     }
 
     return this;
@@ -9978,8 +9997,8 @@ SC.RecordArray = SC.Object.extend(SC.Enumerable, SC.Array,
     you access the RecordArray to make sure it is up to date, but you can
     call it yourself as well if you need to force the record array to fully
     update immediately.
-    
-    Currently this method only has an effect if the query location is 
+
+    Currently this method only has an effect if the query location is
     `SC.Query.LOCAL`.  You can call this method on any `RecordArray` however,
     without an error.
 
@@ -10129,7 +10148,7 @@ SC.RecordArray = SC.Object.extend(SC.Enumerable, SC.Array,
   },
 
   /**
-    Set to `YES` when the query is dirty and needs to update its storeKeys 
+    Set to `YES` when the query is dirty and needs to update its storeKeys
     before returning any results.  `RecordArray`s always start dirty and become
     clean the first time you try to access their contents.
 
@@ -10144,7 +10163,7 @@ SC.RecordArray = SC.Object.extend(SC.Enumerable, SC.Array,
   /**
     Returns `YES` whenever the status is `SC.Record.ERROR`.  This will allow
     you to put the UI into an error state.
-    
+
 		@property
     @type Boolean
   */
@@ -10155,7 +10174,7 @@ SC.RecordArray = SC.Object.extend(SC.Enumerable, SC.Array,
   /**
     Returns the receiver if the record array is in an error state.  Returns
     `null` otherwise.
-    
+
 		@property
     @type SC.Record
   */
@@ -10167,7 +10186,7 @@ SC.RecordArray = SC.Object.extend(SC.Enumerable, SC.Array,
     Returns the current error object only if the record array is in an error
     state. If no explicit error object has been set, returns
     `SC.Record.GENERIC_ERROR.`
-    
+
 		@property
     @type SC.Error
   */
@@ -10180,7 +10199,7 @@ SC.RecordArray = SC.Object.extend(SC.Enumerable, SC.Array,
 
   // ..........................................................
   // INTERNAL SUPPORT
-  // 
+  //
 
   propertyWillChange: function(key) {
     if (key === 'storeKeys') {
