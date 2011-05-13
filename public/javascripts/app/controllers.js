@@ -2,10 +2,11 @@ Travis.controllers = SC.Object.create({
   repositories: SC.ArrayController.create({
     load: function() {
       this.set('content', Travis.Repository.latest());
-    }
+    },
   }),
   repository: SC.SingleObjectController.create({
     tabs: SC.Object.create({
+      active: null,
       current: SC.ObjectController.create(Travis.Helpers.Build, {
         name: 'current',
         load: function(repository, params) {
@@ -39,15 +40,17 @@ Travis.controllers = SC.Object.create({
       }
     },
     activateTab: function(tab) {
-      this.tabs.active = this.tabs[tab];
+      this.tabs.set('active', this.tabs[tab]);
       $('#repository .tabs > li').removeClass('active');
       $('#repository #tab_' + tab).addClass('active');
     },
     repositoryObserver: function() {
       var repository = this.getPath('content.firstObject');
       if(repository) {
-        this.tabs.active.set('content', null);
-        this.tabs.active.load(repository, this.params);
+        var activeTab = this.tabs.get('active');
+        activeTab.set('content', null);
+        activeTab.load(repository, this.params);
+        repository.select();
       }
     }.observes('*content'),
   }),
