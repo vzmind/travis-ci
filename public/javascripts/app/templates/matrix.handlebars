@@ -3,15 +3,21 @@
   <thead>
     <tr>
       <th>Build</th>
+      {{#each content.configDimensions tagName="th"}}
+        {{this}}
+      {{/each}}
       <th>Duration</th>
       <th>Finished</th>
     </tr>
   </thead>
 
-  {{#collection SC.TemplateCollectionView tagName="tbody" itemClass="build" contentBinding="Travis.controllers.repository.tabs.active.content.matrix"}}
+  {{#collection SC.TemplateCollectionView tagName="tbody" itemClassBinding="content.color" contentBinding="Travis.controllers.repository.tabs.active.content.matrix"}}
     {{#with content}}
       <td class="number"><a {{bindAttr href="urlBuild"}}>{{number}}</a></td>
-      <td class="duration" {{bindAttr title="duration"}}>-</td>
+      {{#each configValues tagName="td"}}
+        {{this}}
+      {{/each}}
+      <td class="duration" {{bindAttr title="duration"}}></td>
       <td class="finished_at timeago" {{bindAttr title="finished_at"}}>{{#if finished_at}}{{finished_at}}{{else}}-{{/if}}</td>
     {{/with}}
   {{/collection}}

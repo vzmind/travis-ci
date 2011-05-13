@@ -17,6 +17,9 @@ $.extend({
   capitalize: function(string) {
     return string[0].toUpperCase() + string.substring(1);
   },
+  compact: function(array) {
+    return $.grep(array, function(value){ return !!value; });
+  }
 });
 
 $.fn.extend({

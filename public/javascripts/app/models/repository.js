@@ -20,15 +20,28 @@ Travis.Repository = SC.Record.extend(Travis.Helpers.Urls, {
     return Utils.duration(this.get('lastBuildStartedAt'), this.get('lastBuildFinishedAt'));
   }.property('lastBuildStartedAt', 'lastBuildFinishedAt').cacheable(),
 
-  scguid: function() {
-    return SC.guidFor(repository);
-  }.property()
+  color: function() {
+    return Utils.buildColor(this.get('lastBuildStatus'));
+  }.property('lastBuildStatus'),
+
+  // TODO this all seems to belong to a controller, but how to bind an itemClass to a controller w/ TemplateCollectionView
+  select: function() {
+    $.each(Travis.Repository.all().toArray(), function(ix, repository) { repository.set('selected', false); });
+    this.set('selected', true);
+  },
+
+  cssClasses: function() {
+    return $.compact(['repository', this.get('color'), this.get('selected') ? 'selected' : null]).join(' ');
+  }.property('color', 'selected')
 });
 
 Travis.Repository.mixin({
   _queries: {
     latest: {},
     bySlug: {}
+  },
+  all: function() {
+    return Travis.store.find(this);
   },
   find: function(id) {
     return Travis.store.find(this, id);

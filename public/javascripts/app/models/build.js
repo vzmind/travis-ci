@@ -12,6 +12,7 @@ Travis.Build = SC.Record.extend(Travis.Helpers.Urls, {
   committerEmail: SC.Record.attr(String, { key: 'committer_email' }),
   authorName:     SC.Record.attr(String, { key: 'author_name' }),
   authorEmail:    SC.Record.attr(String, { key: 'author_email' }),
+  result:         SC.Record.attr(String, { key: 'status' }), // status is reserved by SC
   log:            SC.Record.attr(String),
   startedAt:      SC.Record.attr(String, { key: 'started_at'}), // Date
   finishedAt:     SC.Record.attr(String, { key: 'finished_at'}), // Date
@@ -24,16 +25,20 @@ Travis.Build = SC.Record.extend(Travis.Helpers.Urls, {
     return (this.get('commit') || '').substr(0, 7) + (this.get('branch') ? ' (%@)'.fmt(this.get('branch')) : '');
   }.property(),
 
+  color: function() {
+    return Utils.buildColor(this.get('result'));
+  }.property('result'),
+
   duration: function() {
     return Utils.duration(this.get('startedAt'), this.get('finishedAt'));
   }.property('startedAt', 'finishedAt'),
 
   configDimensions: function() {
-    return $.map($.keys(this.get('config')), function(value) { return $.camelize(value) });
+    return $.map($.keys(this.get('config') || {}), function(value) { return $.camelize(value) });
   }.property(),
 
   configValues: function() {
-    return $.values(this.get('config'));
+    return $.values(this.get('config') || {});
   }.property()
 });
 

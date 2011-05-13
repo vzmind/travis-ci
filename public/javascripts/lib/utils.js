@@ -18,6 +18,9 @@ Utils = {
     finished = finished ? new Date(finished) : new Date();
     return started ? Math.round((finished - started) / 1000) : 0;
   },
+  buildColor: function(status) {
+    return status == 0 ? 'green' : status == 1 ? 'red' : null;
+  },
   activateTab: function(element, tab) {
     $('.tabs li', element).removeClass('active');
     $('#tab_' + tab.toLowerCase(), element).addClass('active');
