@@ -189,9 +189,6 @@ SC.mixin(/** @lends SC */ {
 
 }) ;
 ; if ((typeof SC !== 'undefined') && SC && SC.Module && SC.Module.scriptDidLoad) SC.Module.scriptDidLoad('sproutcore/core_foundation');
-/* >>>>>>>>>> BEGIN __sc_chance.js */
-if (typeof CHANCE_SLICES === 'undefined') var CHANCE_SLICES = [];CHANCE_SLICES = CHANCE_SLICES.concat([]);
-
 /* >>>>>>>>>> BEGIN source/controllers/controller.js */
 // ==========================================================================
 // Project:   SproutCore - JavaScript Application Framework
@@ -1496,20 +1493,28 @@ sc_require('ext/handlebars');
         previousContext: this
       });
 
+      var observer, invoker;
+
       view.get('childViews').push(bindView);
 
-      // Observe the given property on the context and
-      // tells the SC._BindableSpan to re-render.
-      this.addObserver(property, this, function observer() {
+      observer = function() {
         if (bindView.get('layer')) {
           bindView.rerender();
         } else {
           // If no layer can be found, we can assume somewhere
           // above it has been re-rendered, so remove the
           // observer.
-          this.removeObserver(property, this, observer);
+          this.removeObserver(property, invoker);
         }
-      });
+      };
+
+      invoker = function() {
+        this.invokeOnce(observer);
+      };
+
+      // Observe the given property on the context and
+      // tells the SC._BindableSpan to re-render.
+      this.addObserver(property, invoker);
 
       var context = bindView.renderContext(bindView.get('tagName'));
       bindView.renderToContext(context);
@@ -1584,10 +1589,9 @@ Handlebars.registerHelper('bindAttr', function(options) {
     var property = attrs[attr];
     var value = this.getPath(property);
 
-    // Add an observer to the view for when the property changes.
-    // When the observer fires, find the element using the
-    // unique data id and update the attribute to the new value.
-    this.addObserver(property, function observer() {
+    var observer, invoker;
+
+    observer = function observer() {
       var result = this.getPath(property);
       var elem = view.$("[data-handlebars-id='" + dataId + "']");
 
@@ -1596,7 +1600,7 @@ Handlebars.registerHelper('bindAttr', function(options) {
       // In that case, we can assume the template has been re-rendered
       // and we need to clean up the observer.
       if (elem.length === 0) {
-        this.removeObserver(property, observer);
+        this.removeObserver(property, invoker);
         return;
       }
 
@@ -1612,7 +1616,16 @@ Handlebars.registerHelper('bindAttr', function(options) {
       } else {
         elem.attr(attr, result);
       }
-    });
+    };
+
+    invoker = function() {
+      this.invokeOnce(observer);
+    };
+
+    // Add an observer to the view for when the property changes.
+    // When the observer fires, find the element using the
+    // unique data id and update the attribute to the new value.
+    this.addObserver(property, invoker);
 
     // Use the attribute's name as the value when it is YES
     if (value === YES) {
@@ -1688,9 +1701,11 @@ SC.Handlebars.bindClasses = function(context, classBindings, view, id) {
     // the property changes.
     var oldClass;
 
+    var observer, invoker;
+
     // Set up an observer on the context. If the property changes, toggle the
     // class name.
-    var observer = function() {
+    observer = function() {
       // Get the current value of the property
       newClass = classStringForProperty(property);
       elem = id ? view.$("[data-handlebars-id='" + id + "']") : view.$();
@@ -1698,7 +1713,7 @@ SC.Handlebars.bindClasses = function(context, classBindings, view, id) {
       // If we can't find the element anymore, a parent template has been
       // re-rendered and we've been nuked. Remove the observer.
       if (elem.length === 0) {
-        context.removeObserver(property, observer);
+        context.removeObserver(property, invoker);
       } else {
         // If we had previously added a class to the element, remove it.
         if (oldClass) {
@@ -1716,7 +1731,11 @@ SC.Handlebars.bindClasses = function(context, classBindings, view, id) {
       }
     };
 
-    context.addObserver(property, observer);
+    invoker = function() {
+      this.invokeOnce(observer);
+    };
+
+    context.addObserver(property, invoker);
 
     // We've already setup the observer; now we just need to figure out the correct
     // behavior right now on the first pass through.
@@ -1788,7 +1807,7 @@ Handlebars.registerHelper('collection', function(path, options) {
 });
 
 Handlebars.registerHelper('each', function(path, options) {
-  options.hash.contentBinding = SC.Binding.from('*'+path, this);
+  options.hash.contentBinding = SC.Binding.from('*'+path, this).oneWay();
   options.hash.itemContextProperty = 'content';
   return Handlebars.helpers.collection.call(this, null, options);
 });
@@ -6165,13 +6184,18 @@ SC.Button = SC.TemplateView.extend({
     }
   },
 
+  rootResponder: function() {
+    var pane = this.get('pane');
+    return pane.get('rootResponder');
+  }.property('pane').cacheable(),
+
   // Setting isActive to false will remove 'is-active' from our
   // layer's class names.
   mouseUp: function(event) {
     if (this.get('isActive')) {
       var action = this.get('action'),
           target = this.get('target') || null,
-          rootResponder = this.getPath('pane.rootResponder');
+          rootResponder = this.get('rootResponder');
 
       if (action && rootResponder) {
         rootResponder.sendAction(action, target, this, this.get('pane'), null, this);
@@ -6191,7 +6215,6 @@ SC.Button = SC.TemplateView.extend({
     this.mouseUp(touch);
   }
 });
-
 ; if ((typeof SC !== 'undefined') && SC && SC.Module && SC.Module.scriptDidLoad) SC.Module.scriptDidLoad('sproutcore/core_foundation');
 /* >>>>>>>>>> BEGIN source/ext/function.js */
 // ==========================================================================
@@ -8006,8 +8029,8 @@ SC.Pane.reopen(
 
 /** @class
 
-  The root object for a SproutCore application.  Usually you will create a
-  single SC.Application instance as your root namespace.  SC.Application is
+  The root object for a SproutCore application. Usually you will create a
+  single SC.Application instance as your root namespace. SC.Application is
   required if you intend to use SC.Responder to route events.
 
   ## Example
@@ -8017,11 +8040,6 @@ SC.Pane.reopen(
 
         // add other useful properties here
       });
-
-  ## Sending Events
-
-  You can send actions and events down an application-level responder chain
-  by
 
   @extends SC.ResponderContext
   @since SproutCore 1.0
@@ -10275,6 +10293,7 @@ SC.RootResponder = SC.Object.extend(
   mousedown: function(evt) {
     if (SC.platform.touch) {
       evt.allowDefault();
+      this._lastMouseDownCustomHandling = YES;
       return YES;
     }
 
@@ -10332,6 +10351,7 @@ SC.RootResponder = SC.Object.extend(
   mouseup: function(evt) {
     if (SC.platform.touch) {
       evt.allowDefault();
+      this._lastMouseUpCustomHandling = YES;
       return YES;
     }
 
@@ -14224,12 +14244,6 @@ SC.TemplateCollectionView = SC.TemplateView.extend(
   // In case a default content was set, trigger the child view creation
   // as soon as the empty layer was created
   didCreateLayer: function() {
-    // FIXME: didCreateLayer gets called multiple times when template collection
-    // views are nested - this is a hack to avoid rendering the content more
-    // than once.
-    if (this._sctcv_layerCreated) { return; }
-    this._sctcv_layerCreated = true;
-
     var content = this.get('content');
     if(content) {
       this.arrayContentDidChange(0, 0, content.get('length'));
@@ -14263,34 +14277,6 @@ SC.TemplateCollectionView = SC.TemplateView.extend(
     @type String
   */
   itemViewTemplateName: null,
-
-  /**
-    A template to render when there is no content or the content length is 0.
-  */
-  inverseTemplate: function(key, value) {
-    if (value !== undefined) {
-      return value;
-    }
-
-    var templateName = this.get('inverseTemplateName'),
-        template = this.get('templates').get(templateName);
-
-    if (!template) {
-      
-
-
-      return function() { return ''; };
-    }
-
-    return template;
-  }.property('inverseTemplateName').cacheable(),
-
-  /**
-    The name of a template to lookup if no inverse template is provided.
-
-    @property {String}
-  */
-  inverseTemplateName: null,
 
   itemContext: null,
 
@@ -14364,6 +14350,8 @@ SC.TemplateCollectionView = SC.TemplateView.extend(
   }.observes('content'),
 
   arrayContentWillChange: function(start, removedCount, addedCount) {
+    if (!this.get('layer')) { return; }
+
     // If the contents were empty before and this template collection has an empty view
     // remove it now.
     var emptyView = this.get('emptyView');
@@ -14404,68 +14392,71 @@ SC.TemplateCollectionView = SC.TemplateView.extend(
         addedViews    = [],
         renderFunc, childView, itemOptions, elem, insertAtElement, item, itemElem, idx, len;
 
-    var addedObjects = content.slice(start, start+addedCount);
+    if (content) {
+      var addedObjects = content.slice(start, start+addedCount);
 
-    // If we have content to display, create a view for
-    // each item.
-    itemOptions = this.get('itemViewOptions') || {};
+      // If we have content to display, create a view for
+      // each item.
+      itemOptions = this.get('itemViewOptions') || {};
 
-    elem = this.$();
-    insertAtElement = elem.find('li')[start-1] || null;
-    len = addedObjects.get('length');
+      elem = this.$();
+      insertAtElement = elem.find('li')[start-1] || null;
+      len = addedObjects.get('length');
 
-    // TODO: This logic is duplicated from the view helper. Refactor
-    // it so we can share logic.
-    var itemAttrs = {
-      "id": itemOptions.id,
-      "class": itemOptions['class'],
-      "classBinding": itemOptions.classBinding
-    };
+      // TODO: This logic is duplicated from the view helper. Refactor
+      // it so we can share logic.
+      var itemAttrs = {
+        "id": itemOptions.id,
+        "class": itemOptions['class'],
+        "classBinding": itemOptions.classBinding
+      };
 
-    renderFunc = function(context) {
-      arguments.callee.base.apply(this,arguments);
-      SC.Handlebars.ViewHelper.applyAttributes(itemAttrs, this, context);
-    };
+      renderFunc = function(context) {
+        arguments.callee.base.apply(this,arguments);
+        SC.Handlebars.ViewHelper.applyAttributes(itemAttrs, this, context);
+      };
 
-    itemOptions = SC.clone(itemOptions);
-    delete itemOptions.id;
-    delete itemOptions['class'];
-    delete itemOptions.classBinding;
+      itemOptions = SC.clone(itemOptions);
+      delete itemOptions.id;
+      delete itemOptions['class'];
+      delete itemOptions.classBinding;
 
-    for (idx = 0; idx < len; idx++) {
-      item = addedObjects.objectAt(idx);
-      childView = this.createChildView(itemViewClass.extend(itemOptions, {
-        content: item,
-        render: renderFunc
-      }));
+      for (idx = 0; idx < len; idx++) {
+        item = addedObjects.objectAt(idx);
+        view = this.createChildView(itemViewClass.extend(itemOptions, {
+          content: item,
+          render: renderFunc,
+          tagName: itemViewClass.prototype.tagName || this.get('itemTagName')
+        }));
 
-      var contextProperty = childView.get('contextProperty');
-      if (contextProperty) {
-        childView.set('context', childView.get(contextProperty));
+        var contextProperty = view.get('contextProperty');
+        if (contextProperty) {
+          view.set('context', view.get(contextProperty));
+        }
+
+        itemElem = view.createLayer().$();
+        if (!insertAtElement) {
+          elem.append(itemElem);
+        } else {
+          itemElem.insertAfter(insertAtElement);
+        }
+        insertAtElement = itemElem;
+
+        addedViews.push(view);
       }
 
-      itemElem = childView.createLayer().$();
-      if (!insertAtElement) {
-        elem.append(itemElem);
-      } else {
-        itemElem.insertAfter(insertAtElement);
-      }
-      insertAtElement = itemElem;
-
-      addedViews.push(childView);
+      childViews.replace(start, 0, addedViews);
     }
-
-    childViews.replace(start, 0, addedViews);
 
     var inverseTemplate = this.get('inverseTemplate');
     if (childViews.get('length') === 0 && inverseTemplate) {
-      childView = this.createChildView(SC.TemplateView.extend({
+      view = this.createChildView(SC.TemplateView.extend({
         template: inverseTemplate,
         content: this
       }));
-      this.set('emptyView', childView);
-      childView.createLayer().$().appendTo(elem);
-      this.childViews = [childView];
+      this.set('emptyView', view);
+      view.createLayer().$().appendTo(elem);
+      this.childViews = [view];
     }
 
     // Because the layer has been modified, we need to invalidate the frame
@@ -14473,6 +14464,19 @@ SC.TemplateCollectionView = SC.TemplateView.extend(
     // be used inside of SC.ScrollView.
     this.invokeLast('invalidateFrame');
   },
+
+  itemTagName: function() {
+    switch(this.get('tagName')) {
+      case 'ul':
+      case 'ol':
+        return 'li';
+      case 'table':
+      case 'thead':
+      case 'tbody':
+      case 'tfoot':
+        return 'tr'
+    }
+  }.property('tagName'),
 
   invalidateFrame: function() {
     this.notifyPropertyChange('frame');
