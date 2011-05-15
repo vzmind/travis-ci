@@ -27,7 +27,7 @@ Travis.controllers = SC.Object.create({
 
     load: function(params) {
       this.params = params;
-      this.setPath('tabs.build.content', Travis.Build.find(this.get('buildId')));
+      this.setPath('tabs.build.content', Travis.Build.find(this.params.id));
       this.set('content', this.repository(params));
       this.activateTab(params.tab);
     },
