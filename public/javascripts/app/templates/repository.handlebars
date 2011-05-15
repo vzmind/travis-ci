@@ -19,10 +19,14 @@
       </div>
     </li>
     <li id="tab_parent">
-      <h5><a {{bindAttr href="urlBuild"}}>Build</a></h5>
+      {{#view SC.TemplateView contentBinding="Travis.controllers.repository.tabs.build*content.parent"}}
+        <h5><a {{bindAttr href="content.urlBuild"}}>Build #{{content.number}}</a></h5>
+      {{/view}}
     </li>
     <li id="tab_build">
-      <h5><a {{bindAttr href="urlBuild"}}>{{#view SC.TemplateView contentBinding="Travis.controllers.repository.tabs.build"}}Build #{{content.number}}{{/view}}</a></h5>
+      {{#view SC.TemplateView contentBinding="Travis.controllers.repository.tabs.build"}}
+        <h5><a {{bindAttr href="content.urlBuild"}}>Build #{{content.number}}</a></h5>
+      {{/view}}
       <div class="tab">
         {{view SC.TemplateView templateName="summary" contentBinding="Travis.controllers.repository.tabs.build"}}
         {{view SC.TemplateView templateName="build" contentBinding="Travis.controllers.repository.tabs.build"}}

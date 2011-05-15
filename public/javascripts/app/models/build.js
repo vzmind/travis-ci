@@ -21,6 +21,10 @@ Travis.Build = SC.Record.extend(Travis.Helpers.Urls, {
     return Travis.Repository.find(this.get('repositoryId'));
   }.property(),
 
+  parent: function() {
+    return this.get('parentId') ? Travis.Build.find(this.get('parentId')) : null;
+  }.property(),
+
   commitAndBranch: function() {
     return (this.get('commit') || '').substr(0, 7) + (this.get('branch') ? ' (%@)'.fmt(this.get('branch')) : '');
   }.property(),

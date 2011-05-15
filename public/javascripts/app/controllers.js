@@ -51,7 +51,11 @@ Travis.controllers = SC.Object.create({
     repositoryObserver: function() {
       var repository = this.getPath('content.firstObject');
       if(repository) { repository.select(); }
-    }.observes('content', 'tabs.active')
+    }.observes('content', 'tabs.active'),
+
+    buildObserver: function() {
+      this.getPath('active.content.parentId') ? $('#tab_parent').addClass('display') : $('#tab_parent').removeClass('display');
+    }.observes('content', 'tabs.active') //('*active.content')
   }),
 
   jobs: SC.ArrayController.create({

@@ -312,6 +312,9 @@ caption {
   #tab_parent {
     display: none;
   }
+  #tab_parent.display {
+    display: block;
+  }
   #tab_build:not(.active) {
     display: none;
   }
