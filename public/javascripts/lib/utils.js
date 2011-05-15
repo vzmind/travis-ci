@@ -14,7 +14,7 @@ Utils = {
     return query.length > 0 ? '?' + query.join('&') : '';
   },
   duration: function(started, finished) {
-    started  = new Date(started);
+    started  = started ? new Date(started) : new Date();
     finished = finished ? new Date(finished) : new Date();
     return started ? Math.round((finished - started) / 1000) : 0;
   },
