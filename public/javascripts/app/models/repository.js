@@ -20,6 +20,14 @@ Travis.Repository = SC.Record.extend(Travis.Helpers.Urls, {
     return Utils.duration(this.get('lastBuildStartedAt'), this.get('lastBuildFinishedAt'));
   }.property('lastBuildStartedAt', 'lastBuildFinishedAt').cacheable(),
 
+  formattedDuration: function() {
+    return this.get('lastBuildDuration') ? Utils.readableTime(this.get('lastBuildDuration')) : '-';
+  }.property('lastBuildDuration'),
+
+  formattedFinishedAt: function() {
+    return this.get('lastBuildFinishedAt') ? $.timeago.inWords($.timeago.distance($.timeago.parse(this.get('lastBuildFinishedAt')))) : '-';
+  }.property('lastBuildFinishedAt'),
+
   color: function() {
     return Utils.buildColor(this.get('lastBuildStatus'));
   }.property('lastBuildStatus'),
