@@ -11,7 +11,7 @@
     </tr>
   </thead>
 
-  {{#collection SC.TemplateCollectionView tagName="tbody" itemClassBinding="content.color" contentBinding="Travis.controllers.repository.tabs.active.content.matrix"}}
+  {{#collection SC.TemplateCollectionView tagName="tbody" itemClassBinding="content.color" contentBinding="Travis.controllers.repository.tabs.active.matrix"}}
     {{#with content}}
       <td class="number"><a {{bindAttr href="urlBuild"}}>{{number}}</a></td>
       {{#each configValues tagName="td"}}
