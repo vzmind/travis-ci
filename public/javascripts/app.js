@@ -17,7 +17,10 @@ Travis = SC.Application.create({
     Travis.controllers.workers.load();
     Travis.controllers.jobs.load();
 
-    Utils.updateTimes();
+    // TODO: This registers an interval that updates the DOM.
+    // We should update this to just invalidate SproutCore properties so the
+    // DOM updates automatically.
+    // Utils.updateTimes();
 
     $('.tool-tip').tipsy({ gravity: 'n', fade: true });
     $('.fold').live('click', function() { $(this).hasClass('open') ? $(this).removeClass('open') : $(this).addClass('open'); })
