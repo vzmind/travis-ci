@@ -51,8 +51,18 @@ Travis.Repository.mixin({
   all: function() {
     return Travis.store.find(this);
   },
-  find: function(id) {
-    return Travis.store.find(this, id);
+  find: function(id, callback) {
+    var record = Travis.store.find(this, id);
+    if(callback) { // TODO move to SC.Store or something
+      if(record.get('status') & SC.Record.READY) {
+        callback(record);
+      } else {
+        record.addObserver('status', function() {
+          if(record.get('status') & SC.Record.READY) callback(record);
+        })
+      }
+    }
+    return record;
   },
   latest: function() {
     return Travis.store.find(SC.Query.local(Travis.Repository));

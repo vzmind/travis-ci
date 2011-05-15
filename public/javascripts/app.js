@@ -1,5 +1,6 @@
 Travis = SC.Application.create({
   Helpers: {},
+  store: SC.Store.create().from('Travis.DataSource'),
   main: function() {
     $.extend(SC.TEMPLATES, Utils.loadTemplates(SC.Handlebars.compile));
 
@@ -28,7 +29,29 @@ Travis = SC.Application.create({
     $('#top .profile').mouseover(function() { $('#top .profile ul').show(); });
     $('#top .profile').mouseout(function() { $('#top .profile ul').hide(); });
   },
-  store: SC.Store.create().from('Travis.DataSource')
+  receive: function(event, data) {
+    data = data.build;
+    if(data) {
+      if(data.status) {
+        data.result = data.status; // TODO setting build status doesn't seem to trigger bindings?
+      }
+
+      Travis.Build.find(data.id, function(build) {
+        $.each(data, function(key, value) {
+          build.set(key, value);
+        });
+      });
+
+      Travis.Repository.find(data.repository_id, function(repository) {
+        $.each(['id', 'number', 'status', 'started_at', 'finished_at'], function(ix, key) {
+          if(data[key]) {
+            console.log('lastBuild' + $.camelize(key), data[key])
+            repository.set('lastBuild' + $.camelize(key), data[key]);
+          }
+        });
+      });
+    }
+  }
 });
 
 SC.ready(function() {

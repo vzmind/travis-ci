@@ -50,8 +50,18 @@ Travis.Build.mixin({
   _queries: {
     byRepositoryId: {},
   },
-  find: function(id) {
-    return Travis.store.find(this, id);
+  find: function(id, callback) {
+    var record = Travis.store.find(this, id);
+    if(callback) { // TODO move to SC.Store or something
+      if(record.get('status') & SC.Record.READY) {
+        callback(record);
+      } else {
+        record.addObserver('status', function() {
+          if(record.get('status') & SC.Record.READY) callback(record);
+        })
+      }
+    }
+    return record;
   },
   byRepositoryId: function(id, parameters) {
     parameters = parameters || {};
