@@ -45,19 +45,3 @@ $.extend(SC.routes, {
     }
  }
 });
-
-// allow updating bulk attributes
-$.extend(SC.Record, {
-  update: function(id, attributes) {
-    this.find(id).update(attributes);
-  }
-});
-
-$.extend(SC.Record.prototype, {
-  update: function(attributes) {
-    var record = this;
-    $.each(attributes, function(key, value) {
-      record.set(key, value);
-    });
-  }
-});

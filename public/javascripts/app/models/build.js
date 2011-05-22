@@ -76,7 +76,9 @@ Travis.Build = Travis.Record.extend(Travis.Helpers.Urls, {
     var config = this.get('config');
     if(config) {
       var result = []; // doh. sc is on jquery 1.4
-      $.each(config, function(key, value) { result.push('%@: %@'.fmt(key, value.join(', '))) });
+      $.each(config, function(key, value) {
+        result.push('%@: %@'.fmt(key, value.join ? value.join(', ') : value))
+      });
       return result.join(', ');
     }
   }.property('config')

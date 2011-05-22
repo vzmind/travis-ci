@@ -41,7 +41,7 @@ $.extend(jasmine, {
     var color = repository.get('color');
     if(color && !$(element).hasClass(color)) {
       errors.push('expected "' + element.selector + '" to be ' + repository.color + ' but it is not.');
-    } else if($.include($.keys(repository), 'color') && !repository.color && $.any(['red', 'green'], function(color) { return $(element).hasClass(color) })) {
+    } else if($.keys(repository).indexOf('color') == -1 && !repository.color && $.any(['red', 'green'], function(color) { return $(element).hasClass(color) })) {
       errors.push('expected "' + element.selector + '" not to have a color class but it has.');
     }
 

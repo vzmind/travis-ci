@@ -1,9 +1,32 @@
 Travis.Record = SC.Record.extend({
   childRecordNamespace: Travis,
   primaryKey: 'id',
+
+  update: function(attributes) {
+    this.whenReady(function(record) {
+      $.each(attributes, function(key, value) {
+        this.set(key, value);
+      }.bind(this));
+    }.bind(this));
+    return this;
+  },
+
+  whenReady: function(callback) {
+    if(this.get('status') & SC.Record.READY) {
+      callback(this);
+    } else {
+      this.addObserver('status', function() {
+        if(this.get('status') & SC.Record.READY) callback(this);
+      })
+    }
+  }
 });
 
 Travis.Record.mixin({
+  update: function(id, attributes) {
+    this.find(id).update(attributes);
+  },
+
   find: function(id, callback) {
     var record = Travis.store.find(this, id);
     if(callback) {
@@ -56,7 +79,7 @@ Travis.Record.mixin({
     var conditions = [];
     var skip = ['url', 'orderBy'];
     $.each(params, function(name, value) {
-      if(!$.include(skip, name)) {
+      if(skip.indexOf(name) == -1) {
         conditions.push('%@ = %@'.fmt(name, this._quoteQueryValue(name, value)));
       }
     }.bind(this));
@@ -67,9 +90,11 @@ Travis.Record.mixin({
     var resource = this.toString().toLowerCase().replace('travis.', '').replace('y', 'ies'); // TODO
     var params = [];
     var skip = ['url', 'orderBy'];
-    $.each(options, function(name, value) {if(!$.include(skip, name)) {
-      params.push('%@=%@'.fmt(name, encodeURIComponent(value)));
-    }});
+    $.each(options, function(name, value) {
+      if(skip.indexOf(name) == -1) {
+        params.push('%@=%@'.fmt(name, encodeURIComponent(value)));
+      }
+    });
     return '/%@.json?%@'.fmt(resource, params.join('&'));
   },
 

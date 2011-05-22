@@ -20,21 +20,21 @@ $.extend({
   compact: function(array) {
     return $.grep(array, function(value) { return !!value; });
   },
-  include: function(value) {
-    var args  = Array.prototype.slice.apply(arguments);
-    var value = args.pop();
-    var array = args.pop() || this;
-    for(var i = 0; i < array.length; i++) {
-      if(array[i] == value) return true;
-    }
-    return false;
-  },
-  any: function(callback) {
+  any: function(array, callback) {
     var args  = Array.prototype.slice.apply(arguments);
     var callback = args.pop();
     var array = args.pop() || this;
     for(var i = 0; i < array.length; i++) {
       if(callback(array[i])) return true;
+    }
+    return false;
+  },
+  slice: function(object, key) {
+    var keys   = Array.prototype.slice.apply(arguments);
+    var object = (typeof keys[0] == 'object') ? keys.shift() : this;
+    var result = {};
+    for(var key in object) {
+      if(object.indexOf(keys)) result[key] = object[key];
     }
     return false;
   }
