@@ -1,6 +1,4 @@
-Travis.Repository = SC.Record.extend(Travis.Helpers.Urls, {
-  primaryKey:         'id',
-
+Travis.Repository = Travis.Record.extend(Travis.Helpers.Urls, {
   slug:                SC.Record.attr(String),
   lastBuildId:         SC.Record.attr(Number, { key: 'last_build_id' }),
   lastBuildNumber:     SC.Record.attr(Number, { key: 'last_build_number' }),
@@ -32,7 +30,7 @@ Travis.Repository = SC.Record.extend(Travis.Helpers.Urls, {
   }.property('lastBuildFinishedAt'),
 
   select: function() {
-    $.each(Travis.Repository.all().toArray(), function(ix, repository) { repository.set('selected', false); });
+    $.each(Travis.Repository.latest().toArray(), function(ix, repository) { repository.set('selected', false); });
     this.set('selected', true);
   },
 
@@ -42,36 +40,8 @@ Travis.Repository = SC.Record.extend(Travis.Helpers.Urls, {
 });
 
 Travis.Repository.mixin({
-  _queries: {
-    latest: {},
-    bySlug: {}
-  },
-  all: function() {
-    return Travis.store.find(this);
-  },
-  find: function(id, callback) {
-    var record = Travis.store.find(this, id);
-    if(callback) { // TODO move to SC.Store or something
-      if(record.get('status') & SC.Record.READY) {
-        callback(record);
-      } else {
-        record.addObserver('status', function() {
-          if(record.get('status') & SC.Record.READY) callback(record);
-        })
-      }
-    }
-    return record;
-  },
   latest: function() {
-    return Travis.store.find(SC.Query.local(Travis.Repository, { orderBy: 'lastBuildFinishedAt DESC' }));
-  },
-  bySlug: function(slug) {
-    var query = this._queries.bySlug[slug] = this._queries.bySlug[slug] || SC.Query.local(Travis.Repository, {
-      conditions: 'slug = {slug}',
-      parameters: { slug: slug },
-      url: '/repositories.json?slug=%@'.fmt(slug)
-    });
-    return Travis.store.find(query);
+    return this.all({ orderBy: 'lastBuildFinishedAt DESC' });
   },
 })
 

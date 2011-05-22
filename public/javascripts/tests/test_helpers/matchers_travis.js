@@ -85,11 +85,12 @@ $.extend(jasmine, {
       jasmine.matchValues(selector, text, errors, element);
     });
 
-    // if(summary.color && !$('.summary', this.actual).hasClass(summary.color)) {
-    //   errors.push('expected "' + this.actual.selector + '" to be ' + summary.color + ' but it is not.');
-    // } else if(_.include(_.keys(summary), 'color') && !summary.color && _.any(['red', 'green'], function(color) { return $('.summary', this.actual).hasClass(color) })) {
-    //   errors.push('expected "' + this.actual.selector + '" not to have a color class but it has.');
-    // }
+    var color = build.get('color');
+    if(color && !$('.summary', element).hasClass(color)) {
+      errors.push('expected "' + element.selector + '" to be ' + summary.color + ' but it is not.');
+    } else if(!color && $.any(['red', 'green'], function(color) { return $('.summary', element).hasClass(color) })) {
+      errors.push('expected "' + element.selector + '" not to have a color class but it has.');
+    }
 
     this.message = function() { return errors.join("\\\\n"); };
     return errors.length == 0;

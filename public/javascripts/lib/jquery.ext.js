@@ -21,14 +21,20 @@ $.extend({
     return $.grep(array, function(value) { return !!value; });
   },
   include: function(value) {
-    for(var i = 0; i < this.length; i++) {
-      if(this[i] == value) return true;
+    var args  = Array.prototype.slice.apply(arguments);
+    var value = args.pop();
+    var array = args.pop() || this;
+    for(var i = 0; i < array.length; i++) {
+      if(array[i] == value) return true;
     }
     return false;
   },
   any: function(callback) {
-    for(var i = 0; i < this.length; i++) {
-      if(callback(this[i])) return true;
+    var args  = Array.prototype.slice.apply(arguments);
+    var callback = args.pop();
+    var array = args.pop() || this;
+    for(var i = 0; i < array.length; i++) {
+      if(callback(array[i])) return true;
     }
     return false;
   }

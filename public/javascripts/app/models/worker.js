@@ -1,9 +1,5 @@
-Travis.Worker = SC.Record.extend({
-  primaryKey: 'id',
+Travis.Worker = Travis.Record.extend({
 });
 
 Travis.Worker.mixin({
-  all: function(id) {
-    return Travis.store.find(this);
-  },
 })

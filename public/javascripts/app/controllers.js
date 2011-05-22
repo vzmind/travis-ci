@@ -36,7 +36,7 @@ Travis.controllers = SC.Object.create({
 
     repository: function(params) {
       if(params.owner && params.repository) {
-        return Travis.Repository.bySlug(params.owner + '/' + params.repository);
+        return Travis.Repository.findBy({ slug: params.owner + '/' + params.repository });
       } else {
         return Travis.Repository.latest();
       }

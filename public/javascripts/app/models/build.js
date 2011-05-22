@@ -1,6 +1,4 @@
-Travis.Build = SC.Record.extend(Travis.Helpers.Urls, Travis.Helpers.Build, {
-  primaryKey:     'id',
-  childRecordNamespace: Travis,
+Travis.Build = Travis.Record.extend(Travis.Helpers.Urls, {
   matrix: SC.Record.toMany('Travis.Build', { nested: true }),
 
   repositoryId:   SC.Record.attr(Number, { key: 'repository_id' }),
@@ -85,34 +83,8 @@ Travis.Build = SC.Record.extend(Travis.Helpers.Urls, Travis.Helpers.Build, {
 });
 
 Travis.Build.mixin({
-  _queries: {
-    byRepositoryId: {},
-  },
-  all: function() {
-    return Travis.store.find(this);
-  },
-  find: function(id, callback) {
-    var record = Travis.store.find(this, id);
-    if(callback) { // TODO move to SC.Store or something
-      if(record.get('status') & SC.Record.READY) {
-        callback(record);
-      } else {
-        record.addObserver('status', function() {
-          if(record.get('status') & SC.Record.READY) callback(record);
-        })
-      }
-    }
-    return record;
-  },
   byRepositoryId: function(id, parameters) {
-    parameters = parameters || {};
-    var key = [id, parameters.limit].join('-');
-    var query = this._queries.byRepositoryId[key] = this._queries.byRepositoryId[key] || SC.Query.local(Travis.Build, {
-      conditions: 'repositoryId = %@ AND parentId = null'.fmt(id),
-      url: '/repositories/%@/builds.json?limit=%@'.fmt(id, parameters.limit),
-      orderBy: 'number DESC'
-    });
-    return Travis.store.find(query);
+    return this.findBy({ repositoryId: id, parentId: null, url: '/repositories/%@/builds.json'.fmt(id), orderBy: 'number DESC' })
   },
 })
 
