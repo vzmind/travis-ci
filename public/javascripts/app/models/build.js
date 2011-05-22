@@ -47,9 +47,10 @@ Travis.Build = Travis.Record.extend(Travis.Helpers.Urls, {
     var repository = this.get('repository');
     if(repository.get('lastBuildStartedAt') < this.get('startedAt') || repository.get('lastBuildFinishedAt') < this.get('finishedAt')) {
       repository.update({
+        lastBuildNumber:     this.get('number'),
+        lastBuildStatus:     this.get('result'),
         lastBuildStartedAt:  this.get('startedAt'),
         lastBuildFinishedAt: this.get('finishedAt'),
-        lastBuildStatus:     this.get('result')
       });
     }
   }.observes('startedAt', 'finishedAt', 'result'),
