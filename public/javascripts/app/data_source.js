@@ -3,7 +3,7 @@
 Travis.DataSource = SC.DataSource.extend({
   fetch: function(store, query) {
     options = {
-      url:     this._urlForQuery(query),
+      url:     query.url,
       store:   store,
       query:   query,
       isQuery: YES
@@ -23,22 +23,6 @@ Travis.DataSource = SC.DataSource.extend({
       type:     store.recordTypeFor(storeKey)
     });
     return YES;
-  },
-
-  _urlForQuery: function(query) {
-    if(query.url) {
-      return query.url
-    } else if(query.recordType == Travis.Repository) {
-      return '/repositories.json';
-    } else if(query.recordType == Travis.Job) {
-      return '/jobs.json';
-    } else if(query.recordType == Travis.Worker) {
-      return '/workers.json';
-    } else if(query.recordType == Travis.Build) {
-      var parameters = query.parameters || {};
-      return '/builds/%@.json'.fmt(parameters.id);
-    }
-    console.log('can not generate url for query:', query)
   },
 
   _urlForRecord: function(storeKey, id) {

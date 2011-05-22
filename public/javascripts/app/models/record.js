@@ -31,12 +31,13 @@ Travis.Record.mixin({
   },
 
   find: function(id, callback) {
-    return Travis.store.find(this, id).whenReady(callback);
+    var record = Travis.store.find(this, id)
+    return record ? record.whenReady(callback) : record;
   },
 
   all: function(options) {
     options = options || {};
-    return Travis.store.find(this._cachedQuery('by', options, function() {
+    return Travis.store.find(this._cachedQuery('all', options, function() {
       return SC.Query.local(this, {
         conditions: this._queryConditions(options),
         url: options.url || this._queryUrl(options),
@@ -60,30 +61,31 @@ Travis.Record.mixin({
     args.unshift(this);
     return $.map(args, function(arg) {
       if(arg) return typeof arg == 'object' ? SC.json.encode(arg) : arg.toString();
-    }).join('-');
+    }.bind(this)).join('-');
   },
 
-  _queryConditions: function(params) {
-    var conditions = [];
-    var skip = ['url', 'orderBy'];
-    $.each(params || {}, function(name, value) {
-      if(skip.indexOf(name) == -1) {
-        conditions.push('%@ = %@'.fmt(name, this._quoteQueryValue(name, value)));
-      }
-    }.bind(this));
-    return conditions.join(' AND ');
+  _queryConditions: function(options) {
+    return $.map($.except(options || {}, 'id', 'url', 'orderBy'), function(value, name) {
+      return '%@ = %@'.fmt(name, this._quoteQueryValue(name, value));
+    }.bind(this)).join(' AND ');
   },
 
   _queryUrl: function(options) {
-    var resource = this.toString().toLowerCase().replace('travis.', '').replace('y', 'ies'); // TODO
-    var params = [];
-    var skip = ['url', 'orderBy'];
-    $.each(options, function(name, value) {
-      if(skip.indexOf(name) == -1) {
-        params.push('%@=%@'.fmt(name, encodeURIComponent(value)));
-      }
-    });
-    return '/%@.json?%@'.fmt(resource, params.join('&'));
+    return [this._queryPath(options), this._queryParams()].join('?')
+  },
+
+  _queryResource: function() {
+    return this.toString().toLowerCase().replace('travis.', '').replace('y', 'ies'); // TODO demodulize, singularize?
+  },
+
+  _queryPath: function(options) {
+    return '/%@%@.json'.fmt(this._queryResource(), (options.id ? '/' + id : ''))
+  },
+
+  _queryParams: function(options) {
+    return $.map($.except(options || {}, 'id', 'url', 'orderBy'), function(value, name) {
+      return '%@=%@'.fmt(name, encodeURIComponent(value));
+    }).join('&');
   },
 
   _quoteQueryValue: function(name, value) {
