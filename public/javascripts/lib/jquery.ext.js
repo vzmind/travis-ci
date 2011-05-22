@@ -18,7 +18,19 @@ $.extend({
     return string[0].toUpperCase() + string.substring(1);
   },
   compact: function(array) {
-    return $.grep(array, function(value){ return !!value; });
+    return $.grep(array, function(value) { return !!value; });
+  },
+  include: function(value) {
+    for(var i = 0; i < this.length; i++) {
+      if(this[i] == value) return true;
+    }
+    return false;
+  },
+  any: function(callback) {
+    for(var i = 0; i < this.length; i++) {
+      if(callback(this[i])) return true;
+    }
+    return false;
   }
 });
 

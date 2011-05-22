@@ -1,26 +1,26 @@
 var __TEST__ = true;
 
 beforeEach(function() {
-  jasmine.clock = sinon.useFakeTimers(Date.parse('2010-11-12T17:00:30Z'), 'Date');
+  jasmine.clock = sinon.useFakeTimers(Date.parse('2011-05-12T02:20:00Z'), 'Date');
 
   window.location.hash = '';
   var mainPane = Travis.get('mainPane');
   if(mainPane) mainPane.remove();
-  if(Travis.store) Travis.store = null;
 
   withinRunLoop(function() {
-    Travis.store = SC.Store.create().from(SC.Record.fixtures); // .from('Travis.DataSource')
+    if(Travis.store) Travis.store.dataSource._fixtures = null;
+    Travis.store = SC.Store.create().from(SC.Record.fixtures);
     Travis.main();
   })
 });
 
 afterEach(function() {
-  jasmine.clock.restore();
+  if(jasmine.clock) jasmine.clock.restore();
 });
 
 var withinRunLoop = function(block) {
   SC.RunLoop.begin();
-  var result = block.call();
+  var result = block();
   SC.RunLoop.end();
   return result;
 };

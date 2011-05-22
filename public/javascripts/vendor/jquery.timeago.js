@@ -45,6 +45,9 @@
       }
     },
     distanceInWords: function(date) {
+      if(typeof date == 'string') {
+        date = $.timeago.parse(date);
+      }
       return $.timeago.inWords($.timeago.distance(date));
     },
     inWords: function(distanceMillis) {

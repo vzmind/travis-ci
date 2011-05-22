@@ -17,8 +17,8 @@
       {{#each configValues tagName="td"}}
         {{this}}
       {{/each}}
-      <td class="duration" {{bindAttr title="duration"}}></td>
-      <td class="finished_at timeago" {{bindAttr title="finished_at"}}>{{#if finished_at}}{{finished_at}}{{else}}-{{/if}}</td>
+      <td class="duration" {{bindAttr title="duration"}}>{{formattedDuration}}</td>
+      <td class="finished_at timeago" {{bindAttr title="finishedAt"}}>{{#if finishedAt}}{{formattedFinishedAt}}{{else}}-{{/if}}</td>
     {{/with}}
   {{/collection}}
 </table>

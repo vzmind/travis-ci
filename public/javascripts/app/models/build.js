@@ -1,4 +1,4 @@
-Travis.Build = SC.Record.extend(Travis.Helpers.Urls, {
+Travis.Build = SC.Record.extend(Travis.Helpers.Urls, Travis.Helpers.Build, {
   primaryKey:     'id',
   childRecordNamespace: Travis,
   matrix: SC.Record.toMany('Travis.Build', { nested: true }),
@@ -43,12 +43,53 @@ Travis.Build = SC.Record.extend(Travis.Helpers.Urls, {
 
   configValues: function() {
     return $.values(this.get('config') || {});
-  }.property()
+  }.property(),
+
+  observer: function() {
+    var repository = this.get('repository');
+    if(repository.get('lastBuildStartedAt') < this.get('startedAt') || repository.get('lastBuildFinishedAt') < this.get('finishedAt')) {
+      repository.update({
+        lastBuildStartedAt:  this.get('startedAt'),
+        lastBuildFinishedAt: this.get('finishedAt'),
+        lastBuildStatus:     this.get('result')
+      });
+    }
+  }.observes('startedAt', 'finishedAt', 'result'),
+
+  // TODO the following display logic all seems to belong to a controller or helper module
+
+  formattedLog: function() {
+    return this.get('log'); // fold log etc. here
+  }.property('log'),
+
+  formattedCommit: function() {
+    return (this.get('commit') || '').substr(0, 7) + (this.get('branch') ? ' (%@)'.fmt(this.get('branch')) : '');
+  }.property('commit'),
+
+  formattedDuration: function() {
+    return this.get('duration') ? Utils.readableTime(this.get('duration')) : '-';
+  }.property('duration'),
+
+  formattedFinishedAt: function() {
+    return this.get('finishedAt') ? $.timeago.distanceInWords(this.get('finishedAt')) : '-';
+  }.property('finishedAt'),
+
+  configDisplay: function() {
+    var config = this.get('config');
+    if(config) {
+      var result = []; // doh. sc is on jquery 1.4
+      $.each(config, function(key, value) { result.push('%@: %@'.fmt(key, value.join(', '))) });
+      return result.join(', ');
+    }
+  }.property('config')
 });
 
 Travis.Build.mixin({
   _queries: {
     byRepositoryId: {},
+  },
+  all: function() {
+    return Travis.store.find(this);
   },
   find: function(id, callback) {
     var record = Travis.store.find(this, id);

@@ -10,29 +10,27 @@ Travis.Repository = SC.Record.extend(Travis.Helpers.Urls, {
 
   builds: function() {
     return Travis.Build.byRepositoryId(this.get('id'));
-  }.property().cacheable(),
-
-  lastBuild: function() {
-    return Travis.Build.find(this.get('lastBuildId'));
-  }.property().cacheable(),
+  }.property(),
 
   lastBuildDuration: function() {
     return Utils.duration(this.get('lastBuildStartedAt'), this.get('lastBuildFinishedAt'));
   }.property('lastBuildStartedAt', 'lastBuildFinishedAt').cacheable(),
 
-  formattedDuration: function() {
-    return this.get('lastBuildDuration') ? Utils.readableTime(this.get('lastBuildDuration')) : '-';
-  }.property('lastBuildDuration'),
-
-  formattedFinishedAt: function() {
-    return this.get('lastBuildFinishedAt') ? $.timeago.inWords($.timeago.distance($.timeago.parse(this.get('lastBuildFinishedAt')))) : '-';
-  }.property('lastBuildFinishedAt'),
+  // TODO the following display logic all all seems to belong to a controller or helper module,
+  // but I can't find a way to bind an itemClass to a controller w/ TemplateCollectionView
 
   color: function() {
     return Utils.buildColor(this.get('lastBuildStatus'));
   }.property('lastBuildStatus'),
 
-  // TODO this all seems to belong to a controller, but how to bind an itemClass to a controller w/ TemplateCollectionView
+  formattedLastBuildDuration: function() {
+    return this.get('lastBuildDuration') ? Utils.readableTime(this.get('lastBuildDuration')) : '-';
+  }.property('lastBuildDuration'),
+
+  formattedLastBuildFinishedAt: function() {
+    return this.get('lastBuildFinishedAt') ? $.timeago.distanceInWords(this.get('lastBuildFinishedAt')) : '-';
+  }.property('lastBuildFinishedAt'),
+
   select: function() {
     $.each(Travis.Repository.all().toArray(), function(ix, repository) { repository.set('selected', false); });
     this.set('selected', true);
@@ -65,7 +63,7 @@ Travis.Repository.mixin({
     return record;
   },
   latest: function() {
-    return Travis.store.find(SC.Query.local(Travis.Repository));
+    return Travis.store.find(SC.Query.local(Travis.Repository, { orderBy: 'lastBuildFinishedAt DESC' }));
   },
   bySlug: function(slug) {
     var query = this._queries.bySlug[slug] = this._queries.bySlug[slug] || SC.Query.local(Travis.Repository, {

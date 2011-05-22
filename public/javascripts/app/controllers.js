@@ -9,9 +9,9 @@ Travis.controllers = SC.Object.create({
   repository: SC.SingleObjectController.create({
     tabs: SC.Object.create({
       active: null,
-      current: SC.ObjectController.create(Travis.Helpers.Build, {
+      current: SC.SingleObjectController.create(Travis.Helpers.Build, {
         name: 'current',
-        contentBinding: 'Travis.controllers.repository.lastBuild'
+        contentBinding: 'Travis.controllers.repository.builds'
       }),
 
       builds: SC.ArrayController.create(Travis.Helpers.Build, {
@@ -27,8 +27,10 @@ Travis.controllers = SC.Object.create({
 
     load: function(params) {
       this.params = params;
-      this.setPath('tabs.build.content', Travis.Build.find(this.params.id));
       this.set('content', this.repository(params));
+      if(this.params.id) {
+        this.setPath('tabs.build.content', Travis.Build.find(this.params.id));
+      }
       this.activateTab(params.tab);
     },
 

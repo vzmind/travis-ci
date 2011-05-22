@@ -26,20 +26,38 @@ SC.SingleObjectController = SC.ObjectController.extend({
 });
 
 // Allow adding routes without a target option
-SC.routes.trigger = function() {
-  var firstRoute = this._firstRoute,
-      location = this.get('location'),
-      params, route;
+$.extend(SC.routes, {
+  trigger: function() {
+    var firstRoute = this._firstRoute,
+        location = this.get('location'),
+        params, route;
 
-  if (firstRoute) {
-    params = this._extractParametersAndRoute({ route: location });
-    location = params.route;
-    delete params.route;
-    delete params.params;
-    route = firstRoute.routeForParts(location.split('/'), params);
-    // if (route && route.target && route.method) {
-    if (route && route.method) {
-      route.method.call(route.target, params);
+    if (firstRoute) {
+      params = this._extractParametersAndRoute({ route: location });
+      location = params.route;
+      delete params.route;
+      delete params.params;
+      route = firstRoute.routeForParts(location.split('/'), params);
+      // if (route && route.target && route.method) {
+      if (route && route.method) {
+        route.method.call(route.target, params);
+      }
     }
+ }
+});
+
+// allow updating bulk attributes
+$.extend(SC.Record, {
+  update: function(id, attributes) {
+    this.find(id).update(attributes);
   }
-};
+});
+
+$.extend(SC.Record.prototype, {
+  update: function(attributes) {
+    var record = this;
+    $.each(attributes, function(key, value) {
+      record.set(key, value);
+    });
+  }
+});

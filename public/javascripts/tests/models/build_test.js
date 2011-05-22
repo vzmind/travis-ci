@@ -23,5 +23,19 @@ describe('Models: Build', function() {
     var build = Travis.Build.find(4);
     expect(build.get('configValues')).toEqual(['1.8.7']);
   });
+
+  it("updates the repository's lastBuild attributes after update", function() {
+    var repository = Travis.Repository.find(1);
+    var builds = repository.get('builds');
+    var date = '2011-05-13T00:00:00Z';
+
+    expect(repository.get('lastBuildStartedAt')).not.toEqual(date);
+    expect(repository.get('lastBuildFinishedAt')).not.toEqual(date);
+
+    builds.firstObject().update({ startedAt: date, finishedAt: date });
+
+    expect(repository.get('lastBuildStartedAt')).toEqual(date);
+    expect(repository.get('lastBuildFinishedAt')).toEqual(date);
+  });
 });
 
