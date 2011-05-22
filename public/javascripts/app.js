@@ -30,30 +30,19 @@ Travis = SC.Application.create({
     $('#top .profile').mouseout(function() { $('#top .profile ul').hide(); });
   },
   receive: function(event, data) {
-    data = data.build;
-    if(data) {
-      if(data.status) {
-        data.result = data.status; // TODO setting build status doesn't seem to trigger bindings?
-      }
+    var build = data.build;
+    delete build.repository;
 
-      Travis.Build.find(data.id, function(build) {
-        $.each(data, function(key, value) {
-          build.set(key, value);
-        });
-      });
+    if(build) {
+      if(build.status) build.result = build.status; // setting build status doesn't trigger bindings
+      Travis.Build.update(build.id, build);
 
-      Travis.Repository.find(data.repository_id, function(repository) {
-        $.each(['id', 'number', 'status', 'started_at', 'finished_at'], function(ix, key) {
-          if(data[key]) {
-            console.log('lastBuild' + $.camelize(key), data[key])
-            repository.set('lastBuild' + $.camelize(key), data[key]);
-          }
-        });
-      });
+      SC.RunLoop.end()
     }
   }
 });
 
 SC.ready(function() {
   if(typeof Jasmine !== undefined) Travis.main();
+  // Travis.receive('foo', { build: { id: 2, number: 3, log: 'fuck yeah!' } });
 });

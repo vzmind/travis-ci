@@ -86,7 +86,7 @@ Travis.Build = Travis.Record.extend(Travis.Helpers.Urls, {
 
 Travis.Build.mixin({
   byRepositoryId: function(id, parameters) {
-    return this.findBy({ repositoryId: id, parentId: null, url: '/repositories/%@/builds.json'.fmt(id), orderBy: 'number DESC' })
+    return this.all({ repositoryId: id, parentId: null, url: '/repositories/%@/builds.json'.fmt(id), orderBy: 'number DESC' })
   },
 })
 

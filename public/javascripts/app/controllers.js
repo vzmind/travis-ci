@@ -1,5 +1,4 @@
 Travis.controllers = SC.Object.create({
-
   repositories: SC.ArrayController.create({
     load: function() {
       this.set('content', Travis.Repository.latest());
@@ -36,7 +35,7 @@ Travis.controllers = SC.Object.create({
 
     repository: function(params) {
       if(params.owner && params.repository) {
-        return Travis.Repository.findBy({ slug: params.owner + '/' + params.repository });
+        return Travis.Repository.all({ slug: params.owner + '/' + params.repository });
       } else {
         return Travis.Repository.latest();
       }
@@ -57,7 +56,7 @@ Travis.controllers = SC.Object.create({
 
     buildObserver: function() {
       this.getPath('active.content.parentId') ? $('#tab_parent').addClass('display') : $('#tab_parent').removeClass('display');
-    }.observes('content', 'tabs.active') //('*active.content')
+    }.observes('content', 'tabs.active')
   }),
 
   jobs: SC.ArrayController.create({

@@ -12,42 +12,30 @@ Travis.Record = SC.Record.extend({
   },
 
   whenReady: function(callback) {
-    if(this.get('status') & SC.Record.READY) {
+    if(!callback) {
+      return this;
+    } else if(this.get('status') & SC.Record.READY) {
       callback(this);
     } else {
       this.addObserver('status', function() {
         if(this.get('status') & SC.Record.READY) callback(this);
       })
     }
+    return this;
   }
 });
 
 Travis.Record.mixin({
   update: function(id, attributes) {
-    this.find(id).update(attributes);
+    return this.find(id).update(attributes);
   },
 
   find: function(id, callback) {
-    var record = Travis.store.find(this, id);
-    if(callback) {
-      if(record.get('status') & SC.Record.READY) {
-        callback(record);
-      } else {
-        record.addObserver('status', function() {
-          if(record.get('status') & SC.Record.READY) callback(record);
-        })
-      }
-    }
-    return record;
+    return Travis.store.find(this, id).whenReady(callback);
   },
 
   all: function(options) {
-    return Travis.store.find(this._cachedQuery('all', options, function() {
-      return SC.Query.local(this, options);
-    }.bind(this)));
-  },
-
-  findBy: function(options) { // TODO join with all?
+    options = options || {};
     return Travis.store.find(this._cachedQuery('by', options, function() {
       return SC.Query.local(this, {
         conditions: this._queryConditions(options),
@@ -78,7 +66,7 @@ Travis.Record.mixin({
   _queryConditions: function(params) {
     var conditions = [];
     var skip = ['url', 'orderBy'];
-    $.each(params, function(name, value) {
+    $.each(params || {}, function(name, value) {
       if(skip.indexOf(name) == -1) {
         conditions.push('%@ = %@'.fmt(name, this._quoteQueryValue(name, value)));
       }

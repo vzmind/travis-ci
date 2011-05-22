@@ -24,8 +24,8 @@ describe('Models: Repository', function() {
     expect(repositories.getEach('slug')).toEqual(['svenfuchs/minimal', 'josevalim/enginex']);
   });
 
-  it("findBy returns an array containing the repository with the given slug", function() {
-    var repositories = Travis.Repository.findBy({ slug: 'josevalim/enginex' });
+  it("given a conditions hash all returns an array containing the repository with the given slug", function() {
+    var repositories = Travis.Repository.all({ slug: 'josevalim/enginex' });
     expect(repositories.getEach('slug')).toEqual(['josevalim/enginex']);
   });
 
