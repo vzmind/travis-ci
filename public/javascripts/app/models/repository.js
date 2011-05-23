@@ -30,8 +30,12 @@ Travis.Repository = Travis.Record.extend(Travis.Helpers.Urls, {
   }.property('lastBuildFinishedAt'),
 
   select: function() {
-    $.each(Travis.Repository.latest().toArray(), function(ix, repository) { repository.set('selected', false); });
-    this.set('selected', true);
+    this.whenReady(function() {
+      var id = this.get('id');
+      Travis.Repository.latest().forEach(function(repository) {
+        repository.whenReady(function() { repository.set('selected', repository.get('id') == id); });
+      });
+    }.bind(this));
   },
 
   cssClasses: function() {

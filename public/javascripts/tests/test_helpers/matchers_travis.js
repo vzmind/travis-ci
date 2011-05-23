@@ -87,7 +87,7 @@ $.extend(jasmine, {
 
     var color = build.get('color');
     if(color && !$('.summary', element).hasClass(color)) {
-      errors.push('expected "' + element.selector + '" to be ' + summary.color + ' but it is not.');
+      errors.push('expected "' + element.selector + '" to be ' + color + ' but it is not.');
     } else if(!color && $.any(['red', 'green'], function(color) { return $('.summary', element).hasClass(color) })) {
       errors.push('expected "' + element.selector + '" not to have a color class but it has.');
     }

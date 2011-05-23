@@ -63,6 +63,15 @@ $.extend({
   compact: function(array) {
     return $.grep(array, function(value) { return !!value; });
   },
+  all: function(array, callback) {
+    var args  = Array.prototype.slice.apply(arguments);
+    var callback = args.pop();
+    var array = args.pop() || this;
+    for(var i = 0; i < array.length; i++) {
+      if(callback(array[i])) return false;
+    }
+    return true;
+  },
   any: function(array, callback) {
     var args  = Array.prototype.slice.apply(arguments);
     var callback = args.pop();

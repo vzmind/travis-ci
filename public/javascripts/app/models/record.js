@@ -28,7 +28,13 @@ Travis.Record = SC.Record.extend({
 
 Travis.Record.mixin({
   update: function(id, attributes) {
-    return this.find(id).update(attributes);
+    var record = this.find(id);
+    if(record) {
+      record.whenReady(function(record) { record.update(attributes) });
+    } else {
+      throw('can not find %@ with id: %@'.fmt(this, id));
+    }
+    return record;
   },
 
   find: function(id, callback) {

@@ -31,7 +31,6 @@ Travis = SC.Application.create({
   },
   receive: function(event, data) {
     var build = data.build;
-    delete build.repository;
 
     if(build) {
       if(build.status) build.result = build.status; // setting build status doesn't trigger bindings
@@ -44,5 +43,5 @@ Travis = SC.Application.create({
 
 SC.ready(function() {
   if(typeof Jasmine !== undefined) Travis.main();
-  // Travis.receive('foo', { build: { id: 2, number: 3, log: 'fuck yeah!' } });
+  // Travis.receive('foo', { build: { id: 8, startedAt: '2011-05-23T00:00:00Z', finishedAt: '2011-05-23T00:00:20Z' } })
 });
