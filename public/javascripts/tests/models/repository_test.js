@@ -14,6 +14,20 @@ describe('Models: Repository', function() {
     });
   });
 
+  it("the latest repositories sort order is updated when a build's startedAt attribute is updated", function() {
+    var repository = Travis.Repository.find(2);
+    var build = repository.builds().firstObject();
+    var startedAt  = '2011-05-22T22:22:00Z';
+    var finishedAt = '2011-05-22T22:22:22Z';
+
+    withinRunLoop(function() {
+      build.set('startedAt', startedAt);
+      build.set('finishedAt', finishedAt); // TODO can use a snakecase attribute name for started_at but not finished_at
+    });
+
+    expect(Travis.Repository.latest().getEach('slug')).toEqual(['josevalim/enginex', 'svenfuchs/minimal']);
+  });
+
   it('find returns the repository with the given id', function() {
     var repository = Travis.Repository.find(2);
     expect(repository.get('slug')).toEqual('josevalim/enginex');
@@ -34,7 +48,7 @@ describe('Models: Repository', function() {
     expect(builds.getEach('number').sort()).toEqual(['1', '2']); // TODO shouldn't need to sort here
   });
 
-  it('updates the builds collection when a new build iss added', function() {
+  it('updates the builds collection when a new build is added', function() {
     var repository = Travis.Repository.find(1);
 
     withinRunLoop(function() {

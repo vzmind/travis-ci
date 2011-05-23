@@ -50,8 +50,10 @@ var follow = function(text, context) {
 
 var goTo = function(hash, expectations) {
   runs(function() {
-    window.location.hash = normalizeHash(hash);
-    SC.routes.set('location', '#' + window.location.hash)
+    withinRunLoop(function() {
+      window.location.hash = normalizeHash(hash);
+      SC.routes.set('location', '#' + window.location.hash)
+    });
   });
   if(expectations) runs(expectations);
 };
