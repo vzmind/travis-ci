@@ -49,8 +49,11 @@ $.extend({
     $.each(obj, function(key, value){ values.push(value) });
     return values;
   },
-  camelize: function(string) {
-    return $.capitalize(string).replace(/_(.)?/g, function(match, chr) {
+  camelize: function(string, uppercase) {
+    if(uppercase || typeof uppercase == 'undefined') {
+      string = $.capitalize(string);
+    }
+    return string.replace(/_(.)?/g, function(match, chr) {
       return chr ? chr.toUpperCase() : '';
     });
   },

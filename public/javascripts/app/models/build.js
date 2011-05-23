@@ -43,7 +43,7 @@ Travis.Build = Travis.Record.extend(Travis.Helpers.Urls, {
     return $.values(this.get('config') || {});
   }.property(),
 
-  observer: function() {
+  updateRepository: function() {
     var repository = this.get('repository');
     if(repository.get('lastBuildStartedAt') < this.get('startedAt') || repository.get('lastBuildFinishedAt') < this.get('finishedAt')) {
       repository.update({
@@ -53,6 +53,10 @@ Travis.Build = Travis.Record.extend(Travis.Helpers.Urls, {
         lastBuildFinishedAt: this.get('finishedAt'),
       });
     }
+  },
+
+  updateObserver: function() {
+    this.updateRepository();
   }.observes('startedAt', 'finishedAt', 'result'),
 
   // TODO the following display logic all seems to belong to a controller or helper module
