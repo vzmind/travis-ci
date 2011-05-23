@@ -1,6 +1,7 @@
 Travis.Record = SC.Record.extend({
   childRecordNamespace: Travis,
   primaryKey: 'id',
+  id: SC.Record.attr(Number),
 
   update: function(attributes) {
     this.whenReady(function(record) {
