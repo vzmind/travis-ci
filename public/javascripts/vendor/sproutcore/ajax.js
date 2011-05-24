@@ -25,7 +25,7 @@ SC.Response = SC.Object.extend(
 
   /**
     Becomes true if there was a failure.  Makes this into an error object.
-    
+
     @type Boolean
     @default NO
   */
@@ -61,7 +61,7 @@ SC.Response = SC.Object.extend(
     @default null
   */
   request: null,
-  
+
   /**
     The request object that originated this request series.  Mostly this is
     useful if you are looking for a reference to the original request.  To
@@ -77,7 +77,7 @@ SC.Response = SC.Object.extend(
     return ret ;
   }.property('request').cacheable(),
 
-  /** 
+  /**
     Type of request. Must be an HTTP method. Based on the request.
 
     @field
@@ -100,7 +100,7 @@ SC.Response = SC.Object.extend(
   }.property('request').cacheable(),
 
   /**
-    If set then will attempt to automatically parse response as JSON 
+    If set then will attempt to automatically parse response as JSON
     regardless of headers.
 
     @field
@@ -206,7 +206,7 @@ SC.Response = SC.Object.extend(
     @default null
   */
   timedOut: null,
-  
+
   /**
     The timer tracking the timeout
 
@@ -218,7 +218,7 @@ SC.Response = SC.Object.extend(
 
   // ..........................................................
   // METHODS
-  // 
+  //
 
   /**
     Called by the request manager when its time to actually run. This will
@@ -235,7 +235,7 @@ SC.Response = SC.Object.extend(
     req.freeze();
 
     // if the source did not cancel the request, then invoke the transport
-    // to actually trigger the request.  This might receive a response 
+    // to actually trigger the request.  This might receive a response
     // immediately if it is synchronous.
     if (!this.get('isCancelled')) { this.invokeTransport(); }
 
@@ -404,10 +404,10 @@ SC.Response = SC.Object.extend(
     handled = this._notifyListeners(listeners, status);
     if (!handled && baseStat !== status) { handled = this._notifyListeners(listeners, baseStat); }
     if (!handled && status !== 0) { handled = this._notifyListeners(listeners, 0); }
-    
+
     return this ;
   },
-  
+
   /**
     String representation of the response object
 
@@ -652,7 +652,7 @@ SC.Request = SC.Object.extend(SC.Copyable, SC.Freezable,
 
   // ..........................................................
   // PROPERTIES
-  // 
+  //
 
   /**
     Sends the request asynchronously instead of blocking the browser. You
@@ -692,7 +692,7 @@ SC.Request = SC.Object.extend(SC.Copyable, SC.Freezable,
     @default YES
   */
   attachIdentifyingHeaders: YES,
-  
+
   init: function() {
     arguments.callee.base.apply(this,arguments);
 
@@ -748,7 +748,7 @@ SC.Request = SC.Object.extend(SC.Copyable, SC.Freezable,
     @default 'GET'
   */
   type: 'GET',
-  
+
   /**
     An optional timeout value of the request, in milliseconds. The timer
     begins when SC.Response#fire is actually invoked by the request manager
@@ -764,7 +764,7 @@ SC.Request = SC.Object.extend(SC.Copyable, SC.Freezable,
     @default null
   */
   timeout: null,
-  
+
   /**
     The body of the request.  May be an object is isJSON or isXML is set,
     otherwise should be a string.
@@ -773,7 +773,7 @@ SC.Request = SC.Object.extend(SC.Copyable, SC.Freezable,
     @default null
   */
   body: null,
-  
+
   /**
     The body, encoded as JSON or XML if needed.
 
@@ -850,7 +850,7 @@ SC.Request = SC.Object.extend(SC.Copyable, SC.Freezable,
 
   /** @private */
   COPY_KEYS: ['attachIdentifyingHeaders', 'isAsynchronous', 'isJSON', 'isXML', 'address', 'type', 'timeout', 'body', 'responseClass', 'willSend', 'didSend', 'willReceive', 'didReceive'],
-  
+
   /**
     Returns a copy of the current request. This will only copy certain
     properties so if you want to add additional properties to the copy you
@@ -994,15 +994,15 @@ SC.Request = SC.Object.extend(SC.Copyable, SC.Freezable,
     }
     return this;
   },
-  
+
   /**
     Will fire the actual request. If you have set the request to use JSON
     mode then you can pass any object that can be converted to JSON as the
     body. Otherwise you should pass a string body.
-    
+
     @param {String|Object} [body]
     @returns {SC.Response} New response object
-  */  
+  */
   send: function(body) {
     // Sanity-check: Be sure a timeout value was not specified if the request
     // is synchronous (because it wouldn't work).
@@ -1156,7 +1156,7 @@ SC.Request.manager = SC.Object.create(
 
   /**
     Maximum number of concurrent requests allowed. 6 for all browsers.
-    
+
     @type Number
     @default 6
   */
@@ -1181,12 +1181,12 @@ SC.Request.manager = SC.Object.create(
 
   // ..........................................................
   // METHODS
-  // 
-  
+  //
+
   /**
     Invoked by the send() method on a request. This will create a new low-
     level transport object and queue it if needed.
-    
+
     @param {SC.Request} request the request to send
     @returns {SC.Object} response object
   */
@@ -1205,7 +1205,7 @@ SC.Request.manager = SC.Object.create(
     return response;
   },
 
-  /** 
+  /**
     Cancels a specific request. If the request is pending it will simply
     be removed. Otherwise it will actually be cancelled.
 
@@ -1248,7 +1248,7 @@ SC.Request.manager = SC.Object.create(
 
     return NO;
   },
-  
+
   /**
     Checks the inflight queue. If there is an open slot, this will move a
     request from pending to inflight.

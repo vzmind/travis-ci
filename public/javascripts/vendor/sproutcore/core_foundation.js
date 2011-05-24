@@ -2837,7 +2837,6 @@ SC.mixin(SC.Event, /** @scope SC.Event */ {
     @returns {Boolean}
   */
   handle: function(event) {
-
     // ignore events triggered after window is unloaded or if double-called
     // from within a trigger.
     if ((typeof SC === "undefined") || SC.Event.triggered) return YES ;

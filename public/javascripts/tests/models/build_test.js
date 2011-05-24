@@ -1,13 +1,3 @@
-var whenLoaded = function(object, callback) {
-  waitsFor(function() {
-    var path = object.kindOf(SC.ChildArray) ? 'firstObject.status' : 'status';
-    return object.getPath(path) & SC.Record.READY;
-  });
-  runs(function() {
-    callback();
-  });
-}
-
 describe('Models: Build', function() {
   it('find returns the build with the given id', function() {
     var build = Travis.Build.find(2);

@@ -1,5 +1,25 @@
 var __TEST__ = true;
 
+var FIXTURES = [
+  'repositories',
+  'repositories/1',
+  'repositories/1/builds',
+  'repositories/2',
+  'repositories/2/builds',
+  'repositories/3',
+  'builds/1',
+  'builds/2',
+  'builds/3',
+  'builds/4',
+  'builds/5',
+  'builds/6',
+  'builds/7',
+  'builds/8',
+  'builds/9',
+  'jobs',
+  'workers'
+];
+
 beforeEach(function() {
   jasmine.clock = sinon.useFakeTimers(Date.parse('2011-01-01T06:00:00Z'), 'Date');
 
@@ -24,6 +44,16 @@ var withinRunLoop = function(block) {
   var result = block();
   SC.RunLoop.end();
   return result;
+};
+
+var whenLoaded = function(object, callback) {
+  waitsFor(function() {
+    var path = object.kindOf(SC.ChildArray) ? 'firstObject.status' : 'status';
+    return object.getPath(path) & SC.Record.READY;
+  });
+  runs(function() {
+    callback();
+  });
 };
 
 var runsAfter = function(time, func) {

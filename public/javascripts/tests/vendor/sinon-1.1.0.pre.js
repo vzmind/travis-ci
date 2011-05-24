@@ -1494,11 +1494,26 @@ sinon.FakeXMLHttpRequest = (function () {
         this.requestBody = null;
         this.status = 0;
         this.statusText = "";
+        this.eventListeners = {};
 
         if (typeof FakeXMLHttpRequest.onCreate == "function") {
             FakeXMLHttpRequest.onCreate(this);
         }
     }
+
+    var Event = function Event() {};
+
+    sinon.extend(Event.prototype, {
+      initEvent: function(type, bubbles, cancelable) {
+        this.type = type;
+        this.bubbles = bubbles;
+        this.cancelable = cancelable;
+      },
+      stopPropagation: function() {
+      },
+      preventDefault: function() {
+      }
+    });
 
     function verifyState(xhr) {
         if (xhr.readyState !== FakeXMLHttpRequest.OPENED) {
@@ -1526,12 +1541,43 @@ sinon.FakeXMLHttpRequest = (function () {
             this.readyStateChange(FakeXMLHttpRequest.OPENED);
         },
 
+        addEventListener: function addEventListener(event, listener, useCapture) {
+          var listeners = this.eventListeners[event];
+          if(!listeners){
+            listeners = this.eventListeners[event] = [];
+          }
+          listeners.push(listener);
+        },
+
+        removeEventListener: function removeEventListener(event, listener, useCapture) {
+          var listeners = this.eventListeners[event];
+          if(listeners) {
+            var index = listeners.indexOf(listener);
+            if(index != -1) {
+              listeners.splice(index, 1);
+            }
+          }
+        },
+
+        dispatchEvent: function dispatchEvent(event) {
+          var listeners = this.eventListeners[event.type];
+          if(listeners) {
+            for(var i = 0; i < listeners.length; i++) {
+              listeners[i](event); // TODO shouldn't this implement handleEvent() ?
+            }
+          }
+        },
+
         readyStateChange: function readyStateChange(state) {
             this.readyState = state;
 
             if (typeof this.onreadystatechange == "function") {
                 this.onreadystatechange();
             }
+
+            var event = new Event();
+            event.initEvent('readystatechange');
+            this.dispatchEvent(event);
         },
 
         setRequestHeader: function setRequestHeader(header, value) {
@@ -1965,6 +2011,7 @@ sinon.fakeServer = (function () {
 
                 var response = this.response || [404, {}, ""];
 
+                // console.log(request.url)
                 if (this.responses) {
                     for (var i = 0, l = this.responses.length; i < l; i++) {
                         if (match.call(this, this.responses[i], request)) {
