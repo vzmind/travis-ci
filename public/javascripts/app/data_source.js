@@ -67,7 +67,8 @@ Travis.DataSource = SC.DataSource.extend({
       var data = response.get('body');
       store.loadRecords(type, data.isEnumerable ? data : [data]);
     } else {
-      store.dataSourceDidError(storeKey, response.get('body'));
+      // TODO crap. this needs to error
+      // store.dataSourceDidError(storeKey, response.get('body'));
     }
   },
 });

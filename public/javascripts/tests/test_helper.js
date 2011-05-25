@@ -30,6 +30,7 @@ beforeEach(function() {
   withinRunLoop(function() {
     // if(Travis.store) Travis.store.dataSource._fixtures = null;
     // Travis.store = SC.Store.create().from(SC.Record.fixtures);
+    Travis.Record._queryCache = {};
     Travis.store = SC.Store.create().from('Travis.DataSource');
     Travis.main();
   })
@@ -85,8 +86,8 @@ var follow = function(text, context) {
 var goTo = function(hash, expectations) {
   runs(function() {
     withinRunLoop(function() {
+      SC.routes.set('location', '--should-not-match--'); // weird hack. how to do the right thing?
       window.location.hash = normalizeHash(hash);
-      SC.routes.set('location', '#' + window.location.hash)
     });
   });
   if(expectations) runs(expectations);
@@ -94,7 +95,7 @@ var goTo = function(hash, expectations) {
 
 var normalizeHash = function(hash) {
   hash = '#!/' + hash.replace(/^\//, '').replace('#!/', '');
-  return hash.replace(/#|!|\//) == '' ? '' : hash;
+  return hash.replace(/[#!\/]*/, '') == '' ? '' : hash;
 };
 
 
