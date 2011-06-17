@@ -24,6 +24,8 @@ gem 'SystemTimer',          '~> 1.2.3', :platforms => :ruby_18
 gem 'resque',               '~> 1.17.0'
 gem 'resque-heartbeat',     '~> 0.0.2'
 
+gem 'newrelic_rpm',         '~> 3.1.0'
+
 group :test do
   gem 'database_cleaner'
   gem 'factory_girl',       '~> 1.3'
