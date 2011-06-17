@@ -80,8 +80,8 @@ class RepositoriesController < ApplicationController
       pubsub_arguments = {
         :token => current_user.tokens.first.token,
         :user => current_user.login,
-        :domain => Travis.config['rails']['host']
+        :domain => Travis.config['domain']
       }
       "github://Travis?#{pubsub_arguments.collect{ |k,v| [ k,v ].join("=") }.join("&") }"
-  end
+    end
 end
