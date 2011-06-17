@@ -8,15 +8,15 @@ class Build < ActiveRecord::Base
 
   belongs_to :repository
   belongs_to :parent, :class_name => 'Build', :foreign_key => :parent_id
-  has_many :matrix, :class_name => 'Build', :foreign_key => :parent_id, :order => :id
+  has_many   :matrix, :class_name => 'Build', :foreign_key => :parent_id, :order => :id
 
   validates :repository_id, :presence => true
 
   serialize :config
 
   before_save :expand_matrix!, :if => :expand_matrix?
-  after_save :denormalize_to_repository, :if => :denormalize_to_repository?
-  after_save :propagate_status_to_parent, :if => :was_finished?
+  after_save  :denormalize_to_repository,  :if => :denormalize_to_repository?
+  after_save  :propagate_status_to_parent, :if => :was_finished?
 
   class << self
     def create_from_github_payload(payload)
@@ -48,6 +48,10 @@ class Build < ActiveRecord::Base
 
     def matrix?(config)
       config.values_at(*ENV_KEYS).compact.any? { |value| value.is_a?(Array) && value.size > 1 }
+    end
+
+    def recent_build_list
+      started.order('id DESC').limit(10).includes(:matrix)
     end
   end
 
