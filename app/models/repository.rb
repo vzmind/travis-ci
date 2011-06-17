@@ -2,7 +2,9 @@ require 'uri'
 require 'core_ext/hash/compact'
 
 class Repository < ActiveRecord::Base
-  has_many :builds, :dependent => :delete_all, :conditions => 'parent_id IS null'
+
+  has_many :builds, :conditions => 'parent_id IS null', :dependent => :delete_all
+
   has_one :last_build,          :class_name => 'Build', :order => 'id DESC', :conditions => 'parent_id IS NULL AND started_at IS NOT NULL'
   has_one :last_finished_build, :class_name => 'Build', :order => 'id DESC', :conditions => 'parent_id IS NULL AND finished_at IS NOT NULL'
   has_one :last_success,        :class_name => 'Build', :order => 'id DESC', :conditions => 'parent_id IS NULL AND status = 0'
@@ -41,7 +43,7 @@ class Repository < ActiveRecord::Base
     @slug ||= [owner_name, name].join('/')
   end
 
-  base_attrs       = [:id, :slug]
+  base_attrs       = [:id]
   last_build_attrs = [:last_build_id, :last_build_number, :last_build_status, :last_build_started_at, :last_build_finished_at]
   all_attrs        = base_attrs + last_build_attrs
 
@@ -49,12 +51,11 @@ class Repository < ActiveRecord::Base
     :default            => all_attrs,
     :job                => base_attrs,
     :'build:queued'     => base_attrs,
-    :'build:configured' => [:id],
+    :'build:configured' => base_attrs,
     :'build:log'        => [:id]
   }
   JSON_METHODS = {
     :default            => [:slug],
-    :'build:configured' => [],
     :'build:log'        => []
   }
 

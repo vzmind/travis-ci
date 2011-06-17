@@ -60,6 +60,7 @@ class RepositoriesController < ApplicationController
   end
 
   protected
+
     def repositories
       repos = params[:owner_name] ? Repository.where(:owner_name => params[:owner_name]).timeline : Repository.timeline.recent
       params[:search].present? ? repos.search(params[:search]) : repos
@@ -69,4 +70,5 @@ class RepositoriesController < ApplicationController
       @repository ||= params[:id] ? Repository.find(params[:id]) : nil
     end
     helper_method :repository
+
 end

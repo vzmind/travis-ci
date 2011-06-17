@@ -20,9 +20,12 @@ gem 'jammit',               '~> 0.6.0'
 
 gem 'unicorn',              '~> 3.6.2'
 gem 'SystemTimer',          '~> 1.2.3', :platforms => :ruby_18
+gem 'clockwork'
 
 gem 'resque',               '~> 1.17.0'
-gem 'resque-heartbeat',     '~> 0.0.2'
+gem 'resque-heartbeat',     :git => 'https://github.com/svenfuchs/resque-heartbeat.git'
+
+gem 'newrelic_rpm',         '~> 3.1.0'
 
 group :test do
   gem 'database_cleaner'
