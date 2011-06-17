@@ -58,7 +58,6 @@ ActiveRecord::Schema.define(:version => 20110617114728) do
     t.string   "name"
     t.string   "url"
     t.integer  "last_duration"
-    t.datetime "last_built_at"
     t.datetime "created_at"
     t.datetime "updated_at"
     t.integer  "user_id"
