@@ -6,14 +6,36 @@ describe RepositoriesController do
 
   describe "POST 'create'" do
     before(:each) do
-      sign_in_user Factory.create(:user, :github_oauth_token => "myfaketoken")
+      @user = Factory.create(:user, :github_oauth_token => "myfaketoken")
+      sign_in_user @user
+      stub_request(:post, "https://api.github.com/hub?access_token=myfaketoken").to_return(:status => 200, :body => "")
     end
 
-    it "should be success and return success code 'true'" do
-      stub_request(:post, "https://api.github.com/hub?access_token=myfaketoken").to_return(:status => 200, :body => "")
-      post :create, :name => "sven", :name => "travis-ci"
+    it "should be success" do
+      post :create, :name => "travis-ci", :owner_name => "sven"
       response.should be_success
-      JSON.parse(response.body)['success'].should eql true
+    end
+
+    it "should create a repository record in database" do
+      post :create, :name => "travis-ci", :owner_name => "sven"
+
+      Repository.all.count.should eql 1
+      repository = Repository.all.first
+      repository.owner_name.should eql "sven"
+      repository.name.should eql "travis-ci"
+    end
+
+    it "should redirect when used is not signed in" do
+      sign_out @user
+      post :create, :name => "travis-ci", :owner_name => "sven"
+
+      response.should be_redirect
+    end
+
+    it "should send request to Github pubsub" do
+      post :create, :name => "travis-ci", :owner_name => "sven"
+
+      assert_requested :post, "https://api.github.com/hub?access_token=myfaketoken", :times => 1
     end
   end
 
@@ -56,7 +78,7 @@ describe RepositoriesController do
 
       ## FIXME: probably it makes sense to verify these things agains a complete json, even though we care most about these fields
       result = ActiveSupport::JSON.decode response.body
-      
+
       result.first["name"].should eql "safemode"
       result.first["owner"].should eql "svenfuchs"
       result.second["name"].should eql "scriptaculous-sortabletree"
