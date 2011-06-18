@@ -42,7 +42,12 @@ group :test do
     gem 'minitest_tu_shim'
   end
 
-  gem 'ruby-debug',   :platforms => :mri_18
+  platforms :mri_18 do
+    # required as linecache uses it but does not have it as a dep
+    gem "require_relative", "~> 1.0.1"
+    gem 'ruby-debug'
+  end
+
   gem 'ruby-debug19', :platforms => :mri_19
 
   gem 'capybara', '~> 0.4.1.2'
