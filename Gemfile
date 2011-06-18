@@ -48,7 +48,7 @@ group :test do
     gem 'ruby-debug'
   end
 
-  gem 'ruby-debug19', :platforms => :mri_19
+  gem 'ruby-debug19', :platforms => :mri_19 unless RUBY_VERSION == 'ruby-head'
 
   gem 'capybara', '~> 0.4.1.2'
 end
