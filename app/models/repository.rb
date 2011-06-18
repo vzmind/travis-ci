@@ -51,7 +51,6 @@ class Repository < ActiveRecord::Base
     :default            => all_attrs,
     :job                => base_attrs,
     :'build:queued'     => base_attrs,
-    :'build:configured' => base_attrs,
     :'build:log'        => [:id]
   }
   JSON_METHODS = {
