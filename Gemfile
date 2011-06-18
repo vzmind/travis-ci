@@ -27,6 +27,8 @@ gem 'resque-heartbeat',     :git => 'https://github.com/svenfuchs/resque-heartbe
 
 gem 'newrelic_rpm',         '~> 3.1.0'
 
+gem 'jruby-openssl',        :platforms => :jruby
+
 group :test do
   gem 'database_cleaner'
   gem 'factory_girl',       '~> 1.3'
