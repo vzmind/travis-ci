@@ -45,10 +45,10 @@ group :test do
   gem 'ruby-debug',   :platforms => :mri_18
   gem 'ruby-debug19', :platforms => :mri_19
 
-  gem 'capybara', '~> 0.4.1.2'
+  gem 'capybara', '~> 1.0.0'
 end
 
 group :development, :test do
-  gem 'steak',        '~> 1.1.0'
+
   gem 'rspec-rails',  '~> 2.6.1'
 end
