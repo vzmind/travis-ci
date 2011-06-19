@@ -18,6 +18,11 @@ module Travis
         # we might want to improve this for logging purposes
         raise ServiceHookError, 'error subscribing to the GitHub push event'
       end
+
+      def remove_service_hook(repository, user)
+        client = Octokit::Client.new(:oauth_token => user.github_oauth_token)
+        client.unsubscribe_service_hook(repository.owner_name, repository.name, "Travis")
+      end
     end
 
   end
