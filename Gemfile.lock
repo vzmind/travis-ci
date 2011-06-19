@@ -12,7 +12,8 @@ GIT
 
 GIT
   remote: https://github.com/svenfuchs/resque-heartbeat.git
-  revision: e159e71f9a2d8202e3a87c23113c2cf2bcee6a95
+  revision: ba7a89f504906182635ec2cecbed5bd52a557aa6
+  ref: ba7a89f
   specs:
     resque-heartbeat (0.0.2)
       resque (~> 1.17.0)
@@ -57,6 +58,7 @@ GEM
     arel (2.0.10)
     bcrypt-ruby (2.1.4)
     bcrypt-ruby (2.1.4-java)
+    bouncy-castle-java (1.5.0146.1)
     builder (2.1.2)
     capybara (1.0.0)
       mime-types (>= 1.16)
@@ -104,6 +106,8 @@ GEM
     i18n (0.5.0)
     jammit (0.6.3)
       yui-compressor (>= 0.9.3)
+    jruby-openssl (0.7.4)
+      bouncy-castle-java
     json (1.5.2)
     json (1.5.2-java)
     json_pure (1.5.2)
@@ -174,6 +178,7 @@ GEM
     redis-namespace (1.0.3)
       redis (< 3.0.0)
     refraction (0.2.0)
+    require_relative (1.0.1)
     resque (1.17.1)
       json (< 1.6, >= 1.4.6)
       redis-namespace (~> 1.0.2)
@@ -236,7 +241,6 @@ GEM
     warden (1.0.4)
       rack (>= 1.0)
     weakling (0.0.4-java)
-    web-socket-ruby (0.1.0)
     webmock (1.6.4)
       addressable (> 2.2.5, ~> 2.2)
       crack (>= 0.1.7)
@@ -262,6 +266,7 @@ DEPENDENCIES
   fakeredis
   hoptoad_notifier (~> 2.4.9)
   jammit (~> 0.6.0)
+  jruby-openssl
   minitest
   minitest_tu_shim
   mocha
@@ -273,6 +278,7 @@ DEPENDENCIES
   rails (~> 3.0.7)
   rake (~> 0.9.1)
   refraction (~> 0.2.0)
+  require_relative (~> 1.0.1)
   resque (~> 1.17.0)
   resque-heartbeat!
   rspec-rails (~> 2.6.1)
@@ -282,6 +288,5 @@ DEPENDENCIES
   test_declarative
   unicorn (~> 3.6.2)
   unobtrusive_flash (~> 0.0.2)
-  web-socket-ruby
   webmock
   yajl-ruby (~> 0.8.2)

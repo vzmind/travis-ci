@@ -49,39 +49,39 @@ class RepositoriesController < ApplicationController
 
 
   def update
-    @repository = Repository.find(params[:id])
+    args = [params[:owner], params[:name], current_user]
+
     begin
       if params[:is_active]
-        subscribe_service_hook
+        repository = Repository.find_or_create_and_add_service_hook(*args)
       else
-        unsubscribe_service_hook
+        repository = Repository.find_and_remove_service_hook(*args)
       end
-      @repository.save
-      render :json => @repository
-    rescue Exception => e
-      puts e.message
+      render :json => repository
+    rescue Travis::GitHubApi::ServiceHookError => e
       render :json => @repository, :status => :not_acceptable
     end
   end
 
   def create
-    @repository = Repository.find_or_create_by_name_and_owner_name(params[:name], params[:owner])
-
-    # Octokit doesn't have internal error processing. Subscribe will throw an exception when fails. Further investigation + some use-cases will give a hint about what kind
-    # of error handling might be useful here.
     begin
-      subscribe_service_hook
-      @repository.save
-      render :json => @repository
-    rescue
-      render :json => @repository, :status => :not_acceptable
+      args = [params[:owner], params[:name], current_user]
+      repository = Repository.find_or_create_and_add_service_hook(*args)
+      render :json => repository
+    rescue ActiveRecord::RecordInvalid, Travis::GitHubApi::ServiceHookError => e
+      render :json => repository, :status => :not_acceptable
     end
   end
 
   protected
 
     def repositories
-      repos = params[:owner_name] ? Repository.where(:owner_name => params[:owner_name]).timeline : Repository.timeline.recent
+      repos = if params[:owner_name]
+          Repository.where(:owner_name => params[:owner_name]).timeline
+        else
+          Repository.timeline.recent
+        end
+
       params[:search].present? ? repos.search(params[:search]) : repos
     end
 
@@ -89,24 +89,4 @@ class RepositoriesController < ApplicationController
       @repository ||= params[:id] ? Repository.find(params[:id]) : nil
     end
     helper_method :repository
-
-    def octokit_client
-      # current_user.github_oauth_token = "34fe8380745b83de7ada858d8174028097008d6b"
-      # current_user.save
-      Octokit::Client.new(:oauth_token => current_user.github_oauth_token)
-    end
-
-    def unsubscribe_service_hook
-      octokit_client.unsubscribe_service_hook(@repository.owner_name, @repository.name, "Travis")
-      @repository.is_active = false
-    end
-
-    def subscribe_service_hook
-      octokit_client.subscribe_service_hook(@repository.owner_name, @repository.name, "Travis", {
-        :token => current_user.tokens.first.token,
-        :user => current_user.login,
-        :domain => Travis.config['rails']['host']
-      })
-      @repository.is_active = true
-    end
 end
