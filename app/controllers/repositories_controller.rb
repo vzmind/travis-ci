@@ -27,7 +27,13 @@ class RepositoriesController < ApplicationController
       # Please refer to https://github.com/intridea/omniauth/issues/203 for details.
       # Without authenticity token our POST request will cause session unset.
       repository.authenticity_token = form_authenticity_token
-      repository.travis_enabled = Repository.exists?({ :name => repository.name, :owner_name => repository.owner })
+      existing_repository = Repository.find_by_name_and_owner_name(repository.name, repository.owner)
+      unless existing_repository.nil?
+        repository.is_active = existing_repository.is_active
+        repository.id = existing_repository.id
+      else
+        repository.is_active = false
+      end
     end
 
     respond_to do |format|
@@ -41,14 +47,30 @@ class RepositoriesController < ApplicationController
     end
   end
 
+
+  def update
+    args = [params[:owner], params[:name], current_user]
+
+    begin
+      if params[:is_active]
+        repository = Repository.find_or_create_and_add_service_hook(*args)
+      else
+        repository = Repository.find_and_remove_service_hook(*args)
+      end
+      render :json => repository
+    rescue Travis::GitHubApi::ServiceHookError => e
+      render :json => @repository, :status => :not_acceptable
+    end
+  end
+
   def create
-    args = [params[:name], params[:owner], current_user]
-
-    repository = Repository.find_or_create_and_add_service_hook(*args)
-
-    render :json => repository
-  rescue ActiveRecord::RecordInvalid, Travis::GitHubApi::ServiceHookError => e
-    render :json => repository, :status => :not_acceptable
+    begin
+      args = [params[:owner], params[:name], current_user]
+      repository = Repository.find_or_create_and_add_service_hook(*args)
+      render :json => repository
+    rescue ActiveRecord::RecordInvalid, Travis::GitHubApi::ServiceHookError => e
+      render :json => repository, :status => :not_acceptable
+    end
   end
 
   protected
@@ -67,5 +89,4 @@ class RepositoriesController < ApplicationController
       @repository ||= params[:id] ? Repository.find(params[:id]) : nil
     end
     helper_method :repository
-
 end
