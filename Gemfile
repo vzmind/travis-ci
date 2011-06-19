@@ -43,9 +43,6 @@ group :test do
     gem 'minitest_tu_shim'
   end
 
-  gem 'ruby-debug',   :platforms => :mri_18
-  gem 'ruby-debug19', :platforms => :mri_19
-
   gem 'capybara', '~> 1.0.0'
 end
 
