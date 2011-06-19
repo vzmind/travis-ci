@@ -1,6 +1,6 @@
 class RepositoriesController < ApplicationController
   before_filter :authenticate_user!, :only => [ :my, :create ]
-  # protect_from_forgery :except => :create
+
   respond_to :json
 
   def index
@@ -51,26 +51,22 @@ class RepositoriesController < ApplicationController
   def update
     args = [params[:owner], params[:name], current_user]
 
-    begin
-      if params[:is_active]
-        repository = Repository.find_or_create_and_add_service_hook(*args)
-      else
-        repository = Repository.find_and_remove_service_hook(*args)
-      end
-      render :json => repository
-    rescue Travis::GitHubApi::ServiceHookError => e
-      render :json => @repository, :status => :not_acceptable
+    if params[:is_active]
+      repository = Repository.find_or_create_and_add_service_hook(*args)
+    else
+      repository = Repository.find_and_remove_service_hook(*args)
     end
+    render :json => repository
+  rescue Travis::GitHubApi::ServiceHookError => e
+    render :json => @repository, :status => :not_acceptable
   end
 
   def create
-    begin
-      args = [params[:owner], params[:name], current_user]
-      repository = Repository.find_or_create_and_add_service_hook(*args)
-      render :json => repository
-    rescue ActiveRecord::RecordInvalid, Travis::GitHubApi::ServiceHookError => e
-      render :json => repository, :status => :not_acceptable
-    end
+    args = [params[:owner], params[:name], current_user]
+    repository = Repository.find_or_create_and_add_service_hook(*args)
+    render :json => repository
+  rescue ActiveRecord::RecordInvalid, Travis::GitHubApi::ServiceHookError => e
+    render :json => repository, :status => :not_acceptable
   end
 
   protected
