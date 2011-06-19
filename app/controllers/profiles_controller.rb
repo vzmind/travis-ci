@@ -13,6 +13,8 @@ class ProfilesController < ApplicationController
   def service_hooks
     repositories = Repository.github_repos_for_user(current_user)
 
+    headers['Csrf-Token'] = form_authenticity_token
+
     respond_with(repositories)
   end
 
