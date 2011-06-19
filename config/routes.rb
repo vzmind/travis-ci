@@ -1,7 +1,7 @@
 require 'patches/rails_route_set'
 
 TravisCi::Application.routes.draw do
-  root :to => 'application#index'
+  root :to => 'home#index'
 
   devise_for :users, :controllers => { :omniauth_callbacks => "users/omniauth_callbacks" }
 
@@ -9,12 +9,13 @@ TravisCi::Application.routes.draw do
     get 'users/sign_out', :to => 'devise/sessions#destroy', :as => :destroy_session
   end
 
-  resource :profile
+  resource :profile, :only => :show do
+    get    :service_hooks
+    post   :service_hooks, :to => 'profiles#add_service_hook'
+    delete :service_hooks, :to => 'profiles#remove_service_hook'
+  end
 
   resources :repositories do
-    collection do
-      get :my
-    end
     resources :builds
   end
 

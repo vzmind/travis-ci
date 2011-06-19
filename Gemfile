@@ -27,13 +27,14 @@ gem 'resque-heartbeat',     :git => 'https://github.com/svenfuchs/resque-heartbe
 
 gem 'newrelic_rpm',         '~> 3.1.0'
 
+gem 'jruby-openssl',        :platforms => :jruby
+
 group :test do
   gem 'database_cleaner'
   gem 'factory_girl',       '~> 1.3'
   gem 'factory_girl_rails'
   gem 'mocha'
   gem 'test_declarative'
-  gem 'web-socket-ruby'
   gem 'fakeredis'
   gem 'webmock'
 
@@ -42,18 +43,24 @@ group :test do
     gem 'minitest_tu_shim'
   end
 
+  gem 'capybara', '~> 1.0.0'
+end
+
+group :development, :test do
+  gem 'rspec-rails',  '~> 2.6.1'
+end
+
+group :development do
   platforms :mri_18 do
     # required as linecache uses it but does not have it as a dep
     gem "require_relative", "~> 1.0.1"
     gem 'ruby-debug'
   end
 
-  gem 'ruby-debug19', :platforms => :mri_19
-
-  gem 'capybara', '~> 0.4.1.2'
-end
-
-group :development, :test do
-  gem 'steak',        '~> 1.1.0'
-  gem 'rspec-rails',  '~> 2.6.1'
+  # sadly ruby-debug19 (linecache19) doesn't
+  # work with ruby-head, but we don't use this in
+  # development so this should cover us just in case
+  unless RUBY_VERSION == '1.9.3'
+    gem 'ruby-debug19', :platforms => :mri_19
+  end
 end

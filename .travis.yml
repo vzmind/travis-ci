@@ -1,6 +1,8 @@
-script: "bundle exec rake db:drop db:create db:test:load test"
+bundler_args: "--without development"
+script: "bundle exec rake test:ci"
 rvm:
   - 1.8.7
-  - ree
   - 1.9.2
   - ruby-head
+  - ree
+  - jruby

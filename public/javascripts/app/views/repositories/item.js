@@ -40,27 +40,3 @@ Travis.Views.Repositories.Item = Backbone.View.extend({
     this.el.find('.build').attr('href', '#!/' + this.model.get('slug') + '/builds/' + this.model.get('last_build_id')).text('#' + this.model.get('last_build_number'))
   },
 });
-
-Travis.Views.Repositories.MyItem = Backbone.View.extend({
-  events: {
-    'click a.enable_travis': 'enableTravis'
-  },
-  initialize: function() {
-    _.bindAll(this, 'render', 'enableTravis', 'onTravisEnabled');
-    this.template = Travis.templates['repositories/my_item'];
-  },
-  render: function() {
-    this.el = $(this.template(this.model.toJSON()));
-    this.delegateEvents()
-    return this;
-  },
-  enableTravis: function(e) {
-    e.preventDefault()
-    this.model.save({},{
-      success: this.onTravisEnabled
-    });
-  },
-  onTravisEnabled: function() {
-    this.el.find('.enable_travis').hide('fade')
-  }
-});

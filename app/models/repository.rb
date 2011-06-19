@@ -39,14 +39,44 @@ class Repository < ActiveRecord::Base
       where("repositories.name LIKE ? OR repositories.owner_name LIKE ?", "%#{query}%", "%#{query}%")
     end
 
-    def find_or_create_and_add_service_hook(owner_name, name, user)
-      repo = find_or_initialize_by_name_and_owner_name(name, owner_name)
+    def find_and_remove_service_hook(owner_name, name, user)
+      repo = find_by_name_and_owner_name(name, owner_name)
+      repo.is_active = false
+
       if repo.valid?
-        Travis::GitHubApi.add_service_hook(repo, user) if repo.valid?
+        Travis::GitHubApi.remove_service_hook(repo, user)
         repo.save!
         repo
       else
         raise ActiveRecord::RecordInvalid, repo
+      end
+    end
+
+    def find_or_create_and_add_service_hook(owner_name, name, user)
+      repo = find_or_initialize_by_name_and_owner_name(name, owner_name)
+      repo.is_active = true
+
+      if repo.valid?
+        Travis::GitHubApi.add_service_hook(repo, user)
+        repo.save!
+        repo
+      else
+        raise ActiveRecord::RecordInvalid, repo
+      end
+    end
+
+    def github_repos_for_user(user)
+      github_repos = Travis::GitHubApi.repository_list_for_user(user.login)
+
+      repo_name_is_active_array = where(:owner_name => user.login).select([:is_active, :name]).map{ |repo| [repo.name, repo.is_active] }
+      names_and_is_active = Hash[repo_name_is_active_array]
+
+      github_repos.each do |repo|
+        if names_and_is_active[repo.name].nil?
+          repo.is_active = false
+        else
+          repo.is_active = names_and_is_active[repo.name]
+        end
       end
     end
   end
