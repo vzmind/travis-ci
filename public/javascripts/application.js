@@ -23,7 +23,8 @@ var Travis = {
 };
 
 $(document).ready(function() {
-  if(!window.__TESTING__ && $('#application').length == 1) {
+  if(!window.__TESTING__ && $('#home').length == 1) {
+
     Travis.start();
     Backbone.history.start();
 
@@ -113,7 +114,7 @@ $.ajaxSetup({ cache: false });
     'delete': 'DELETE',
     'read'  : 'GET'
   };
-
+  Travis.DISPLAYED_KEYS = [ 'rvm', 'gemfile', 'env' ]
   function CSRFProtection (xhr) {
     var token = $('meta[name="csrf-token"]').attr('content');
     if (token) xhr.setRequestHeader('X-CSRF-Token', token);
