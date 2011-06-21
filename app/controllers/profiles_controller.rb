@@ -13,25 +13,19 @@ class ProfilesController < ApplicationController
   def service_hooks
     repositories = Repository.github_repos_for_user(current_user)
 
-    headers['Csrf-Token'] = form_authenticity_token
-
     respond_with(repositories)
   end
 
-  def add_service_hook
-    repository = Repository.find_or_create_and_add_service_hook(*service_hook_args)
+  def update_service_hook
+    if params[:is_active]
+      repository = Repository.find_or_create_and_add_service_hook(*service_hook_args)
+    else
+      repository = Repository.find_and_remove_service_hook(*service_hook_args)
+    end
 
     respond_with(repository)
   rescue ActiveRecord::RecordInvalid, Travis::GitHubApi::ServiceHookError => e
-    respond_with(repository, :status => :not_acceptable)
-  end
-
-  def remove_service_hook
-    repository = Repository.find_and_remove_service_hook(*service_hook_args)
-
-    respond_with(repository)
-  rescue Travis::GitHubApi::ServiceHookError => e
-    respond_with(repository, :status => :not_acceptable)
+    respond_with(repository, :only => [:id, :is_active], :status => :not_acceptable)
   end
 
   private
