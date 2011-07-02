@@ -42,15 +42,15 @@ TravisCi::Application.configure do
 
   # Disable delivery errors, bad email addresses will be ignored
   # config.action_mailer.raise_delivery_errors = false
-  config.action_mailer.smtp_settings = {
-    :address        => Travis.config['smtp']['address'],
-    :port           => "25",
-    :authentication => :cram_md5,
-    :user_name      => Travis.config['smtp']['user_name'],
-    :password       => Travis.config['smtp']['password'],
-    :domain         => Travis.config['smtp']['domain'],
-    :enable_starttls_auto => true
-  }
+  #config.action_mailer.smtp_settings = {
+  #  :address        => Travis.config['smtp']['address'],
+  #  :port           => "25",
+  #  :authentication => :cram_md5,
+  #  :user_name      => Travis.config['smtp']['user_name'],
+  #  :password       => Travis.config['smtp']['password'],
+  #  :domain         => Travis.config['smtp']['domain'],
+  #  :enable_starttls_auto => true
+  #}
 
   # Enable threaded mode
   # config.threadsafe!
