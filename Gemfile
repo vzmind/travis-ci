@@ -7,7 +7,7 @@ gem 'yajl-ruby',         '~> 0.8.2'
 
 gem 'compass',           '~> 0.11.3'
 gem 'devise',            '~> 1.4.2'
-gem 'oa-oauth',          '~> 0.2.6'
+gem 'oa-oauth',          '~> 0.3.0.rc1', :require => 'omniauth/oauth', :git => 'https://github.com/intridea/omniauth.git'
 
 gem 'refraction',        '~> 0.2.0'
 gem 'unobtrusive_flash', '~> 0.0.2'
