@@ -8,9 +8,9 @@ There's an example file provided that you can copy:
 
 $ cp config/travis.example.yml config/travis.yml
 
-h3. 2. Create an app on Heroku
+h3. 2. Create an app on Heroku (Procfile require the new Cedar Stack)
 
-$ heroku create my-travis
+$ heroku create --stack cedar my-travis
 
 h3. 3. Setup addons
 
@@ -57,7 +57,7 @@ This will push the config values contained in the @production@ section of your t
 
 h3. 8. Migrate the Heroku database
 
-$ heroku db:migrate
+$ heroku run rake db:migrate
 $ heroku restart
 
 There you go.
