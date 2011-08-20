@@ -46,6 +46,7 @@ class BuildsController < ApplicationController
       build.destroy
       trigger('build:removed', build, 'msg_id' => params[:msg_id])
     elsif build.was_finished?
+      build.add_tags
       trigger('build:finished', build, 'msg_id' => params[:msg_id])
       Travis::Notifications.send_notifications(build)
     end

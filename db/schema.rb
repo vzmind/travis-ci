@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20110729094426) do
+ActiveRecord::Schema.define(:version => 20110819232908) do
 
   create_table "builds", :force => true do |t|
     t.integer  "repository_id"
@@ -37,6 +37,7 @@ ActiveRecord::Schema.define(:version => 20110729094426) do
     t.text     "github_payload"
     t.string   "compare_url"
     t.string   "token"
+    t.text     "tags"
   end
 
   add_index "builds", ["parent_id"], :name => "index_builds_on_parent_id"

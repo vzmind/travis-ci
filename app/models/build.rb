@@ -4,7 +4,7 @@ class Build < ActiveRecord::Base
   cattr_accessor :sources
   self.sources = []
 
-  include Branches, Events, Json, Matrix, Notifications, Sources::Github
+  include Branches, Events, Json, Matrix, Notifications, Tagging, Sources::Github
 
   ENV_KEYS = ['rvm', 'gemfile', 'env', 'otp_release']
 
